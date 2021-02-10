@@ -2,82 +2,50 @@ import 'package:flutter/material.dart';
 
 void main() {
   runApp(MaterialApp(
-    title: 'Flutter',
-    home: FirstScreen(),
+    title: 'Navigation Basics',
+    home: FirstRoute(),
   ));
 }
 
-class FirstScreen extends StatefulWidget {
-  @override
-  _FirstScreenState createState() {
-    return _FirstScreenState();
-  }
-}
-
-class _FirstScreenState extends State<FirstScreen> {
-
-  // this allows us to access the TextField text
-  TextEditingController textFieldController = TextEditingController();
-
+class FirstRoute extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('First screen')),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-
-          Padding(
-            padding: const EdgeInsets.all(32.0),
-            child: TextField(
-              controller: textFieldController,
-              style: TextStyle(
-                fontSize: 24,
-                color: Colors.black,
-              ),
-            ),
-          ),
-
-          RaisedButton(
-            child: Text(
-              'Go to second screen',
-              style: TextStyle(fontSize: 24),
-            ),
+      body:
+      Align(
+        alignment: Alignment.bottomCenter,
+        child:
+        Container(
+          margin: const EdgeInsets.only(bottom: 80.0),
+          child: ElevatedButton(
+            child: Text('Entrar', ),
             onPressed: () {
-              _sendDataToSecondScreen(context);
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => SecondRoute()),
+              );
             },
-          )
-
-        ],
+          ),
+        ),
       ),
+
     );
   }
-
-  // get the text in the TextField and start the Second Screen
-  void _sendDataToSecondScreen(BuildContext context) {
-    String textToSend = textFieldController.text;
-    Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => SecondScreen(text: textToSend,),
-        ));
-  }
 }
 
-class SecondScreen extends StatelessWidget {
-  final String text;
-
-  // receive data from the FirstScreen as a parameter
-  SecondScreen({Key key, @required this.text}) : super(key: key);
-
+class SecondRoute extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Second screen')),
+      appBar: AppBar(
+        title: Text("Second Route"),
+      ),
       body: Center(
-        child: Text(
-          text,
-          style: TextStyle(fontSize: 24),
+        child: ElevatedButton(
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          child: Text('Go back!'),
         ),
       ),
     );
