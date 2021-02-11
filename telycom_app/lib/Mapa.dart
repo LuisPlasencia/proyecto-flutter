@@ -27,6 +27,7 @@ class _MyAppState extends State<MyApp> {
           padding: EdgeInsets.all(8.0),
           child: Column(
             children: [
+
               Flexible(
                 child: FlutterMap(
                   options: MapOptions(

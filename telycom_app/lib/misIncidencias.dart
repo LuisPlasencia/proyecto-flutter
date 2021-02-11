@@ -3,11 +3,19 @@ import 'package:flutter_map_arcgis/flutter_map_arcgis.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong/latlong.dart';
 
+
 import "ElementList.dart";
 import "main.dart";
 import "Mapa.dart";
 
-class MisIncidencias extends StatelessWidget {
+void main() => runApp(MisIncidencias());
+
+class MisIncidencias extends StatefulWidget {
+  @override
+  _MisIncidenciasState createState() => _MisIncidenciasState();
+}
+
+class _MisIncidenciasState extends State<MisIncidencias> {
   List<ElementList> itemsList = [
     ElementList(
         '12:45 05/02/21', 'LPA21/0011', 'No Atendido', 'Las Palmas G.C.'),
@@ -15,6 +23,12 @@ class MisIncidencias extends StatelessWidget {
     ElementList(
         '12:45 05/02/21', 'LPA21/0021', 'No Atendido', 'Las Palmas G.C.'),
   ];
+
+
+  @override
+  void initState() {
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -85,7 +99,7 @@ class MisIncidencias extends StatelessWidget {
                   child: FlutterMap(
                     options: MapOptions(
                       center: LatLng(28.0713516, -15.45598),
-                      zoom: 2.0,
+                      zoom: 11.0,
                       plugins: [EsriPlugin()],
 
                     ),
