@@ -5,7 +5,6 @@ import 'package:latlong/latlong.dart';
 
 
 import "ElementList.dart";
-import "main.dart";
 import "Mapa.dart";
 
 void main() => runApp(MisIncidencias());
@@ -32,8 +31,7 @@ class _MisIncidenciasState extends State<MisIncidencias> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Scaffold(
+    return  Scaffold(
           appBar: AppBar(
             title: Text("Mis incidencias"),
           ),
@@ -150,7 +148,7 @@ class _MisIncidenciasState extends State<MisIncidencias> {
                 ),
               ],
             )
-          ),
-    );
+          );
+
   }
 }
