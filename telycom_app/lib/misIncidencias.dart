@@ -1,6 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_map_arcgis/flutter_map_arcgis.dart';
+import 'package:flutter_map/flutter_map.dart';
+import 'package:latlong/latlong.dart';
+
 import "ElementList.dart";
 import "main.dart";
+import "Mapa.dart";
+
 
 class MisIncidencias extends StatelessWidget {
   List<ElementList> itemsList = [
@@ -8,6 +14,8 @@ class MisIncidencias extends StatelessWidget {
     ElementList('12:45 05/02/21', 'LPA21/0011', 'Atendido', 'Las Palmas G.C.'),
     ElementList('12:45 05/02/21', 'LPA21/0021', 'No Atendido', 'Las Palmas G.C.'),
   ];
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +37,7 @@ class MisIncidencias extends StatelessWidget {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => FirstRoute()),
+                                  builder: (context) => MyApp()),
                             );
                           },
                           title: RichText(
@@ -70,19 +78,7 @@ class MisIncidencias extends StatelessWidget {
               ],
             ),
           ),
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Container(
-                child: Image(
-                  image: AssetImage('images/bear.png'),
-                  height: 200,
-                  width: 200,
-                ),
-              ),
-            ],
-          )
+
         ]));
   }
 }
