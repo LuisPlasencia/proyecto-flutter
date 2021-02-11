@@ -10,36 +10,125 @@ void main() {
 }
 
 class FirstRoute extends StatelessWidget {
+
+  TextEditingController textFieldController = TextEditingController();
+  TextEditingController textFieldController2 = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomPadding: false,
       body:
-      Align(
-        alignment: Alignment.bottomCenter,
-        child:
-        Container(
-          margin: const EdgeInsets.only(bottom: 80.0),
-          child: RaisedButton(
-            color: Colors.blue,
-            shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(18.0),
-                side: BorderSide(color: Colors.black)
+      Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceAround ,
+          crossAxisAlignment: CrossAxisAlignment.center ,
+          children: <Widget>[
+            Container(
+              padding: EdgeInsets.all(20.0),
+              child: Image(
+                image: AssetImage('images/logo.png'),
+              )
             ),
-            padding: EdgeInsets.only(left: 50, right:50, top: 10, bottom: 10),
-            child: Text('Entrar', style: TextStyle(fontSize: 26, color: Colors.white)),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => MisIncidencias()),
-              );
-            },
-          ),
+
+            Column(
+              children: [
+                Container(
+                  margin: EdgeInsets.only(bottom: 10.0, left: 50.0, right: 50.0),
+                  child: TextField(
+                      controller:textFieldController,
+
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(),
+                        labelText: 'Usuario',
+                      ),
+
+                      style:TextStyle(
+                        fontSize: 20,
+                        color:Colors.black,
+                      )
+                  ),
+                ),
+
+                Container(
+                  margin: EdgeInsets.only(top: 10.0, left: 50.0, right: 50.0),
+
+                  child: TextField(
+                      controller:textFieldController2,
+
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(),
+                        labelText: 'Contraseña',
+                      ),
+
+                      style:TextStyle(
+                        fontSize: 20,
+                        color:Colors.black,
+                      )
+                  ),
+                ),
+              ],
+            ),
+
+
+            Container(
+              // margin: const EdgeInsets.only(bottom: 80.0),
+              child: RaisedButton(
+                color: Colors.blue,
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(18.0),
+                    side: BorderSide(color: Colors.black)
+                ),
+                padding: EdgeInsets.only(left: 50, right:50, top: 10, bottom: 10),
+                child: Text('Entrar', style: TextStyle(fontSize: 26, color: Colors.white)),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => MisIncidencias()),
+                  );
+                },
+              ),
+            ),
+          ],
         ),
       ),
 
     );
   }
 }
+
+
+// class FirstRoute extends StatelessWidget {
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       body:
+//       Align(
+//         alignment: Alignment.bottomCenter,
+//         child:
+//         Container(
+//           margin: const EdgeInsets.only(bottom: 80.0),
+//           child: RaisedButton(
+//             color: Colors.blue,
+//             shape: RoundedRectangleBorder(
+//                 borderRadius: BorderRadius.circular(18.0),
+//                 side: BorderSide(color: Colors.black)
+//             ),
+//             padding: EdgeInsets.only(left: 50, right:50, top: 10, bottom: 10),
+//             child: Text('Entrar', style: TextStyle(fontSize: 26, color: Colors.white)),
+//             onPressed: () {
+//               Navigator.push(
+//                 context,
+//                 MaterialPageRoute(builder: (context) => MisIncidencias()),
+//               );
+//             },
+//           ),
+//         ),
+//       ),
+//
+//     );
+//   }
+// }
 
 
 
