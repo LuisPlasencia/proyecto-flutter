@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_map_arcgis/flutter_map_arcgis.dart';
 import 'package:flutter_map/flutter_map.dart';
+import 'package:flutter_map/plugin_api.dart';
+import 'package:flutter_map_arcgis/flutter_map_arcgis.dart';
 import 'package:latlong/latlong.dart';
 
 void main() => runApp(MyApp());
@@ -30,6 +31,8 @@ class _MyAppState extends State<MyApp> {
               Flexible(
                 child: FlutterMap(
                   options: MapOptions(
+                    maxZoom: 19,
+                    minZoom: 10,
                     center: LatLng(28.0713516, -15.45598),
                     zoom: 11.0,
                     plugins: [EsriPlugin()],

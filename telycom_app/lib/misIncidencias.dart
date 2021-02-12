@@ -196,6 +196,8 @@ class _MisIncidenciasState extends State<MisIncidencias> {
               child: Flexible(
                 child: FlutterMap(
                   options: MapOptions(
+                    maxZoom: 19,
+                    minZoom: 10,
                     center: LatLng(28.0713516, -15.45598),
                     zoom: 12.0,
                     plugins: [EsriPlugin()],
@@ -277,5 +279,4 @@ class _MisIncidenciasState extends State<MisIncidencias> {
       ),
     );
   }
-
 }

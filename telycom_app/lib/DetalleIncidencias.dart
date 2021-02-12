@@ -6,6 +6,7 @@ void main() {
     title: '',
     home: DetalleInicidencias(),
   ));
+
 }
 
 
