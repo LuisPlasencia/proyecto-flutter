@@ -46,10 +46,44 @@ class _MisIncidenciasState extends State<MisIncidencias> {
         false;
   }
 
+  static const _markerSize = 80.0;
+  List<Marker> _markers;
+  List<LatLng> _points;
+
+
   @override
   void initState() {
     super.initState();
-  }
+    _markers = new List<Marker>();
+    _points = new List<LatLng>();
+
+    for(var i = 0; i<itemsList.length ; i++) {
+      _points.add(LatLng(itemsList[i].latitud, itemsList[i].longitud));
+    }
+
+    _markers = _points
+        .map(
+          (LatLng point) => Marker(
+        point: point,
+        width: _markerSize,
+        height: _markerSize,
+        builder: (ctx) =>
+            Image(
+              image: AssetImage('images/sirena.png'),
+            )
+      // Icon(
+      //   Icons.pin_drop,
+      //   color: Colors.red[900],
+      // ),
+      // new Container(
+      //   child: new FlutterLogo(),
+      // ),
+      //   builder: (_) => Icon(Icons.location_on, size: _markerSize),
+      //   anchorPos: AnchorPos.align(AnchorAlign.top),
+      ),
+    )
+        .toList();
+    }
 
   Widget _buildChild() {
     if (true) {
@@ -168,6 +202,7 @@ class _MisIncidenciasState extends State<MisIncidencias> {
                   ),
 
                   layers: [
+
                     // TileLayerOptions(
                     //   urlTemplate:
                     //   'http://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}',
@@ -215,59 +250,7 @@ class _MisIncidenciasState extends State<MisIncidencias> {
                     // ),
 
                     new MarkerLayerOptions(
-                      markers: [
-                        new Marker(
-                          width: 80.0,
-                          height: 80.0,
-                          point: new LatLng(itemsList[0].latitud, itemsList[0].longitud),
-                          builder: (ctx) =>
-                              Image(
-                                image: AssetImage('images/sirena.png'),
-                              )
-                              // Icon(
-                              //   Icons.pin_drop,
-                              //   color: Colors.red[900],
-                              // ),
-                          // new Container(
-                          //   child: new FlutterLogo(),
-                          // ),
-                        ),
-
-                        new Marker(
-                            width: 80.0,
-                            height: 80.0,
-                            point: new LatLng(itemsList[1].latitud, itemsList[1].longitud),
-                            builder: (ctx) =>
-                                Image(
-                                  image: AssetImage('images/sirena.png'),
-                                )
-                          // Icon(
-                          //   Icons.pin_drop,
-                          //   color: Colors.red[900],
-                          // ),
-                          // new Container(
-                          //   child: new FlutterLogo(),
-                          // ),
-                        ),
-
-                        new Marker(
-                            width: 80.0,
-                            height: 80.0,
-                            point: new LatLng(itemsList[2].latitud, itemsList[2].longitud),
-                            builder: (ctx) =>
-                                Image(
-                                  image: AssetImage('images/sirena.png'),
-                                )
-                          // Icon(
-                          //   Icons.pin_drop,
-                          //   color: Colors.red[900],
-                          // ),
-                          // new Container(
-                          //   child: new FlutterLogo(),
-                          // ),
-                        ),
-
-                      ],
+                      markers: _markers,
                     ),
 
                     FeatureLayerOptions(
@@ -294,4 +277,5 @@ class _MisIncidenciasState extends State<MisIncidencias> {
       ),
     );
   }
+
 }
