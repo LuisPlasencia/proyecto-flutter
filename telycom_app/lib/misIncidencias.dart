@@ -16,17 +16,22 @@ class MisIncidencias extends StatefulWidget {
 
 class _MisIncidenciasState extends State<MisIncidencias> {
   List<ElementList> itemsList = [
-    ElementList(
-        '12:45 05/02/21', 'LPA21/0011', 'No Atendido', 'Las Palmas G.C.'),
+    ElementList('12:45 05/02/21', 'LPA21/0011', 'No Atendido', 'Las Palmas G.C.'),
     ElementList('12:45 05/02/21', 'LPA21/0011', 'Atendido', 'Las Palmas G.C.'),
-    ElementList(
-        '12:45 05/02/21', 'LPA21/0021', 'No Atendido', 'Las Palmas G.C.'),
+    ElementList('12:45 05/02/21', 'LPA21/0021', 'No Atendido', 'Las Palmas G.C.'),
   ];
+
+  Color colorTarjeta;
 
 
   @override
   void initState() {
     super.initState();
+  }
+
+  Widget _buildChild() {
+    if (true) {
+    }
   }
 
   @override
@@ -43,47 +48,56 @@ class _MisIncidenciasState extends State<MisIncidencias> {
                     child: ListView.builder(
                       itemCount: itemsList.length,
                       itemBuilder: (context, index) {
+                        // Para cambiar el color de la tarjeta
+                        if(itemsList[index].state == "Atendido"){
+                            colorTarjeta = Colors.green;
+                        } else {
+                          colorTarjeta = Colors.red;
+                        }
                         return Card(
-                          child: ListTile(
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => MyApp()),
-                              );
-                            },
-                            title: RichText(
-                              text: TextSpan(
-                                children: <TextSpan>[
-                                  TextSpan(
-                                      text: itemsList[index].creation,
-                                      style: TextStyle(color: Colors.black)),
-                                  TextSpan(
-                                      text: " | ",
-                                      style:
-                                          TextStyle(color: Colors.deepOrange)),
-                                  TextSpan(
-                                      text: itemsList[index].reference,
-                                      style: TextStyle(color: Colors.black)),
-                                  TextSpan(
-                                      text: " | ",
-                                      style:
-                                          TextStyle(color: Colors.deepOrange)),
-                                  TextSpan(
-                                      text: itemsList[index].state,
-                                      style: TextStyle(color: Colors.black)),
-                                  TextSpan(
-                                      text: " | ",
-                                      style:
-                                          TextStyle(color: Colors.deepOrange)),
-                                  TextSpan(
-                                      text: itemsList[index].direction,
-                                      style: TextStyle(color: Colors.black)),
-                                ],
+                          child: Container(
+                            color: colorTarjeta,
+                            child: ListTile(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => MyApp()),
+                                );
+                              },
+                              title: RichText(
+                                text: TextSpan(
+                                  children: <TextSpan>[
+                                    TextSpan(
+                                        text: itemsList[index].creation,
+                                        style: TextStyle(color: Colors.white)),
+                                    TextSpan(
+                                        text: " | ",
+                                        style:
+                                            TextStyle(color: Colors.deepOrange)),
+                                    TextSpan(
+                                        text: itemsList[index].reference,
+                                        style: TextStyle(color: Colors.white)),
+                                    TextSpan(
+                                        text: " | ",
+                                        style:
+                                            TextStyle(color: Colors.deepOrange)),
+                                    TextSpan(
+                                        text: itemsList[index].state,
+                                        style: TextStyle(color: Colors.white)),
+                                    TextSpan(
+                                        text: " | ",
+                                        style:
+                                            TextStyle(color: Colors.deepOrange)),
+                                    TextSpan(
+                                        text: itemsList[index].direction,
+                                        style: TextStyle(color: Colors.white)),
+                                  ],
+                                ),
                               ),
-                            ),
-                            leading: CircleAvatar(
-                              backgroundImage: AssetImage('images/bear.png'),
+                              leading: CircleAvatar(
+                                backgroundImage: AssetImage('images/bear.png'),
+                              ),
                             ),
                           ),
                         );
