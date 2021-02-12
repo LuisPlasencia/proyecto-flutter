@@ -8,12 +8,15 @@ void main() {
   ));
 }
 
+
 class DetalleInicidencias extends StatelessWidget {
   final String creation;
   final String reference;
   final String state;
   final String direction;
   final String description;
+
+  Color colorAppBar;
 
   DetalleInicidencias(
       {Key key,
@@ -26,8 +29,19 @@ class DetalleInicidencias extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
+    if(state == "Atendido"){
+      colorAppBar = Colors.green[400];
+    } else {
+      colorAppBar = Colors.red[400];
+    }
     return Scaffold(
-      appBar: AppBar(title: Text(reference)),
+      appBar: AppBar(
+          backgroundColor: colorAppBar,
+          title:
+          Text(reference)
+
+      ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
