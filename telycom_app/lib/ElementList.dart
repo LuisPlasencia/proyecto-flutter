@@ -3,8 +3,10 @@ class ElementList {
   String _reference;
   String _state;
   String _direction;
+  double _latitud;
+  double _longitud;
 
-  ElementList(this._creation, this._reference, this._state, this._direction);
+  ElementList(this._creation, this._reference, this._state, this._direction, this._latitud, this._longitud);
 
   String get creation => _creation;
   set creation(String value) {
@@ -24,5 +26,17 @@ class ElementList {
   String get direction => _direction;
   set direction(String value) {
     _direction = value;
+  }
+
+  double get longitud => _longitud;
+
+  set longitud(double value) {
+    _longitud = value;
+  }
+
+  double get latitud => _latitud;
+
+  set latitud(double value) {
+    _latitud = value;
   }
 }

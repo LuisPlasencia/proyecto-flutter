@@ -20,9 +20,8 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Scaffold(
-        appBar: AppBar(title: Text('ArcGIS')),
+      return Scaffold(
+        appBar: AppBar(title: Text('Mapa')),
         body: Padding(
           padding: EdgeInsets.all(8.0),
           child: Column(
@@ -80,7 +79,6 @@ class _MyAppState extends State<MyApp> {
             ],
           ),
         ),
-      ),
-    );
+      );
   }
 }
