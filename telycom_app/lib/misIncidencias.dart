@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map_arcgis/flutter_map_arcgis.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong/latlong.dart';
+import 'package:telycom_app/DetalleIncidencias.dart';
 
 
 import "ElementList.dart";
@@ -16,9 +17,9 @@ class MisIncidencias extends StatefulWidget {
 
 class _MisIncidenciasState extends State<MisIncidencias> {
   List<ElementList> itemsList = [
-    ElementList('12:45 05/02/21', 'LPA21/0011', 'No Atendido', 'Las Palmas G.C.', 28.0713516, -15.45598),
-    ElementList('12:45 05/02/21', 'LPA21/0011', 'Atendido', 'Las Palmas G.C.', 28.114198, -15.425447),
-    ElementList('12:45 05/02/21', 'LPA21/0021', 'No Atendido', 'Las Palmas G.C.', 28.008015, -15.377626),
+    ElementList('12:45 05/02/21', 'LPA21/0011', 'No Atendido', 'Las Palmas G.C.', 'Atacascos', 28.0713516, -15.45598),
+    ElementList('12:45 05/02/21', 'LPA21/0011', 'Atendido', 'Las Palmas G.C.', 'Accidentes de coche',28.114198, -15.425447),
+    ElementList('12:45 05/02/21', 'LPA21/0021', 'No Atendido', 'Las Palmas G.C.', 'Homicidio', 28.008015, -15.377626),
   ];
 
   Color colorTarjeta;
@@ -96,10 +97,16 @@ class _MisIncidenciasState extends State<MisIncidencias> {
                             child: ListTile(
                               onTap: () {
                                 Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => MyApp()),
-                                );
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => DetalleInicidencias(
+                                        creation: itemsList[index].creation,
+                                        reference: itemsList[index].reference ,
+                                        state: itemsList[index].state,
+                                        direction: itemsList[index].direction,
+                                        description: itemsList[index].description,
+                                      ),
+                                    ));
                               },
                               title: RichText(
                                 text: TextSpan(
@@ -263,6 +270,21 @@ class _MisIncidenciasState extends State<MisIncidencias> {
                       ],
                     ),
 
+                    FeatureLayerOptions(
+                      url: "https://services8.arcgis.com/1p2fLWyjYVpl96Ty/arcgis/rest/services/Forest_Service_Recreation_Opportunities/FeatureServer/0",
+                      geometryType:"point",
+                      render:(dynamic attributes){
+                        // You can render by attribute
+                        return Marker(
+                          width: 30.0,
+                          height: 30.0,
+                          builder: (ctx) => Icon(Icons.pin_drop),
+                        );
+                      },
+                      onTap: (attributes, LatLng location) {
+                        print(attributes);
+                      },
+                    ),
                   ],
                 ),
               ),
@@ -271,6 +293,5 @@ class _MisIncidenciasState extends State<MisIncidencias> {
           )
       ),
     );
-
   }
 }
