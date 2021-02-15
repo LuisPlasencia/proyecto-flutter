@@ -16,6 +16,7 @@ class MisIncidencias extends StatefulWidget {
 }
 
 class _MisIncidenciasState extends State<MisIncidencias> {
+
   List<ElementList> itemsList = [
     ElementList('12:45 05/02/21', 'LPA21/0011', 'No Atendido', 'Las Palmas G.C.', 'Atacascos', 28.0713516, -15.45598),
     ElementList('12:45 05/02/21', 'LPA21/0011', 'Atendido', 'Las Palmas G.C.', 'Accidentes de coche',28.114198, -15.425447),
@@ -95,7 +96,7 @@ class _MisIncidenciasState extends State<MisIncidencias> {
             actions: <Widget>[
               IconButton(
                 icon: const Icon(Icons.add_location),
-                tooltip: 'Show Snackbar',
+                tooltip: 'Mostrar mapa completo', // cuando lo mantenemos pulsado no saldra este texto
                 onPressed: () {
                   Navigator.push(
                     context,
