@@ -131,7 +131,7 @@ class _MisIncidenciasState extends State<MisIncidencias> {
                                   Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                        builder: (context) => DetalleInicidencias(
+                                        builder: (context) => DetalleIncidencias(
                                           creation: itemsList[index].creation,
                                           reference: itemsList[index].reference ,
                                           state: itemsList[index].state,
