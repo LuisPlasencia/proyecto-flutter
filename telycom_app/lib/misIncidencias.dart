@@ -3,6 +3,7 @@ import 'package:flutter_map_arcgis/flutter_map_arcgis.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong/latlong.dart';
 import 'package:telycom_app/DetalleIncidencias.dart';
+import 'package:flutter/services.dart';
 
 
 import "ElementList.dart";
@@ -92,7 +93,15 @@ class _MisIncidenciasState extends State<MisIncidencias> {
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+        value:SystemUiOverlayStyle(
+        // statusBarColor: Colors.transparent, //i like transaparent :-)
+        systemNavigationBarColor: Theme.of(context).scaffoldBackgroundColor, // navigation bar color
+        // statusBarIconBrightness: Brightness.dark, // status bar icons' color
+        // systemNavigationBarIconBrightness:Brightness.dark, //navigation bar icons' color
+    ),
+
+    child: WillPopScope(
       onWillPop: _onBackPressed,
       child: Scaffold(
           appBar: AppBar(
@@ -277,6 +286,7 @@ class _MisIncidenciasState extends State<MisIncidencias> {
           ],
           )
       ),
+    )
     );
   }
 }
