@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import "misIncidencias.dart";
+import 'package:flutter/services.dart';
 
 
 void main() {
@@ -16,7 +17,15 @@ class FirstRoute extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+        value:SystemUiOverlayStyle(
+        // statusBarColor: Colors.transparent, //i like transaparent :-)
+        systemNavigationBarColor: Colors.grey[800], // navigation bar color
+        // statusBarIconBrightness: Brightness.dark, // status bar icons' color
+        // systemNavigationBarIconBrightness:Brightness.dark, //navigation bar icons' color
+    ),
+
+    child: Scaffold(
       resizeToAvoidBottomPadding: false,
       body:
       Center(
@@ -92,6 +101,7 @@ class FirstRoute extends StatelessWidget {
           ],
         ),
       ),
+    )
     );
   }
 }

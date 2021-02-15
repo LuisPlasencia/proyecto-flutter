@@ -3,7 +3,6 @@ import 'package:flutter_map_arcgis/flutter_map_arcgis.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong/latlong.dart';
 import 'package:telycom_app/DetalleIncidencias.dart';
-import 'package:flutter/services.dart';
 
 
 import "ElementList.dart";
@@ -86,22 +85,9 @@ class _MisIncidenciasState extends State<MisIncidencias> {
         .toList();
     }
 
-  Widget _buildChild() {
-    if (true) {
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
-    return AnnotatedRegion<SystemUiOverlayStyle>(
-        value:SystemUiOverlayStyle(
-        // statusBarColor: Colors.transparent, //i like transaparent :-)
-        systemNavigationBarColor: Theme.of(context).scaffoldBackgroundColor, // navigation bar color
-        // statusBarIconBrightness: Brightness.dark, // status bar icons' color
-        // systemNavigationBarIconBrightness:Brightness.dark, //navigation bar icons' color
-    ),
-
-    child: WillPopScope(
+    return WillPopScope(
       onWillPop: _onBackPressed,
       child: Scaffold(
           appBar: AppBar(
@@ -122,75 +108,78 @@ class _MisIncidenciasState extends State<MisIncidencias> {
           ),
           body: Column(
             children: [
-            new Expanded(
-              child: Row(
-                children: [
-                  new Expanded(
-                    child: ListView.builder(
-                      itemCount: itemsList.length,
-                      itemBuilder: (context, index) {
-                        if(itemsList[index].state == "Atendido"){
-                          colorTarjeta = Colors.green[400];
-                        } else {
-                          colorTarjeta = Colors.red[400];
-                        }
-                        return Card(
-                          child: Container(
-                            color: colorTarjeta,
-                            child: ListTile(
-                              onTap: () {
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => DetalleInicidencias(
-                                        creation: itemsList[index].creation,
-                                        reference: itemsList[index].reference ,
-                                        state: itemsList[index].state,
-                                        direction: itemsList[index].direction,
-                                        description: itemsList[index].description,
-                                      ),
-                                    ));
-                              },
-                              title: RichText(
-                                text: TextSpan(
-                                  children: <TextSpan>[
-                                    TextSpan(
-                                        text: itemsList[index].creation,
-                                        style: TextStyle(color: Colors.white)),
-                                    TextSpan(
-                                        text: " | ",
-                                        style:
-                                        TextStyle(color: Colors.deepOrange)),
-                                    TextSpan(
-                                        text: itemsList[index].reference,
-                                        style: TextStyle(color: Colors.white)),
-                                    TextSpan(
-                                        text: " | ",
-                                        style:
-                                        TextStyle(color: Colors.deepOrange)),
-                                    TextSpan(
-                                        text: itemsList[index].state,
-                                        style: TextStyle(color: Colors.white)),
-                                    TextSpan(
-                                        text: " | ",
-                                        style:
-                                        TextStyle(color: Colors.deepOrange)),
-                                    TextSpan(
-                                        text: itemsList[index].direction,
-                                        style: TextStyle(color: Colors.white)),
-                                  ],
+            Container(
+            height: 130,
+              child: new Expanded(
+                child: Row(
+                  children: [
+                    new Expanded(
+                      child: ListView.builder(
+                        itemCount: itemsList.length,
+                        itemBuilder: (context, index) {
+                          if(itemsList[index].state == "Atendido"){
+                            colorTarjeta = Colors.green[400];
+                          } else {
+                            colorTarjeta = Colors.red[400];
+                          }
+                          return Card(
+                            child: Container(
+                              color: colorTarjeta,
+                              child: ListTile(
+                                onTap: () {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => DetalleInicidencias(
+                                          creation: itemsList[index].creation,
+                                          reference: itemsList[index].reference ,
+                                          state: itemsList[index].state,
+                                          direction: itemsList[index].direction,
+                                          description: itemsList[index].description,
+                                        ),
+                                      ));
+                                },
+                                title: RichText(
+                                  text: TextSpan(
+                                    children: <TextSpan>[
+                                      TextSpan(
+                                          text: itemsList[index].creation,
+                                          style: TextStyle(color: Colors.white)),
+                                      TextSpan(
+                                          text: " | ",
+                                          style:
+                                          TextStyle(color: Colors.deepOrange)),
+                                      TextSpan(
+                                          text: itemsList[index].reference,
+                                          style: TextStyle(color: Colors.white)),
+                                      TextSpan(
+                                          text: " | ",
+                                          style:
+                                          TextStyle(color: Colors.deepOrange)),
+                                      TextSpan(
+                                          text: itemsList[index].state,
+                                          style: TextStyle(color: Colors.white)),
+                                      TextSpan(
+                                          text: " | ",
+                                          style:
+                                          TextStyle(color: Colors.deepOrange)),
+                                      TextSpan(
+                                          text: itemsList[index].direction,
+                                          style: TextStyle(color: Colors.white)),
+                                    ],
+                                  ),
+                                ),
+                                leading: CircleAvatar(
+                                  backgroundImage: AssetImage('images/bear.png'),
                                 ),
                               ),
-                              leading: CircleAvatar(
-                                backgroundImage: AssetImage('images/bear.png'),
-                              ),
                             ),
-                          ),
-                        );
-                      },
-                    ),
-                  )
-                ],
+                          );
+                        },
+                      ),
+                    )
+                  ],
+                ),
               ),
             ),
 
@@ -200,9 +189,7 @@ class _MisIncidenciasState extends State<MisIncidencias> {
             ),
 
 
-            Container(
-              height: 470,
-              child: Flexible(
+              Flexible(
                 child: FlutterMap(
                   options: MapOptions(
                     maxZoom: 19,
@@ -282,11 +269,9 @@ class _MisIncidenciasState extends State<MisIncidencias> {
                   ],
                 ),
               ),
-            ),
           ],
           )
       ),
-    )
     );
   }
 }

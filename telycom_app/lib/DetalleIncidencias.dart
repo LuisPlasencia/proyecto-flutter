@@ -38,15 +38,7 @@ class DetalleInicidencias extends StatelessWidget {
       colorAppBar = Colors.red[400];
     }
 
-    return AnnotatedRegion<SystemUiOverlayStyle>(
-      value:SystemUiOverlayStyle(
-        // statusBarColor: Colors.transparent, //i like transaparent :-)
-        systemNavigationBarColor: Colors.grey[800], // navigation bar color
-        // statusBarIconBrightness: Brightness.dark, // status bar icons' color
-        // systemNavigationBarIconBrightness:Brightness.dark, //navigation bar icons' color
-      ),
-
-      child: Scaffold(
+    return Scaffold(
         bottomNavigationBar: new Theme(
           data: Theme.of(context).copyWith(
             // sets the background color of the `BottomNavigationBar`
@@ -318,7 +310,6 @@ class DetalleInicidencias extends StatelessWidget {
             // )
           ],
         ),
-      ),
     );
   }
 }
