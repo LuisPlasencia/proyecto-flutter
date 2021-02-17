@@ -3,8 +3,10 @@ import 'package:flutter_map_arcgis/flutter_map_arcgis.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong/latlong.dart';
 import 'package:telycom_app/DetalleIncidencias.dart';
+import 'package:telycom_app/main.dart';
 import 'package:telycom_app/placeholder_widget.dart';
-
+import 'package:flutter/foundation.dart';
+import 'dart:developer';
 
 import "ElementList.dart";
 import "Mapa.dart";
@@ -25,6 +27,9 @@ class _MisIncidenciasState extends State<MisIncidencias> {
   ];
 
   Color colorTarjeta;
+
+  double latitudCenter = 0;
+  double longitudCenter = 0;
 
   Future<bool> _onBackPressed() {
     return showDialog(
@@ -62,7 +67,6 @@ class _MisIncidenciasState extends State<MisIncidencias> {
     for(var i = 0; i<itemsList.length ; i++) {
       _points.add(LatLng(itemsList[i].latitud, itemsList[i].longitud));
     }
-
     _markers = _points
         .map(
           (LatLng point) => Marker(
@@ -89,8 +93,11 @@ class _MisIncidenciasState extends State<MisIncidencias> {
 
   @override
   Widget build(BuildContext context) {
+
+
     return WillPopScope(
       onWillPop: _onBackPressed,
+
       child: Scaffold(
           appBar: AppBar(
             title: Text("Mis incidencias"),
@@ -108,7 +115,10 @@ class _MisIncidenciasState extends State<MisIncidencias> {
               ),
             ],
           ),
+
+
           body: Column(
+
             children: [
             Container(
             height: 200,
@@ -171,8 +181,31 @@ class _MisIncidenciasState extends State<MisIncidencias> {
                                     ],
                                   ),
                                 ),
-                                leading: CircleAvatar(
-                                  backgroundImage: AssetImage('images/bear.png'),
+                                leading: GestureDetector(
+                                  onTap: ()  {
+                                    final snackBar = SnackBar(content: Text("Tap"));
+                                    Scaffold.of(context).showSnackBar(snackBar);
+                                    latitudCenter = 28.0713516;
+                                    longitudCenter = -15.45598;
+
+                                    // LatLng(latitudCenter, longitudCenter);
+
+                                    // setState(() {
+                                    //   latitudCenter = 28.0713516;
+                                    //   longitudCenter = -15.45598;
+                                    //   LatLng(latitudCenter, longitudCenter);
+                                    // });
+
+                                  },
+                                  child: CircleAvatar(
+                                    radius: 20,
+                                    backgroundColor: Colors.blueAccent[200],
+                                    child: Icon(
+                                      Icons.place,
+                                      color: Colors.black,
+                                      size: 30.0,
+                                    ),
+                                  ),
                                 ),
                               ),
                             ),
@@ -190,13 +223,12 @@ class _MisIncidenciasState extends State<MisIncidencias> {
               thickness: 3,
             ),
 
-
               Flexible(
                 child: FlutterMap(
                   options: MapOptions(
                     maxZoom: 19,
                     minZoom: 10,
-                    center: LatLng(28.0713516, -15.45598),
+                    center: LatLng(latitudCenter, longitudCenter),
                     zoom: 12.0,
                     plugins: [EsriPlugin()],
                   ),
