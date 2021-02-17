@@ -3,6 +3,7 @@ import 'package:flutter_map_arcgis/flutter_map_arcgis.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong/latlong.dart';
 import 'package:telycom_app/DetalleIncidencias.dart';
+import 'package:telycom_app/placeholder_widget.dart';
 
 
 import "ElementList.dart";
@@ -110,7 +111,7 @@ class _MisIncidenciasState extends State<MisIncidencias> {
           body: Column(
             children: [
             Container(
-            height: 130,
+            height: 200,
               child: new Expanded(
                 child: Row(
                   children: [
