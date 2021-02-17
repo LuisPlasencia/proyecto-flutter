@@ -28,8 +28,8 @@ class _MisIncidenciasState extends State<MisIncidencias> {
 
   Color colorTarjeta;
 
-  double latitudCenter = 0;
-  double longitudCenter = 0;
+  double latitudCenter = 28.0713516;
+  double longitudCenter = -15.45598;
 
   Future<bool> _onBackPressed() {
     return showDialog(
@@ -120,73 +120,78 @@ class _MisIncidenciasState extends State<MisIncidencias> {
           body: Column(
 
             children: [
-            Container(
-            height: 200,
-              child: new Expanded(
-                child: Row(
-                  children: [
-                    new Expanded(
-                      child: ListView.builder(
-                        itemCount: itemsList.length,
-                        itemBuilder: (context, index) {
-                          if(itemsList[index].state == "Atendido"){
-                            colorTarjeta = Colors.green[400];
-                          } else {
-                            colorTarjeta = Colors.red[400];
-                          }
-                          return Card(
-                            child: Container(
-                              color: colorTarjeta,
-                              child: ListTile(
-                                onTap: () {
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => DetalleIncidencias(
-                                          creation: itemsList[index].creation,
-                                          reference: itemsList[index].reference ,
-                                          state: itemsList[index].state,
-                                          direction: itemsList[index].direction,
-                                          description: itemsList[index].description,
-                                        ),
-                                      ));
-                                },
-                                title: RichText(
-                                  text: TextSpan(
-                                    children: <TextSpan>[
-                                      TextSpan(
-                                          text: itemsList[index].creation,
-                                          style: TextStyle(color: Colors.white)),
-                                      TextSpan(
-                                          text: " | ",
-                                          style:
-                                          TextStyle(color: Colors.deepOrange)),
-                                      TextSpan(
-                                          text: itemsList[index].reference,
-                                          style: TextStyle(color: Colors.white)),
-                                      TextSpan(
-                                          text: " | ",
-                                          style:
-                                          TextStyle(color: Colors.deepOrange)),
-                                      TextSpan(
-                                          text: itemsList[index].state,
-                                          style: TextStyle(color: Colors.white)),
-                                      TextSpan(
-                                          text: " | ",
-                                          style:
-                                          TextStyle(color: Colors.deepOrange)),
-                                      TextSpan(
-                                          text: itemsList[index].direction,
-                                          style: TextStyle(color: Colors.white)),
-                                    ],
+
+            ExpansionTile(
+              title: Text("Incidencias"),
+              backgroundColor: Colors.amberAccent[100],
+              children:[ Container(
+              height: 200,
+                child: new Expanded(
+                  child: Row(
+                    children: [
+                      new Expanded(
+                        child: ListView.builder(
+                          itemCount: itemsList.length,
+                          itemBuilder: (context, index) {
+                            if(itemsList[index].state == "Atendido"){
+                              colorTarjeta = Colors.green[400];
+                            } else {
+                              colorTarjeta = Colors.red[400];
+                            }
+                            return Card(
+                              child: Container(
+                                color: colorTarjeta,
+                                child: ListTile(
+                                  onTap: () {
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => DetalleIncidencias(
+                                            creation: itemsList[index].creation,
+                                            reference: itemsList[index].reference ,
+                                            state: itemsList[index].state,
+                                            direction: itemsList[index].direction,
+                                            description: itemsList[index].description,
+                                          ),
+                                        ));
+                                  },
+                                  title: RichText(
+                                    text: TextSpan(
+                                      children: <TextSpan>[
+                                        TextSpan(
+                                            text: itemsList[index].creation,
+                                            style: TextStyle(color: Colors.white)),
+                                        TextSpan(
+                                            text: " | ",
+                                            style:
+                                            TextStyle(color: Colors.deepOrange)),
+                                        TextSpan(
+                                            text: itemsList[index].reference,
+                                            style: TextStyle(color: Colors.white)),
+                                        TextSpan(
+                                            text: " | ",
+                                            style:
+                                            TextStyle(color: Colors.deepOrange)),
+                                        TextSpan(
+                                            text: itemsList[index].state,
+                                            style: TextStyle(color: Colors.white)),
+                                        TextSpan(
+                                            text: " | ",
+                                            style:
+                                            TextStyle(color: Colors.deepOrange)),
+                                        TextSpan(
+                                            text: itemsList[index].direction,
+                                            style: TextStyle(color: Colors.white)),
+                                      ],
+                                    ),
                                   ),
-                                ),
+
                                 leading: GestureDetector(
                                   onTap: ()  {
                                     final snackBar = SnackBar(content: Text("Tap"));
                                     Scaffold.of(context).showSnackBar(snackBar);
-                                    latitudCenter = 28.0713516;
-                                    longitudCenter = -15.45598;
+                                    latitudCenter = 0;
+                                    longitudCenter = 0;
 
                                     // LatLng(latitudCenter, longitudCenter);
 
@@ -208,20 +213,22 @@ class _MisIncidenciasState extends State<MisIncidencias> {
                                   ),
                                 ),
                               ),
-                            ),
-                          );
-                        },
-                      ),
-                    )
-                  ],
+                              ),
+                            );
+                          },
+                        ),
+                      )
+                    ],
+                  ),
                 ),
               ),
+            ]
             ),
 
-            Divider(
-              color: Colors.blueAccent,
-              thickness: 3,
-            ),
+            // Divider(
+            //   color: Colors.blueAccent,
+            //   thickness: 3,
+            // ),
 
               Flexible(
                 child: FlutterMap(
