@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_map_arcgis/flutter_map_arcgis.dart';
 import 'package:flutter_map/flutter_map.dart';
@@ -8,15 +10,18 @@ import 'package:telycom_app/DetalleIncidencias.dart';
 import "ElementList.dart";
 import "Mapa.dart";
 
-void main() => runApp(MisIncidencias());
+import 'package:telycom_app/lat_long_bloc.dart';
+
+void main() =>  runApp(MisIncidencias());
 
 class MisIncidencias extends StatefulWidget {
+
+
   @override
   _MisIncidenciasState createState() => _MisIncidenciasState();
 }
 
 class _MisIncidenciasState extends State<MisIncidencias> {
-
   List<ElementList> itemsList = [
     ElementList('12:45 05/02/21', 'LPA21/0011', 'No Atendido', 'Las Palmas G.C.', 'Atacascos', 28.0713516, -15.45598),
     ElementList('12:45 05/02/21', 'LPA21/0011', 'Atendido', 'Las Palmas G.C.', 'Accidentes de coche',28.114198, -15.425447),
@@ -59,6 +64,8 @@ class _MisIncidenciasState extends State<MisIncidencias> {
   @override
   void initState() {
     super.initState();
+    latLongBloc.updateLatLong(LatLng(latitudCenter , longitudCenter ));
+
     _markers = new List<Marker>();
     _points = new List<LatLng>();
 
@@ -91,8 +98,6 @@ class _MisIncidenciasState extends State<MisIncidencias> {
 
   @override
   Widget build(BuildContext context) {
-
-
     return WillPopScope(
       onWillPop: _onBackPressed,
 
@@ -186,16 +191,25 @@ class _MisIncidenciasState extends State<MisIncidencias> {
 
                                 leading: GestureDetector(
                                   onTap: ()  {
-                                  setState(() {
-                                    final snackBar = SnackBar(content: Text(latitudCenter.toString() +
-                                        " " + longitudCenter.toString()));
-                                    Scaffold.of(context).showSnackBar(snackBar
-                                    );
-                                    var latlng = LatLng(1.0, 1.0);
-                                    double zoom = 4.0; //the zoom you want
-                                    _mapController.move(latlng,zoom);
+                                    setState(() {
+                                      var latlng = LatLng(itemsList[index].latitud,itemsList[index].longitud);
+                                      final snackBar = SnackBar(content: Text(latlng.latitude.toString() +
+                                          " " + latlng.longitude.toString()));
+                                      Scaffold.of(context).showSnackBar(snackBar
+                                      );
+                                      double zoom = 12.0; //the zoom you want
+                                      _mapController.move(latlng,zoom);
 
-                                  });
+                                    });
+
+                                    // setState(() {
+                                    //   latitudCenter = 0;
+                                    //   longitudCenter = 0;
+                                    //   latLongBloc.updateLatLong(LatLng(0 , 0 ));
+                                    //
+                                    // });
+
+
 
                                     // LatLng(latitudCenter, longitudCenter);
 
@@ -234,84 +248,91 @@ class _MisIncidenciasState extends State<MisIncidencias> {
             //   thickness: 3,
             // ),
               Flexible(
-                child: FlutterMap(
-                  mapController: _mapController,
-                  options: MapOptions(
-                    maxZoom: 19,
-                    minZoom: 10,
-                    center: LatLng(latitudCenter, longitudCenter),
-                    zoom: 12.0,
-                    plugins: [EsriPlugin()],
-                  ),
+                child: StreamBuilder(
+                  stream: latLongBloc.latLongStream,
+                  builder: (context, snapshot) {
+                    LatLng latLog = snapshot.data;
+                    return FlutterMap(
+                      mapController: _mapController,
+                      options: MapOptions(
+                        maxZoom: 19,
+                        minZoom: 10,
+                        center: LatLng(latLog.latitude, latLog.longitude),
+                        zoom: 12.0,
+                        plugins: [EsriPlugin()],
+                      ),
 
-                  layers: [
+                      layers: [
 
-                    // TileLayerOptions(
-                    //   urlTemplate:
-                    //   'http://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}',
-                    //   subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
-                    //   tileProvider: CachedNetworkTileProvider(),
-                    // ),
+                        // TileLayerOptions(
+                        //   urlTemplate:
+                        //   'http://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}',
+                        //   subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
+                        //   tileProvider: CachedNetworkTileProvider(),
+                        // ),
 
-                    new TileLayerOptions(
-                        urlTemplate: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-                        subdomains: ['a', 'b', 'c']
-                    ),
+                        new TileLayerOptions(
+                            urlTemplate: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+                            subdomains: ['a', 'b', 'c']
+                        ),
 
-                    // FeatureLayerOptions(
-                    //   url: "https://services.arcgis.com/P3ePLMYs2RVChkJx/arcgis/rest/services/USA_Congressional_Districts/FeatureServer/0",
-                    //   geometryType:"polygon",
-                    //   onTap: (attributes, LatLng location) {
-                    //     print(attributes);
-                    //   },
-                    //   render: (dynamic attributes){
-                    //     // You can render by attribute
-                    //     return PolygonOptions(
-                    //         borderColor: Colors.blueAccent,
-                    //         color: Colors.black12,
-                    //         borderStrokeWidth: 2
-                    //     );
-                    //   },
-                    //
-                    // ),
-                    // FeatureLayerOptions(
-                    //   url: "https://services8.arcgis.com/1p2fLWyjYVpl96Ty/arcgis/rest/services/Forest_Service_Recreation_Opportunities/FeatureServer/0",
-                    //   geometryType:"point",
-                    //   render:(dynamic attributes){
-                    //     // You can render by attribute
-                    //     return Marker(
-                    //       width: 30.0,
-                    //       height: 30.0,
-                    //       point: new LatLng(28.0713516, -15.455989),
-                    //       builder: (ctx) =>
-                    //           Icon(Icons.pin_drop),
-                    //     );
-                    //   },
-                    //   onTap: (attributes, LatLng location) {
-                    //     print(attributes);
-                    //   },
-                    // ),
+                        // FeatureLayerOptions(
+                        //   url: "https://services.arcgis.com/P3ePLMYs2RVChkJx/arcgis/rest/services/USA_Congressional_Districts/FeatureServer/0",
+                        //   geometryType:"polygon",
+                        //   onTap: (attributes, LatLng location) {
+                        //     print(attributes);
+                        //   },
+                        //   render: (dynamic attributes){
+                        //     // You can render by attribute
+                        //     return PolygonOptions(
+                        //         borderColor: Colors.blueAccent,
+                        //         color: Colors.black12,
+                        //         borderStrokeWidth: 2
+                        //     );
+                        //   },
+                        //
+                        // ),
+                        // FeatureLayerOptions(
+                        //   url: "https://services8.arcgis.com/1p2fLWyjYVpl96Ty/arcgis/rest/services/Forest_Service_Recreation_Opportunities/FeatureServer/0",
+                        //   geometryType:"point",
+                        //   render:(dynamic attributes){
+                        //     // You can render by attribute
+                        //     return Marker(
+                        //       width: 30.0,
+                        //       height: 30.0,
+                        //       point: new LatLng(28.0713516, -15.455989),
+                        //       builder: (ctx) =>
+                        //           Icon(Icons.pin_drop),
+                        //     );
+                        //   },
+                        //   onTap: (attributes, LatLng location) {
+                        //     print(attributes);
+                        //   },
+                        // ),
 
-                    new MarkerLayerOptions(
-                      markers: _markers,
-                    ),
+                        new MarkerLayerOptions(
+                          markers: _markers,
+                        ),
 
-                    FeatureLayerOptions(
-                      url: "https://services8.arcgis.com/1p2fLWyjYVpl96Ty/arcgis/rest/services/Forest_Service_Recreation_Opportunities/FeatureServer/0",
-                      geometryType:"point",
-                      render:(dynamic attributes){
-                        // You can render by attribute
-                        return Marker(
-                          width: 30.0,
-                          height: 30.0,
-                          builder: (ctx) => Icon(Icons.pin_drop),
-                        );
-                      },
-                      onTap: (attributes, LatLng location) {
-                        print(attributes);
-                      },
-                    ),
-                  ],
+                        FeatureLayerOptions(
+                          url: "https://services8.arcgis.com/1p2fLWyjYVpl96Ty/arcgis/rest/services/Forest_Service_Recreation_Opportunities/FeatureServer/0",
+                          geometryType:"point",
+                          render:(dynamic attributes){
+                            // You can render by attribute
+                            return Marker(
+                              point: LatLng(28.096288 , -15.412257 ),
+                              width: 30.0,
+                              height: 30.0,
+                              builder: (ctx) => Icon(Icons.pin_drop),
+                            );
+                          },
+                          onTap: (attributes, LatLng location) {
+                            print(attributes);
+                          },
+                        ),
+                      ],
+                    );
+                  }
                 ),
               ),
           ],
