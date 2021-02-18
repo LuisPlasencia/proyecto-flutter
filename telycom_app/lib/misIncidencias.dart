@@ -3,10 +3,7 @@ import 'package:flutter_map_arcgis/flutter_map_arcgis.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong/latlong.dart';
 import 'package:telycom_app/DetalleIncidencias.dart';
-import 'package:telycom_app/main.dart';
-import 'package:telycom_app/placeholder_widget.dart';
-import 'package:flutter/foundation.dart';
-import 'dart:developer';
+
 
 import "ElementList.dart";
 import "Mapa.dart";
@@ -30,6 +27,8 @@ class _MisIncidenciasState extends State<MisIncidencias> {
 
   double latitudCenter = 28.0713516;
   double longitudCenter = -15.45598;
+
+  MapController _mapController = MapController();
 
   Future<bool> _onBackPressed() {
     return showDialog(
@@ -56,7 +55,6 @@ class _MisIncidenciasState extends State<MisIncidencias> {
   static const _markerSize = 80.0;
   List<Marker> _markers;
   List<LatLng> _points;
-
 
   @override
   void initState() {
@@ -188,10 +186,16 @@ class _MisIncidenciasState extends State<MisIncidencias> {
 
                                 leading: GestureDetector(
                                   onTap: ()  {
-                                    final snackBar = SnackBar(content: Text("Tap"));
-                                    Scaffold.of(context).showSnackBar(snackBar);
-                                    latitudCenter = 0;
-                                    longitudCenter = 0;
+                                  setState(() {
+                                    final snackBar = SnackBar(content: Text(latitudCenter.toString() +
+                                        " " + longitudCenter.toString()));
+                                    Scaffold.of(context).showSnackBar(snackBar
+                                    );
+                                    var latlng = LatLng(1.0, 1.0);
+                                    double zoom = 4.0; //the zoom you want
+                                    _mapController.move(latlng,zoom);
+
+                                  });
 
                                     // LatLng(latitudCenter, longitudCenter);
 
@@ -229,9 +233,9 @@ class _MisIncidenciasState extends State<MisIncidencias> {
             //   color: Colors.blueAccent,
             //   thickness: 3,
             // ),
-
               Flexible(
                 child: FlutterMap(
+                  mapController: _mapController,
                   options: MapOptions(
                     maxZoom: 19,
                     minZoom: 10,
