@@ -3,11 +3,15 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:telycom_app/ElementList.dart';
 import 'package:telycom_app/SucesosList.dart';
+import 'package:flutter_map_arcgis/flutter_map_arcgis.dart';
+import 'package:flutter_map/flutter_map.dart';
 import "misIncidencias.dart";
 import 'package:flutter/services.dart';
+import 'package:latlong/latlong.dart';
 import "Mapa.dart";
 import 'package:telycom_app/misIncidencias.dart';
 
+import 'package:telycom_app/lat_long_bloc.dart';
 import 'placeholder_widget.dart';
 
 class PlaceholderWidgetCuatro extends StatefulWidget {
@@ -29,11 +33,11 @@ class PlaceholderWidgetCuatro extends StatefulWidget {
       : super(key: key);
 
   @override
-  _PlaceholderWidget createState() => new _PlaceholderWidget(
+  _PlaceholderWidgetCuatro createState() => new _PlaceholderWidgetCuatro(
       creation, reference, state, direction, description);
 }
 
-class _PlaceholderWidget extends State<PlaceholderWidget> {
+class _PlaceholderWidgetCuatro extends State<PlaceholderWidgetCuatro> {
 
   String creation;
   String reference;
@@ -41,7 +45,12 @@ class _PlaceholderWidget extends State<PlaceholderWidget> {
   String direction;
   String description;
 
-  _PlaceholderWidget(this.creation, this.reference, this.state, this.direction,
+  double latitudCenter = 28.0713516;
+  double longitudCenter = -15.45598;
+
+  MapController _mapController = MapController();
+
+  _PlaceholderWidgetCuatro(this.creation, this.reference, this.state, this.direction,
       this.description);
 
   List<SucesosList> sucesosList = [
@@ -74,248 +83,87 @@ class _PlaceholderWidget extends State<PlaceholderWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Container(
-          width: double.infinity,
-          child: Card(
-            color: Colors.grey,
-            child: Padding(
-              padding: EdgeInsets.only(left: 10.0),
-              child: Text(
-                "Descripción",
-                style: TextStyle(fontSize: 20),
-                textAlign: TextAlign.left,
-              ),
-            ),
-          ),
-        ),
-        Padding(
-          padding: EdgeInsets.only(left: 10.0),
-          child: Text(
-            description,
-            style: TextStyle(fontSize: 15),
-            textAlign: TextAlign.right,
-          ),
-        ),
-        Container(
-          width: double.infinity,
-          child: Card(
-            color: Colors.grey,
-            child: Padding(
-              padding: EdgeInsets.only(left: 10.0),
-              child: Text(
-                "Código",
-                style: TextStyle(fontSize: 20),
-                textAlign: TextAlign.left,
-              ),
-            ),
-          ),
-        ),
-        Padding(
-          padding: EdgeInsets.only(left: 10.0),
-          child: Text(
-            reference,
-            style: TextStyle(fontSize: 15),
-            textAlign: TextAlign.right,
-          ),
-        ),
-        Container(
-          width: double.infinity,
-          child: Card(
-            color: Colors.grey,
-            child: Padding(
-              padding: EdgeInsets.only(left: 10.0),
-              child: Text(
-                "Creación",
-                style: TextStyle(fontSize: 20),
-                textAlign: TextAlign.left,
-              ),
-            ),
-          ),
-        ),
-        Padding(
-          padding: EdgeInsets.only(left: 10.0),
-          child: Text(
-            creation,
-            style: TextStyle(fontSize: 15),
-            textAlign: TextAlign.right,
-          ),
-        ),
-        Container(
-          width: double.infinity,
-          child: Card(
-            color: Colors.grey,
-            child: Padding(
-              padding: EdgeInsets.only(left: 10.0),
-              child: Text(
-                "Dirección",
-                style: TextStyle(fontSize: 20),
-                textAlign: TextAlign.left,
-              ),
-            ),
-          ),
-        ),
-        Padding(
-          padding: EdgeInsets.only(left: 10.0),
-          child: Text(
-            direction,
-            style: TextStyle(fontSize: 15),
-            textAlign: TextAlign.right,
-          ),
-        ),
-        Divider(
-          thickness: 3,
-          color: Colors.black,
-        ),
-        new Expanded(
-          child: Row(
-            children: [
-              new Expanded(
-                child: ListView.builder(
-                  itemCount: sucesosList.length,
-                  itemBuilder: (context, index) {
-                    if (sucesosList[index].tipoMsg == "atendido") {
-                      return Card(
-                        child: Container(
-                          child: ListTile(
-                            // onTap: () {
-                            //   Navigator.push(
-                            //       context,
-                            //       MaterialPageRoute(
-                            //         builder: (context) => DetalleIncidencias(
-                            //           // creation: itemsList[index].creation,
-                            //           // reference: itemsList[index].reference ,
-                            //           // state: itemsList[index].state,
-                            //           // direction: itemsList[index].direction,
-                            //           // description: itemsList[index].description,
-                            //         ),
-                            //       ));
-                            // },
-                            title: Row(
-                              children: [
-                                RichText(
-                                  text: TextSpan(
-                                    children: <TextSpan>[
-                                      TextSpan(
-                                        text: sucesosList[index].fecha,
-                                        style: TextStyle(
-                                            fontSize: 16,
-                                            color: Colors.black),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                SizedBox(width: 20),
-                                RichText(
-                                  text: TextSpan(
-                                    text: "Suceso atendido por " +
-                                        sucesosList[index].entidad,
-                                    style: TextStyle(
-                                        fontSize: 16, color: Colors.black),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      );
-                    } else {
-                      return Card(
-                        child: Container(
-                          child: ListTile(
-                            // onTap: () {
-                            //   Navigator.push(
-                            //       context,
-                            //       MaterialPageRoute(
-                            //         builder: (context) => DetalleIncidencias(
-                            //           // creation: itemsList[index].creation,
-                            //           // reference: itemsList[index].reference ,
-                            //           // state: itemsList[index].state,
-                            //           // direction: itemsList[index].direction,
-                            //           // description: itemsList[index].description,
-                            //         ),
-                            //       ));
-                            // },
-                            title: Row(
-                              children: [
-                                RichText(
-                                  text: TextSpan(
-                                    text: sucesosList[index].fecha,
-                                    style: TextStyle(
-                                        fontSize: 16, color: Colors.black),
-                                  ),
-                                ),
-                                SizedBox(width: 20),
-                                RichText(
-                                  text: TextSpan(
-                                    children: <TextSpan>[
-                                      TextSpan(
-                                        text: "Incidente creado por " +
-                                            sucesosList[index].entidad,
-                                        style: TextStyle(
-                                            fontSize: 16,
-                                            color: Colors.black),
-                                      ),
-                                      TextSpan(
-                                        text: "\nTipificación:",
-                                        style: TextStyle(
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.black),
-                                      ),
-                                      TextSpan(
-                                        text: "\n" +
-                                            sucesosList[index].tipificacion,
-                                        style: TextStyle(
-                                            fontSize: 16,
-                                            color: Colors.black),
-                                      ),
-                                      TextSpan(
-                                        text: "\nLocalización:",
-                                        style: TextStyle(
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.black),
-                                      ),
-                                      TextSpan(
-                                        text: "\n" +
-                                            sucesosList[index].localizacion,
-                                        style: TextStyle(
-                                            fontSize: 16,
-                                            color: Colors.black),
-                                      ),
-                                      TextSpan(
-                                        text: "\nAgencia asignada:",
-                                        style: TextStyle(
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.black),
-                                      ),
-                                      TextSpan(
-                                        text: "\n" +
-                                            sucesosList[index].agencia,
-                                        style: TextStyle(
-                                            fontSize: 16,
-                                            color: Colors.black),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      );
-                    }
-                  },
-                ),
-              )
-            ],
-          ),
-        ),
-      ],
-    );
+    return  StreamBuilder(
+              // stream: latLongBloc.latLongStream,
+              builder: (context, snapshot) {
+                LatLng latLog = snapshot.data;
+                return FlutterMap(
+                  mapController: _mapController,
+                  options: MapOptions(
+                    maxZoom: 19,
+                    minZoom: 10,
+                    center: LatLng(28.096288 , -15.412257),
+                    zoom: 12.0,
+                    plugins: [EsriPlugin()],
+                  ),
+
+                  layers: [
+
+                    // TileLayerOptions(
+                    //   urlTemplate:
+                    //   'http://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}',
+                    //   subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
+                    //   tileProvider: CachedNetworkTileProvider(),
+                    // ),
+
+                    new TileLayerOptions(
+                        urlTemplate: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+                        subdomains: ['a', 'b', 'c']
+                    ),
+
+                    // FeatureLayerOptions(
+                    //   url: "https://services.arcgis.com/P3ePLMYs2RVChkJx/arcgis/rest/services/USA_Congressional_Districts/FeatureServer/0",
+                    //   geometryType:"polygon",
+                    //   onTap: (attributes, LatLng location) {
+                    //     print(attributes);
+                    //   },
+                    //   render: (dynamic attributes){
+                    //     // You can render by attribute
+                    //     return PolygonOptions(
+                    //         borderColor: Colors.blueAccent,
+                    //         color: Colors.black12,
+                    //         borderStrokeWidth: 2
+                    //     );
+                    //   },
+                    //
+                    // ),
+                    // FeatureLayerOptions(
+                    //   url: "https://services8.arcgis.com/1p2fLWyjYVpl96Ty/arcgis/rest/services/Forest_Service_Recreation_Opportunities/FeatureServer/0",
+                    //   geometryType:"point",
+                    //   render:(dynamic attributes){
+                    //     // You can render by attribute
+                    //     return Marker(
+                    //       width: 30.0,
+                    //       height: 30.0,
+                    //       point: new LatLng(28.0713516, -15.455989),
+                    //       builder: (ctx) =>
+                    //           Icon(Icons.pin_drop),
+                    //     );
+                    //   },
+                    //   onTap: (attributes, LatLng location) {
+                    //     print(attributes);
+                    //   },
+                    // ),
+
+                    FeatureLayerOptions(
+                      url: "https://services8.arcgis.com/1p2fLWyjYVpl96Ty/arcgis/rest/services/Forest_Service_Recreation_Opportunities/FeatureServer/0",
+                      geometryType:"point",
+                      render:(dynamic attributes){
+                        // You can render by attribute
+                        return Marker(
+                          point: LatLng(28.096288 , -15.412257 ),
+                          width: 30.0,
+                          height: 30.0,
+                          builder: (ctx) => Icon(Icons.pin_drop),
+                        );
+                      },
+                      onTap: (attributes, LatLng location) {
+                        print(attributes);
+                      },
+                    ),
+                  ],
+                );
+              }
+          );
   }
 }

@@ -9,6 +9,7 @@ import 'package:telycom_app/misIncidencias.dart';
 
 import 'placeholder_widget.dart';
 import 'placeholder_dos.dart';
+import 'placeholder_cuatro.dart';
 
 void main() {
   runApp(MaterialApp(
@@ -93,7 +94,11 @@ class _DetalleIncidencias extends State<DetalleIncidencias> {
     _children = [
       PlaceholderWidget(state: this.state ,creation: this.creation, reference: this.reference, direction:  this.direction, description:  this.description, ),
 
-      PlaceholderWidgetDos(Colors.red)
+      PlaceholderWidgetDos(Colors.red),
+
+      PlaceholderWidgetDos(Colors.red),
+
+      PlaceholderWidgetCuatro(state: this.state ,creation: this.creation, reference: this.reference, direction:  this.direction, description:  this.description, ),
     ];
 
     return Scaffold(
