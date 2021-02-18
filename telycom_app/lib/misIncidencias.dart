@@ -201,11 +201,12 @@ class _MisIncidenciasState extends State<MisIncidencias> {
                                     });
                                   },
                                   child: ClipRRect(
-                                    borderRadius: BorderRadius.circular(10.0),
+                                    borderRadius: BorderRadius.circular(60.0),
                                     child: Container(
+                                      margin: const EdgeInsets.only(top: 5.0, bottom: 5.0),
                                       height: 70.0,
                                       width: 60.0,
-                                      color: Colors.blueAccent[200],
+                                      color: Colors.blue,
                                       child: Icon(
                                         Icons.place,
                                         color: Colors.black,
