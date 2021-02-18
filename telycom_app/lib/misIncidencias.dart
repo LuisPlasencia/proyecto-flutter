@@ -48,7 +48,10 @@ class _MisIncidenciasState extends State<MisIncidencias> {
           ),
           SizedBox(height: 16),
           new GestureDetector(
-            onTap: () => Navigator.of(context).pop(true),
+            onTap: () {
+              latLongBloc.dispose();
+              Navigator.of(context).pop(true);
+            },
             child: Text("YES"),
           ),
         ],
