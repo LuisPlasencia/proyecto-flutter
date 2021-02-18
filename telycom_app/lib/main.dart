@@ -36,6 +36,7 @@ class FirstRoute extends StatelessWidget {
             Container(
               padding: EdgeInsets.all(20.0),
               child: Image(
+                width: 300,
                 image: AssetImage('images/logo.png'),
               )
             ),
@@ -63,6 +64,7 @@ class FirstRoute extends StatelessWidget {
                   margin: EdgeInsets.only(top: 10.0, left: 50.0, right: 50.0),
 
                   child: TextField(
+                      obscureText: true,
                       controller:textFieldController2,
 
                       decoration: InputDecoration(
