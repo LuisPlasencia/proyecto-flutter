@@ -70,7 +70,6 @@ class _PlaceholderWidget extends State<PlaceholderWidget> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-
         Container(
           width: double.infinity,
           child: Card(

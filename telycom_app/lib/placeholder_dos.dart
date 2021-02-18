@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 class PlaceholderWidgetDos extends StatelessWidget {
+
   final Color color;
 
   PlaceholderWidgetDos(this.color);

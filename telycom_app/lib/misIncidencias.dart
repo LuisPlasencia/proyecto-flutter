@@ -195,38 +195,22 @@ class _MisIncidenciasState extends State<MisIncidencias> {
                                       var latlng = LatLng(itemsList[index].latitud,itemsList[index].longitud);
                                       final snackBar = SnackBar(content: Text(latlng.latitude.toString() +
                                           " " + latlng.longitude.toString()));
-                                      Scaffold.of(context).showSnackBar(snackBar
-                                      );
+                                      Scaffold.of(context).showSnackBar(snackBar);
                                       double zoom = 12.0; //the zoom you want
                                       _mapController.move(latlng,zoom);
-
                                     });
-
-                                    // setState(() {
-                                    //   latitudCenter = 0;
-                                    //   longitudCenter = 0;
-                                    //   latLongBloc.updateLatLong(LatLng(0 , 0 ));
-                                    //
-                                    // });
-
-
-
-                                    // LatLng(latitudCenter, longitudCenter);
-
-                                    // setState(() {
-                                    //   latitudCenter = 28.0713516;
-                                    //   longitudCenter = -15.45598;
-                                    //   LatLng(latitudCenter, longitudCenter);
-                                    // });
-
                                   },
-                                  child: CircleAvatar(
-                                    radius: 20,
-                                    backgroundColor: Colors.blueAccent[200],
-                                    child: Icon(
-                                      Icons.place,
-                                      color: Colors.black,
-                                      size: 30.0,
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(10.0),
+                                    child: Container(
+                                      height: 70.0,
+                                      width: 60.0,
+                                      color: Colors.blueAccent[200],
+                                      child: Icon(
+                                        Icons.place,
+                                        color: Colors.black,
+                                        size: 30.0,
+                                      ),
                                     ),
                                   ),
                                 ),

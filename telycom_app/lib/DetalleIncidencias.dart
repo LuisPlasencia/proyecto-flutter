@@ -89,6 +89,7 @@ class _DetalleIncidencias extends State<DetalleIncidencias> {
       colorAppBar = Colors.red[400];
     }
 
+    // tiene que ir aqui porque para que reconozca las variables
     _children = [
       PlaceholderWidget(state: this.state ,creation: this.creation, reference: this.reference, direction:  this.direction, description:  this.description, ),
 
@@ -148,7 +149,6 @@ class _DetalleIncidencias extends State<DetalleIncidencias> {
       ),
 
         body:
-
         _children[_currentIndex],
       // Column(
       //     crossAxisAlignment: CrossAxisAlignment.start,
