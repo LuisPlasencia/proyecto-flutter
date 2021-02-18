@@ -1,12 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:telycom_app/ElementList.dart';
 import 'package:telycom_app/SucesosList.dart';
-import "misIncidencias.dart";
-import 'package:flutter/services.dart';
-import "Mapa.dart";
-import 'package:telycom_app/misIncidencias.dart';
-
+import 'package:telycom_app/placeholder_tres.dart';
 import 'placeholder_widget.dart';
 import 'placeholder_dos.dart';
 import 'placeholder_cuatro.dart';
@@ -93,12 +88,10 @@ class _DetalleIncidencias extends State<DetalleIncidencias> {
     // tiene que ir aqui porque para que reconozca las variables
     _children = [
       PlaceholderWidget(state: this.state ,creation: this.creation, reference: this.reference, direction:  this.direction, description:  this.description, ),
+      PlaceholderWidgetDos(),
+      MyHomePage(),
+      PlaceholderWidgetCuatro(state: this.state ,creation: this.creation, reference: this.reference, direction:  this.direction, description:  this.description, )
 
-      PlaceholderWidgetDos(Colors.red),
-
-      PlaceholderWidgetDos(Colors.red),
-
-      PlaceholderWidgetCuatro(state: this.state ,creation: this.creation, reference: this.reference, direction:  this.direction, description:  this.description, ),
     ];
 
     return Scaffold(
