@@ -17,6 +17,8 @@ class PlaceholderWidget extends StatefulWidget {
   final String state;
   final String direction;
   final String description;
+  final double latitud;
+  final double longitud;
 
   // Constructor?
   PlaceholderWidget(
@@ -25,12 +27,14 @@ class PlaceholderWidget extends StatefulWidget {
         this.creation,
         this.reference,
         this.direction,
-        this.description})
+        this.description,
+        this.latitud,
+        this.longitud})
       : super(key: key);
 
   @override
   _PlaceholderWidget createState() => new _PlaceholderWidget(
-      creation, reference, state, direction, description);
+      creation, reference, state, direction, description, latitud, longitud);
 }
 
 class _PlaceholderWidget extends State<PlaceholderWidget> {
@@ -40,9 +44,11 @@ class _PlaceholderWidget extends State<PlaceholderWidget> {
   String state;
   String direction;
   String description;
+  double latitud;
+  double longitud;
 
   _PlaceholderWidget(this.creation, this.reference, this.state, this.direction,
-      this.description);
+      this.description, this.latitud, this.longitud);
 
   List<SucesosList> sucesosList = [
     SucesosList('TELYCOM1', '', '', '', '', '09:56 \n09/02/21', 'atendido'),

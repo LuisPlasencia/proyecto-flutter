@@ -19,6 +19,8 @@ class DetalleIncidencias extends StatefulWidget {
   final String state;
   final String direction;
   final String description;
+  final double latitud;
+  final double longitud;
 
   // Constructor?
   DetalleIncidencias(
@@ -27,12 +29,14 @@ class DetalleIncidencias extends StatefulWidget {
       this.creation,
       this.reference,
       this.direction,
-      this.description})
+      this.description,
+      this.latitud,
+      this.longitud})
       : super(key: key);
 
   @override
   _DetalleIncidencias createState() => new _DetalleIncidencias(
-      creation, reference, state, direction, description);
+      creation, reference, state, direction, description, latitud, longitud);
 }
 
 class _DetalleIncidencias extends State<DetalleIncidencias> {
@@ -41,13 +45,15 @@ class _DetalleIncidencias extends State<DetalleIncidencias> {
   String state;
   String direction;
   String description;
+  double latitud;
+  double longitud;
 
   int _currentIndex = 0;
 
   List<Widget> _children;
 
   _DetalleIncidencias(this.creation, this.reference, this.state, this.direction,
-      this.description);
+      this.description, this.latitud, this.longitud);
 
   void onTabTapped(int index){
     setState(() {
@@ -87,11 +93,10 @@ class _DetalleIncidencias extends State<DetalleIncidencias> {
 
     // tiene que ir aqui porque para que reconozca las variables
     _children = [
-      PlaceholderWidget(state: this.state ,creation: this.creation, reference: this.reference, direction:  this.direction, description:  this.description, ),
+      PlaceholderWidget(state: this.state ,creation: this.creation, reference: this.reference, direction:  this.direction, description:  this.description, latitud: this.latitud, longitud: this.longitud,),
       PlaceholderWidgetDos(),
       MyHomePage(),
-      PlaceholderWidgetCuatro(state: this.state ,creation: this.creation, reference: this.reference, direction:  this.direction, description:  this.description, )
-
+      PlaceholderWidgetCuatro(state: this.state ,creation: this.creation, reference: this.reference, direction:  this.direction, description:  this.description,  latitud: this.latitud, longitud: this.longitud, ),
     ];
 
     return Scaffold(

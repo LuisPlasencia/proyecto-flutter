@@ -158,6 +158,8 @@ class _MisIncidenciasState extends State<MisIncidencias> {
                                             state: itemsList[index].state,
                                             direction: itemsList[index].direction,
                                             description: itemsList[index].description,
+                                            latitud: itemsList[index].latitud,
+                                            longitud: itemsList[index].longitud,
                                           ),
                                         ));
                                   },
