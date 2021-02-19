@@ -25,6 +25,28 @@ class _PlaceholderWidgetTresState extends State<PlaceholderWidgetTres> {
     });
   }
 
+  Widget comprobarImagen() {
+    if (_image != null) {
+      return RaisedButton(
+        color: Colors.blue,
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(18.0),
+            side: BorderSide(color: Colors.black)),
+        padding: EdgeInsets.only(left: 50, right: 50, top: 10, bottom: 10),
+        child:
+        Text('Enviar', style: TextStyle(fontSize: 26, color: Colors.white)),
+        onPressed: () {
+          // Navigator.push(
+          //   context,
+          //   MaterialPageRoute(builder: (context) => MisIncidencias()),
+          // );
+        },
+      );
+    } else {
+      return new Container(width: 0, height: 0);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     // Mostramos el botón para enviar la imagen si existe
@@ -43,6 +65,8 @@ class _PlaceholderWidgetTresState extends State<PlaceholderWidgetTres> {
                   ? Text('No image selected.')
                   : Image.file(_image),
             ),
+
+            comprobarImagen(),
           ],
         ),
         floatingActionButton: FloatingActionButton(
@@ -50,50 +74,7 @@ class _PlaceholderWidgetTresState extends State<PlaceholderWidgetTres> {
           tooltip: 'Pick Image',
           child: Icon(Icons.add_a_photo),
         ),
-  Widget comprobarImagen() {
-    if (_image != null) {
-      return RaisedButton(
-        color: Colors.blue,
-        shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(18.0),
-            side: BorderSide(color: Colors.black)),
-        padding: EdgeInsets.only(left: 50, right: 50, top: 10, bottom: 10),
-        child:
-            Text('Enviar', style: TextStyle(fontSize: 26, color: Colors.white)),
-        onPressed: () {
-          // Navigator.push(
-          //   context,
-          //   MaterialPageRoute(builder: (context) => MisIncidencias()),
-          // );
-        },
       );
-    } else {
-       return new Container(width: 0, height: 0);
     }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-
-    return Scaffold(
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
-          Center(
-            child: _image == null
-                ? Text('No image selected.')
-                : Image.file(_image),
-          ),
-          // condicion if para comprobar la imagen
-          comprobarImagen(),
-        ],
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: getImage,
-        tooltip: 'Pick Image',
-        child: Icon(Icons.add_a_photo),
-      ),
-    );
-    // }
   }
 }
