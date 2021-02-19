@@ -299,7 +299,6 @@ class _MisIncidenciasState extends State<MisIncidencias> {
                         //     print(attributes);
                         //   },
                         // ),
-
                         new MarkerLayerOptions(
                           markers: _markers,
                         ),

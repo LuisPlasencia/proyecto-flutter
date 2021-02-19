@@ -7,6 +7,7 @@ class PlaceholderWidgetDos extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
         Container(
           margin: const EdgeInsets.only(top: 30, bottom: 30,left: 3, right: 3),
@@ -18,6 +19,7 @@ class PlaceholderWidgetDos extends StatelessWidget {
            ),
          ),
         ),
+        
 
         RaisedButton(
           color: Colors.blue,
