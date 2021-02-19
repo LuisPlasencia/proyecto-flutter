@@ -3,12 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
 
-class MyHomePage extends StatefulWidget {
+class PlaceholderWidgetTres extends StatefulWidget {
   @override
-  _MyHomePageState createState() => _MyHomePageState();
+  _PlaceholderWidgetTresState createState() => _PlaceholderWidgetTresState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _PlaceholderWidgetTresState extends State<PlaceholderWidgetTres> {
 
   File _image;
   final picker = ImagePicker();

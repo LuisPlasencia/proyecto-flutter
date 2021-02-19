@@ -93,9 +93,13 @@ class _DetalleIncidencias extends State<DetalleIncidencias> {
 
     // tiene que ir aqui porque para que reconozca las variables
     _children = [
+      // Sucesos
       PlaceholderWidget(state: this.state ,creation: this.creation, reference: this.reference, direction:  this.direction, description:  this.description, latitud: this.latitud, longitud: this.longitud,),
+      // Mensaje
       PlaceholderWidgetDos(),
-      MyHomePage(),
+      // Camara
+      PlaceholderWidgetTres(),
+      // Mapa
       PlaceholderWidgetCuatro(state: this.state ,creation: this.creation, reference: this.reference, direction:  this.direction, description:  this.description,  latitud: this.latitud, longitud: this.longitud, ),
     ];
 
