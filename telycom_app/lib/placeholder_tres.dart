@@ -2,14 +2,12 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
-
 class PlaceholderWidgetTres extends StatefulWidget {
   @override
   _PlaceholderWidgetTresState createState() => _PlaceholderWidgetTresState();
 }
 
 class _PlaceholderWidgetTresState extends State<PlaceholderWidgetTres> {
-
   File _image;
   final picker = ImagePicker();
 
@@ -52,45 +50,50 @@ class _PlaceholderWidgetTresState extends State<PlaceholderWidgetTres> {
           tooltip: 'Pick Image',
           child: Icon(Icons.add_a_photo),
         ),
+  Widget comprobarImagen() {
+    if (_image != null) {
+      return RaisedButton(
+        color: Colors.blue,
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(18.0),
+            side: BorderSide(color: Colors.black)),
+        padding: EdgeInsets.only(left: 50, right: 50, top: 10, bottom: 10),
+        child:
+            Text('Enviar', style: TextStyle(fontSize: 26, color: Colors.white)),
+        onPressed: () {
+          // Navigator.push(
+          //   context,
+          //   MaterialPageRoute(builder: (context) => MisIncidencias()),
+          // );
+        },
       );
-
-    } else{
-
-      return Scaffold(
-        body: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            Center(
-              child: _image == null
-                  ? Text('No image selected.')
-                  : Image.file(_image),
-            ),
-
-            RaisedButton(
-              color: Colors.blue,
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(18.0),
-                  side: BorderSide(color: Colors.black)
-              ),
-              padding: EdgeInsets.only(left: 50, right:50, top: 10, bottom: 10),
-              child: Text('Enviar', style: TextStyle(fontSize: 26, color: Colors.white)),
-              onPressed: () {
-                // Navigator.push(
-                //   context,
-                //   MaterialPageRoute(builder: (context) => MisIncidencias()),
-                // );
-              },
-            ),
-          ],
-        ),
-        floatingActionButton: FloatingActionButton(
-          onPressed: getImage,
-          tooltip: 'Pick Image',
-          child: Icon(Icons.add_a_photo),
-        ),
-      );
+    } else {
+       return new Container(width: 0, height: 0);
     }
+  }
 
+  @override
+  Widget build(BuildContext context) {
 
+    return Scaffold(
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          Center(
+            child: _image == null
+                ? Text('No image selected.')
+                : Image.file(_image),
+          ),
+          // condicion if para comprobar la imagen
+          comprobarImagen(),
+        ],
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: getImage,
+        tooltip: 'Pick Image',
+        child: Icon(Icons.add_a_photo),
+      ),
+    );
+    // }
   }
 }

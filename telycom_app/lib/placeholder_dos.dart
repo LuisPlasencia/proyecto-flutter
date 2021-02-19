@@ -19,7 +19,6 @@ class PlaceholderWidgetDos extends StatelessWidget {
            ),
          ),
         ),
-        
 
         RaisedButton(
           color: Colors.blue,
