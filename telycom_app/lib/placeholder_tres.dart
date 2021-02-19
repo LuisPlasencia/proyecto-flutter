@@ -36,6 +36,11 @@ class _PlaceholderWidgetTresState extends State<PlaceholderWidgetTres> {
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             Center(
+              // (ternary operator (el if en el UI))  =>  condicion +  ? (= {}) + : (= else)
+              // otra forma es ponerlo en un método : child: getWidget()
+              //
+              //                                      Widget getWidget() {
+              //                                          if (x > 5) ... }
               child: _image == null
                   ? Text('No image selected.')
                   : Image.file(_image),
