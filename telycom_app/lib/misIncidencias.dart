@@ -27,7 +27,6 @@ class _MisIncidenciasState extends State<MisIncidencias> {
   ];
 
   Color colorTarjeta;
-
   double latitudCenter = 28.0713516;
   double longitudCenter = -15.45598;
 
@@ -41,11 +40,13 @@ class _MisIncidenciasState extends State<MisIncidencias> {
         content: new Text('Do you want to exit an App'),
         actions: <Widget>[
           new GestureDetector(
+            key: Key("NO"),
             onTap: () => Navigator.of(context).pop(false),
             child: Text("NO"),
           ),
           SizedBox(height: 16),
           new GestureDetector(
+            key: Key("YES"),
             onTap: () {
               latLongBloc.dispose();
               Navigator.of(context).pop(true);
@@ -101,7 +102,6 @@ class _MisIncidenciasState extends State<MisIncidencias> {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: _onBackPressed,
-
       child: Scaffold(
           appBar: AppBar(
             title: Text("Mis incidencias"),
