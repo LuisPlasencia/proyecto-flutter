@@ -8,6 +8,23 @@ import 'package:telycom_app/misIncidencias.dart';
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
+
+  testWidgets("No se ha escrito nombre de usuario, lo que impide el paso de pantalla", (WidgetTester tester) async{
+    await tester.pumpWidget(MyApp());
+    final texto = "holaaaaaaaaaaaaaaaaaaaaaaa";
+    await tester.enterText(find.byKey(Key('user')), texto);
+    expect(find.text(texto), findsWidgets);
+
+    await tester.tap(find.byType(RaisedButton));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byType(BackButton));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(Key('YES')));
+    await tester.pumpAndSettle();
+    expect(find.text(texto), findsWidgets);
+  });
+
+
   // testWidgets("Comprobamos que el texto que escribimos concuerda", (WidgetTester tester) async{
   //   await tester.pumpWidget(MyApp());
   //
