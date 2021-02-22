@@ -3,19 +3,22 @@ import "misIncidencias.dart";
 import 'package:flutter/services.dart';
 
 
-void main() {
+void main() => runApp(MyApp());
 
-
-  runApp(MaterialApp(
-    title: 'Navigation Basics',
-    home: FirstRoute(),
-  ));
+class MyApp extends StatelessWidget{
+  @override
+  Widget build(BuildContext context){
+    return MaterialApp(
+      title: 'Navigation Basics',
+      home: FirstRoute(),
+    );
+  }
 }
 
 class FirstRoute extends StatelessWidget {
 
-  TextEditingController textFieldController = TextEditingController();
-  TextEditingController textFieldController2 = TextEditingController();
+  final TextEditingController textFieldController = TextEditingController();
+  final TextEditingController textFieldController2 = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -49,7 +52,8 @@ class FirstRoute extends StatelessWidget {
                   margin: EdgeInsets.only(bottom: 10.0, left: 50.0, right: 50.0),
                   child: TextField(
                       controller:textFieldController,
-
+                      //la llave es necesaria para realizar el test de integración
+                      key: Key('user'),
                       decoration: InputDecoration(
                         border: OutlineInputBorder(),
                         labelText: 'Usuario',
@@ -68,7 +72,7 @@ class FirstRoute extends StatelessWidget {
                   child: TextField(
                       obscureText: true,
                       controller:textFieldController2,
-
+                      key: Key('password'),
                       decoration: InputDecoration(
                         border: OutlineInputBorder(),
                         labelText: 'Contraseña',

@@ -15,8 +15,6 @@ import 'package:telycom_app/lat_long_bloc.dart';
 void main() =>  runApp(MisIncidencias());
 
 class MisIncidencias extends StatefulWidget {
-
-
   @override
   _MisIncidenciasState createState() => _MisIncidenciasState();
 }

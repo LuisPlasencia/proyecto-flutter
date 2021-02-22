@@ -36,7 +36,7 @@ dependencies:
   image_picker: ^0.6.7+22
 
 dev_dependencies:
-  integration_test: ^1.0.0
+  integration_test: ^1.0.1
   flutter_test:
     sdk: flutter
   flutter_driver:
