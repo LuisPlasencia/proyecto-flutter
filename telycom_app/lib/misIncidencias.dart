@@ -32,8 +32,8 @@ class _MisIncidenciasState extends State<MisIncidencias> {
   Color colorTarjeta;
   Future<Position> posicionActual;
   Position posicionado;
-  double latitudCenter = 28.0713516;
-  double longitudCenter = -15.45598;
+  double latitudCenter = 28.1364;  //28.0713516;
+  double longitudCenter =  120.29; // -15.45598;
 
   MapController _mapController = MapController();
 
@@ -104,8 +104,14 @@ class _MisIncidenciasState extends State<MisIncidencias> {
     super.initState();
     posicionActual = _determinePosition();
     developer.log('log me', name: 'my.app.category');
+
+
+    // esto es un callback
     posicionActual.then((value) => {
-      developer.log(value.toString(), name: 'my.app.category')
+      developer.log(value.toString(), name: 'my.app.category'),
+      latitudCenter = value.latitude,
+      longitudCenter = value.longitude,
+      _mapController.move(LatLng(latitudCenter, longitudCenter), 12.0),
     });
 
     latLongBloc.updateLatLong(LatLng(latitudCenter , longitudCenter ));

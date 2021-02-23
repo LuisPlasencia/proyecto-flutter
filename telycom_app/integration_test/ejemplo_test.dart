@@ -9,7 +9,7 @@ void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
 
-  testWidgets("No se ha escrito nombre de usuario, lo que impide el paso de pantalla", (WidgetTester tester) async{
+  testWidgets("Test 1 : No se ha escrito nombre de usuario, lo que impide el paso de pantalla", (WidgetTester tester) async{
     await tester.pumpWidget(MyApp());
     final texto = "holaaaaaaaaaaaaaaaaaaaaaaa";
     await tester.enterText(find.byKey(Key('user')), texto);
@@ -25,7 +25,7 @@ void main() {
   });
 
 
-  // testWidgets("Comprobamos que el texto que escribimos concuerda", (WidgetTester tester) async{
+  // testWidgets("Test 2: Comprobamos que el texto que escribimos concuerda", (WidgetTester tester) async{
   //   await tester.pumpWidget(MyApp());
   //
   //   final inputText = 'hola soy el sojha';
@@ -44,7 +44,7 @@ void main() {
   //   expect(find.byType(MisIncidencias), findsWidgets);
   // });
 
-  // testWidgets("Paso de pantalla a Mis Incidencias no se muestra las incidencias", (WidgetTester tester) async{
+  // testWidgets("Test 3: Paso de pantalla a Mis Incidencias no se muestra las incidencias", (WidgetTester tester) async{
   //   await tester.pumpWidget(MyApp());
   //
   //   await tester.tap(find.byType(RaisedButton));
@@ -55,7 +55,7 @@ void main() {
   //   expect(find.byType(ListView), findsNothing);
   // });
 
-  // testWidgets("Paso de pantalla a Mis Incidencias SE muestra las incidencias", (WidgetTester tester) async{
+  // testWidgets("Test 4: Paso de pantalla a Mis Incidencias SE muestra las incidencias", (WidgetTester tester) async{
   //   await tester.pumpWidget(MyApp());
   //
   //   await tester.tap(find.byType(RaisedButton));
@@ -68,7 +68,7 @@ void main() {
   //   expect(find.byType(ListTile), findsWidgets);
   // });
 
-  testWidgets("En la pantalla Mis incidencias: pulsamos primera card de la lista -> icono", (WidgetTester tester) async{
+  testWidgets("Test 5: En la pantalla Mis incidencias: pulsamos primera card de la lista -> icono", (WidgetTester tester) async{
     await tester.pumpWidget(MyApp());
 
       await tester.tap(find.byType(RaisedButton));
