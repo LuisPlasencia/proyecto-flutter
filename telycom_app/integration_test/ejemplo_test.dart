@@ -95,23 +95,26 @@ void main() {
   //
   // });
 
-  // testWidgets("Test 6: En la pantalla del detalle del primer card", (WidgetTester tester) async{
-  //   await tester.pumpWidget(MyApp());
-  //
-  //   await tester.tap(find.byType(RaisedButton));
-  //
-  //   await tester.pumpAndSettle();
-  //
-  //   expect(find.byType(MisIncidencias), findsWidgets);
-  //
-  //   await tester.tap(find.byType(ExpansionTile));
-  //   await tester.pumpAndSettle();
-  //
-  //   expect(find.byType(ListTile), findsWidgets);
-  //
-  //   await tester.tap(find.byKey(Key('listElement0')));
-  //   await tester.pumpAndSettle();
-  // });
+  testWidgets("Test 6: En la pantalla del detalle del primer card apareceran la descripción, código, creación y dirección", (WidgetTester tester) async{
+    await tester.pumpWidget(MyApp());
+    await tester.tap(find.byType(RaisedButton));
+    await tester.pumpAndSettle();
+
+    expect(find.byType(MisIncidencias), findsWidgets);
+
+    await tester.tap(find.byType(ExpansionTile));
+    await tester.pumpAndSettle();
+
+    expect(find.byType(ListTile), findsWidgets);
+
+    await tester.tap(find.byKey(Key('listElement0')));
+    await tester.pumpAndSettle();
+
+    expect(find.byKey(Key('description')),findsOneWidget);
+    expect(find.byKey(Key('code')),findsOneWidget);
+    expect(find.byKey(Key('creation')),findsOneWidget);
+    expect(find.byKey(Key('direction')),findsOneWidget);
+  });
 
   testWidgets("Test 7: Detalle completo y vuelta", (WidgetTester tester) async{
     await tester.pumpWidget(MyApp());
@@ -152,8 +155,5 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.byType(FlutterMap), findsOneWidget);
 
-
   });
-
-
 }

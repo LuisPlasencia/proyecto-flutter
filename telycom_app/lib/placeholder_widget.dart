@@ -79,6 +79,7 @@ class _PlaceholderWidget extends State<PlaceholderWidget> {
         Container(
           width: double.infinity,
           child: Card(
+            key: Key("description"),
             color: Colors.grey,
             child: Padding(
               padding: EdgeInsets.only(left: 10.0),
@@ -101,6 +102,7 @@ class _PlaceholderWidget extends State<PlaceholderWidget> {
         Container(
           width: double.infinity,
           child: Card(
+            key: Key("code"),
             color: Colors.grey,
             child: Padding(
               padding: EdgeInsets.only(left: 10.0),
@@ -123,6 +125,7 @@ class _PlaceholderWidget extends State<PlaceholderWidget> {
         Container(
           width: double.infinity,
           child: Card(
+            key: Key("creation"),
             color: Colors.grey,
             child: Padding(
               padding: EdgeInsets.only(left: 10.0),
@@ -145,6 +148,7 @@ class _PlaceholderWidget extends State<PlaceholderWidget> {
         Container(
           width: double.infinity,
           child: Card(
+            key: Key("direction"),
             color: Colors.grey,
             child: Padding(
               padding: EdgeInsets.only(left: 10.0),
