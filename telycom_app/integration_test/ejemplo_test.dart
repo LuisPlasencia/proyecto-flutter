@@ -9,20 +9,20 @@ void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
 
-  testWidgets("Test 1 : No se ha escrito nombre de usuario, lo que impide el paso de pantalla", (WidgetTester tester) async{
-    await tester.pumpWidget(MyApp());
-    final texto = "holaaaaaaaaaaaaaaaaaaaaaaa";
-    await tester.enterText(find.byKey(Key('user')), texto);
-    expect(find.text(texto), findsWidgets);
-
-    await tester.tap(find.byType(RaisedButton));
-    await tester.pumpAndSettle();
-    await tester.tap(find.byType(BackButton));
-    await tester.pumpAndSettle();
-    await tester.tap(find.byKey(Key('YES')));
-    await tester.pumpAndSettle();
-    expect(find.text(texto), findsWidgets);
-  });
+  // testWidgets("Test 1 : No se ha escrito nombre de usuario, lo que impide el paso de pantalla", (WidgetTester tester) async{
+  //   await tester.pumpWidget(MyApp());
+  //   final texto = "holaaaaaaaaaaaaaaaaaaaaaaa";
+  //   await tester.enterText(find.byKey(Key('user')), texto);
+  //   expect(find.text(texto), findsWidgets);
+  //
+  //   await tester.tap(find.byType(RaisedButton));
+  //   await tester.pumpAndSettle();
+  //   await tester.tap(find.byType(BackButton));
+  //   await tester.pumpAndSettle();
+  //   await tester.tap(find.byKey(Key('YES')));
+  //   await tester.pumpAndSettle();
+  //   expect(find.text(texto), findsWidgets);
+  // });
 
 
   // testWidgets("Test 2: Comprobamos que el texto que escribimos concuerda", (WidgetTester tester) async{
@@ -68,27 +68,48 @@ void main() {
   //   expect(find.byType(ListTile), findsWidgets);
   // });
 
-  testWidgets("Test 5: En la pantalla Mis incidencias: pulsamos primera card de la lista -> icono", (WidgetTester tester) async{
+  // testWidgets("Test 5: En la pantalla Mis incidencias: pulsamos primera card de la lista -> icono", (WidgetTester tester) async{
+  //   await tester.pumpWidget(MyApp());
+  //
+  //     await tester.tap(find.byType(RaisedButton));
+  //
+  //     await tester.pumpAndSettle();
+  //
+  //     expect(find.byType(MisIncidencias), findsWidgets);
+  //
+  //     await tester.tap(find.byType(ExpansionTile));
+  //     await tester.pumpAndSettle();
+  //
+  //     expect(find.byType(ListTile), findsWidgets);
+  //
+  //     await tester.tap(find.byKey(Key('centerInMap0')));
+  //     await tester.pumpAndSettle();
+  //
+  //     final latitudCenter = 28.0713516;
+  //     final longitudCenter = -15.45598;
+  //
+  //     String valor = latitudCenter.toString()+" "+longitudCenter.toString();
+  //
+  //     expect(find.byType(SnackBar),findsWidgets);
+  //
+  // });
+
+  testWidgets("Test 6: En la pantalla del detalle del primer card", (WidgetTester tester) async{
     await tester.pumpWidget(MyApp());
 
-      await tester.tap(find.byType(RaisedButton));
+    await tester.tap(find.byType(RaisedButton));
 
-      await tester.pumpAndSettle();
+    await tester.pumpAndSettle();
 
-      expect(find.byType(MisIncidencias), findsWidgets);
+    expect(find.byType(MisIncidencias), findsWidgets);
 
-      await tester.tap(find.byType(ExpansionTile));
-      await tester.pumpAndSettle();
+    await tester.tap(find.byType(ExpansionTile));
+    await tester.pumpAndSettle();
 
-      expect(find.byType(ListTile), findsWidgets);
+    expect(find.byType(ListTile), findsWidgets);
 
-      await tester.tap(find.byKey(Key('listElement1')));
-      await tester.pumpAndSettle();
-
-      final latitudCenter = 28.0713516;
-      final longitudCenter = -15.45598;
-
-     expect(2+2, equals(4));
+    await tester.tap(find.byKey(Key('listElement0')));
+    await tester.pumpAndSettle();
 
 
   });

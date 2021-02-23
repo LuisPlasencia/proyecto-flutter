@@ -245,7 +245,7 @@ class _MisIncidenciasState extends State<MisIncidencias> {
                                   ),
                                 ),
                                 leading: GestureDetector(
-                                  key: Key("centerInMap"),
+                                  key: Key("centerInMap"+index.toString()),
                                   onTap: () {
                                     setState(() {
                                       var latlng = LatLng(
@@ -253,9 +253,7 @@ class _MisIncidenciasState extends State<MisIncidencias> {
                                           itemsList[index].longitud);
                                       final snackBar = SnackBar(
                                           content: Text(
-                                              latlng.latitude.toString() +
-                                                  " " +
-                                                  latlng.longitude.toString()));
+                                              latlng.latitude.toString() + " " + latlng.longitude.toString()));
                                       Scaffold.of(context)
                                           .showSnackBar(snackBar);
                                       double zoom = 12.0; //the zoom you want
