@@ -23,12 +23,15 @@ class MisIncidencias extends StatefulWidget {
 
 class _MisIncidenciasState extends State<MisIncidencias> {
   List<ElementList> itemsList = [
-    ElementList('12:45 05/02/21', 'LPA21/0011', 'No Atendido',
-        'Las Palmas G.C.', 'Atacascos', 28.0713516, -15.45598),
-    ElementList('12:45 05/02/21', 'LPA21/0011', 'Atendido', 'Las Palmas G.C.',
-        'Accidentes de coche', 28.114198, -15.425447),
-    ElementList('12:45 05/02/21', 'LPA21/0021', 'No Atendido',
-        'Las Palmas G.C.', 'Homicidio', 28.008015, -15.377626),
+    ElementList('12:45 05/02/21', 'LPA21/0011', 'No Atendido', 'Las Palmas G.C.', 'Atacascos', 28.0713516, -15.45598),
+    ElementList('12:45 05/02/21', 'LPA21/0011', 'Atendido', 'Las Palmas G.C.', 'Accidentes de coche', 28.114198, -15.425447),
+    ElementList('12:45 05/02/21', 'LPA21/0021', 'No Atendido', 'Las Palmas G.C.', 'Homicidio', 28.008015, -15.377626),
+    ElementList('12:45 05/02/21', 'LPA21/0011', 'No Atendido', 'Las Palmas G.C.', 'Atacascos', 28.0713516, -15.45598),
+    ElementList('12:45 05/02/21', 'LPA21/0011', 'Atendido', 'Las Palmas G.C.', 'Accidentes de coche', 28.114198, -15.425447),
+    ElementList('12:45 05/02/21', 'LPA21/0021', 'No Atendido', 'Las Palmas G.C.', 'Homicidio', 28.008015, -15.377626),
+    ElementList('12:45 05/02/21', 'LPA21/0011', 'No Atendido', 'Las Palmas G.C.', 'Atacascos', 28.0713516, -15.45598),
+    ElementList('12:45 05/02/21', 'LPA21/0011', 'Atendido', 'Las Palmas G.C.', 'Accidentes de coche', 28.114198, -15.425447),
+    ElementList('12:45 05/02/21', 'LPA21/0021', 'No Atendido', 'Las Palmas G.C.', 'Homicidio', 28.008015, -15.377626),
   ];
 
   Color colorTarjeta;
@@ -290,191 +293,209 @@ class _MisIncidenciasState extends State<MisIncidencias> {
   }
 
   Widget _landscapeMode() {
-    
-    return Column(
-      children: [
-        ExpansionTile(
-            title: Text("Incidencias"),
-            backgroundColor: Colors.amberAccent[100],
-            children: [
-              Container(
-                height: 200,
-                child: ListView.builder(
-                  itemCount: itemsList.length,
-                  itemBuilder: (context, index) {
-                    if (itemsList[index].state == "Atendido") {
-                      colorTarjeta = Colors.green[400];
-                    } else {
-                      colorTarjeta = Colors.red[400];
-                    }
-                    return Card(
-                      child: Container(
-                        color: colorTarjeta,
-                        child: ListTile(
-                          onTap: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => DetalleIncidencias(
-                                    creation: itemsList[index].creation,
-                                    reference: itemsList[index].reference,
-                                    state: itemsList[index].state,
-                                    direction: itemsList[index].direction,
-                                    description: itemsList[index].description,
-                                    latitud: itemsList[index].latitud,
-                                    longitud: itemsList[index].longitud,
-                                  ),
-                                ));
-                          },
-                          title: RichText(
-                            // le pasamos la posicion para poder testearlo luego!
-                            key: Key("listElement" + index.toString()),
-                            text: TextSpan(
-                              children: <TextSpan>[
-                                TextSpan(
-                                    text: itemsList[index].creation,
-                                    style: TextStyle(color: Colors.white)),
-                                TextSpan(
-                                    text: " | ",
-                                    style: TextStyle(color: Colors.deepOrange)),
-                                TextSpan(
-                                    text: itemsList[index].reference,
-                                    style: TextStyle(color: Colors.white)),
-                                TextSpan(
-                                    text: " | ",
-                                    style: TextStyle(color: Colors.deepOrange)),
-                                TextSpan(
-                                    text: itemsList[index].state,
-                                    style: TextStyle(color: Colors.white)),
-                                TextSpan(
-                                    text: " | ",
-                                    style: TextStyle(color: Colors.deepOrange)),
-                                TextSpan(
-                                    text: itemsList[index].direction,
-                                    style: TextStyle(color: Colors.white)),
-                              ],
-                            ),
-                          ),
-                          leading: GestureDetector(
-                            key: Key("centerInMap" + index.toString()),
-                            onTap: () {
-                              setState(() {
-                                var latlng = LatLng(itemsList[index].latitud,
-                                    itemsList[index].longitud);
-                                final snackBar = SnackBar(
-                                    content: Text(latlng.latitude.toString() +
-                                        " " +
-                                        latlng.longitude.toString()));
-                                Scaffold.of(context).showSnackBar(snackBar);
-                                double zoom = 12.0; //the zoom you want
-                                _mapController.move(latlng, zoom);
-                              });
-                            },
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(60.0),
-                              child: Container(
-                                margin: const EdgeInsets.only(
-                                    top: 5.0, bottom: 5.0),
-                                height: 70.0,
-                                width: 60.0,
-                                color: Colors.blue,
-                                child: Icon(
-                                  Icons.place,
-                                  color: Colors.black,
-                                  size: 30.0,
+    // var size = MediaQuery.of(context).size;
+    // final double itemHeight = (size.height) / 2;
+    // final double itemWidth = size.width / 2;
+    // var size = MediaQuery.of(context).size;
+    // MediaQueryData mediaQueryData = MediaQuery.of(context);
+    double cardWidth = MediaQuery.of(context).size.width / 3.3;
+    double cardHeight = MediaQuery.of(context).size.height / 3.6;
+    return OrientationBuilder(
+      builder: (context, orientation) {
+        return GridView.count(
+          physics: const NeverScrollableScrollPhysics(),
+          // Create a grid with 2 columns in portrait mode,
+          // or 3 columns in landscape mode.
+          // Altura de todos los items
+          // childAspectRatio: (1),
+          // Separación entre childrens
+          crossAxisSpacing:(1),
+          crossAxisCount: 2,
+
+
+          childAspectRatio: (cardWidth/cardHeight),
+
+
+          children: [
+            Container(
+              width: 100,
+              child: ListView.builder(
+                itemCount: itemsList.length,
+                itemBuilder: (context, index) {
+                  if (itemsList[index].state == "Atendido") {
+                    colorTarjeta = Colors.green[400];
+                  } else {
+                    colorTarjeta = Colors.red[400];
+                  }
+                  return Card(
+                    child: Container(
+                      color: colorTarjeta,
+                      child: ListTile(
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => DetalleIncidencias(
+                                  creation: itemsList[index].creation,
+                                  reference: itemsList[index].reference,
+                                  state: itemsList[index].state,
+                                  direction: itemsList[index].direction,
+                                  description: itemsList[index].description,
+                                  latitud: itemsList[index].latitud,
+                                  longitud: itemsList[index].longitud,
                                 ),
+                              ));
+                        },
+                        title: RichText(
+                          // le pasamos la posicion para poder testearlo luego!
+                          key: Key("listElement" + index.toString()),
+                          text: TextSpan(
+                            children: <TextSpan>[
+                              TextSpan(
+                                  text: itemsList[index].creation,
+                                  style: TextStyle(color: Colors.white)),
+                              TextSpan(
+                                  text: " | ",
+                                  style: TextStyle(color: Colors.deepOrange)),
+                              TextSpan(
+                                  text: itemsList[index].reference,
+                                  style: TextStyle(color: Colors.white)),
+                              TextSpan(
+                                  text: " | ",
+                                  style: TextStyle(color: Colors.deepOrange)),
+                              TextSpan(
+                                  text: itemsList[index].state,
+                                  style: TextStyle(color: Colors.white)),
+                              TextSpan(
+                                  text: " | ",
+                                  style: TextStyle(color: Colors.deepOrange)),
+                              TextSpan(
+                                  text: itemsList[index].direction,
+                                  style: TextStyle(color: Colors.white)),
+                            ],
+                          ),
+                        ),
+                        leading: GestureDetector(
+                          key: Key("centerInMap" + index.toString()),
+                          onTap: () {
+                            setState(() {
+                              var latlng = LatLng(itemsList[index].latitud,
+                                  itemsList[index].longitud);
+                              final snackBar = SnackBar(
+                                  content: Text(latlng.latitude.toString() +
+                                      " " +
+                                      latlng.longitude.toString()));
+                              Scaffold.of(context).showSnackBar(snackBar);
+                              double zoom = 12.0; //the zoom you want
+                              _mapController.move(latlng, zoom);
+                            });
+                          },
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(60.0),
+                            child: Container(
+                              margin:
+                                  const EdgeInsets.only(top: 5.0, bottom: 5.0),
+                              height: 70.0,
+                              width: 60.0,
+                              color: Colors.blue,
+                              child: Icon(
+                                Icons.place,
+                                color: Colors.black,
+                                size: 30.0,
                               ),
                             ),
                           ),
                         ),
                       ),
-                    );
-                  },
-                ),
-              ),
-            ]),
-        Flexible(
-          child: FlutterMap(
-            mapController: _mapController,
-            options: MapOptions(
-              maxZoom: 19,
-              minZoom: 10,
-              // center: LatLng(latLog.latitude, latLog.longitude),
-              center: LatLng(latitudCenter, longitudCenter),
-              zoom: 12.0,
-              plugins: [EsriPlugin()],
-            ),
-            layers: [
-              // TileLayerOptions(
-              //   urlTemplate:
-              //   'http://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}',
-              //   subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
-              //   tileProvider: CachedNetworkTileProvider(),
-              // ),
-
-              new TileLayerOptions(
-                  urlTemplate:
-                  "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-                  subdomains: ['a', 'b', 'c']),
-
-              // FeatureLayerOptions(
-              //   url: "https://services.arcgis.com/P3ePLMYs2RVChkJx/arcgis/rest/services/USA_Congressional_Districts/FeatureServer/0",
-              //   geometryType:"polygon",
-              //   onTap: (attributes, LatLng location) {
-              //     print(attributes);
-              //   },
-              //   render: (dynamic attributes){
-              //     // You can render by attribute
-              //     return PolygonOptions(
-              //         borderColor: Colors.blueAccent,
-              //         color: Colors.black12,
-              //         borderStrokeWidth: 2
-              //     );
-              //   },
-              //
-              // ),
-              // FeatureLayerOptions(
-              //   url: "https://services8.arcgis.com/1p2fLWyjYVpl96Ty/arcgis/rest/services/Forest_Service_Recreation_Opportunities/FeatureServer/0",
-              //   geometryType:"point",
-              //   render:(dynamic attributes){
-              //     // You can render by attribute
-              //     return Marker(
-              //       width: 30.0,
-              //       height: 30.0,
-              //       point: new LatLng(28.0713516, -15.455989),
-              //       builder: (ctx) =>
-              //           Icon(Icons.pin_drop),
-              //     );
-              //   },
-              //   onTap: (attributes, LatLng location) {
-              //     print(attributes);
-              //   },
-              // ),
-              new MarkerLayerOptions(
-                markers: _markers,
-              ),
-
-              FeatureLayerOptions(
-                url:
-                "https://services8.arcgis.com/1p2fLWyjYVpl96Ty/arcgis/rest/services/Forest_Service_Recreation_Opportunities/FeatureServer/0",
-                geometryType: "point",
-                render: (dynamic attributes) {
-                  // You can render by attribute
-                  return Marker(
-                    point: LatLng(28.096288, -15.412257),
-                    width: 30.0,
-                    height: 30.0,
-                    builder: (ctx) => Icon(Icons.pin_drop),
+                    ),
                   );
                 },
-                onTap: (attributes, LatLng location) {
-                  print(attributes);
-                },
               ),
-            ],
-          ),
-        ),
-      ],
+            ),
+            Flexible(
+              child: FlutterMap(
+                mapController: _mapController,
+                options: MapOptions(
+                  maxZoom: 19,
+                  minZoom: 10,
+                  // center: LatLng(latLog.latitude, latLog.longitude),
+                  center: LatLng(latitudCenter, longitudCenter),
+                  zoom: 12.0,
+                  plugins: [EsriPlugin()],
+                ),
+                layers: [
+                  // TileLayerOptions(
+                  //   urlTemplate:
+                  //   'http://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}',
+                  //   subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
+                  //   tileProvider: CachedNetworkTileProvider(),
+                  // ),
+
+                  new TileLayerOptions(
+                      urlTemplate:
+                          "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+                      subdomains: ['a', 'b', 'c']),
+
+                  // FeatureLayerOptions(
+                  //   url: "https://services.arcgis.com/P3ePLMYs2RVChkJx/arcgis/rest/services/USA_Congressional_Districts/FeatureServer/0",
+                  //   geometryType:"polygon",
+                  //   onTap: (attributes, LatLng location) {
+                  //     print(attributes);
+                  //   },
+                  //   render: (dynamic attributes){
+                  //     // You can render by attribute
+                  //     return PolygonOptions(
+                  //         borderColor: Colors.blueAccent,
+                  //         color: Colors.black12,
+                  //         borderStrokeWidth: 2
+                  //     );
+                  //   },
+                  //
+                  // ),
+                  // FeatureLayerOptions(
+                  //   url: "https://services8.arcgis.com/1p2fLWyjYVpl96Ty/arcgis/rest/services/Forest_Service_Recreation_Opportunities/FeatureServer/0",
+                  //   geometryType:"point",
+                  //   render:(dynamic attributes){
+                  //     // You can render by attribute
+                  //     return Marker(
+                  //       width: 30.0,
+                  //       height: 30.0,
+                  //       point: new LatLng(28.0713516, -15.455989),
+                  //       builder: (ctx) =>
+                  //           Icon(Icons.pin_drop),
+                  //     );
+                  //   },
+                  //   onTap: (attributes, LatLng location) {
+                  //     print(attributes);
+                  //   },
+                  // ),
+                  new MarkerLayerOptions(
+                    markers: _markers,
+                  ),
+
+                  FeatureLayerOptions(
+                    url:
+                        "https://services8.arcgis.com/1p2fLWyjYVpl96Ty/arcgis/rest/services/Forest_Service_Recreation_Opportunities/FeatureServer/0",
+                    geometryType: "point",
+                    render: (dynamic attributes) {
+                      // You can render by attribute
+                      return Marker(
+                        point: LatLng(28.096288, -15.412257),
+                        width: 30.0,
+                        height: 30.0,
+                        builder: (ctx) => Icon(Icons.pin_drop),
+                      );
+                    },
+                    onTap: (attributes, LatLng location) {
+                      print(attributes);
+                    },
+                  ),
+                ],
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 
