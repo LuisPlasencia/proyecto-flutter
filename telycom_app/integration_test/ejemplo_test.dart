@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
+import 'package:telycom_app/DetalleIncidencias.dart';
 import 'package:telycom_app/main.dart';
 import 'package:telycom_app/misIncidencias.dart';
 
@@ -94,11 +95,27 @@ void main() {
   //
   // });
 
-  testWidgets("Test 6: En la pantalla del detalle del primer card", (WidgetTester tester) async{
+  // testWidgets("Test 6: En la pantalla del detalle del primer card", (WidgetTester tester) async{
+  //   await tester.pumpWidget(MyApp());
+  //
+  //   await tester.tap(find.byType(RaisedButton));
+  //
+  //   await tester.pumpAndSettle();
+  //
+  //   expect(find.byType(MisIncidencias), findsWidgets);
+  //
+  //   await tester.tap(find.byType(ExpansionTile));
+  //   await tester.pumpAndSettle();
+  //
+  //   expect(find.byType(ListTile), findsWidgets);
+  //
+  //   await tester.tap(find.byKey(Key('listElement0')));
+  //   await tester.pumpAndSettle();
+  // });
+
+  testWidgets("Test 7: Detalle completo y vuelta", (WidgetTester tester) async{
     await tester.pumpWidget(MyApp());
-
     await tester.tap(find.byType(RaisedButton));
-
     await tester.pumpAndSettle();
 
     expect(find.byType(MisIncidencias), findsWidgets);
@@ -110,7 +127,33 @@ void main() {
 
     await tester.tap(find.byKey(Key('listElement0')));
     await tester.pumpAndSettle();
+    expect(find.byType(DetalleIncidencias), findsWidgets);
+
+    await tester.tap(find.text("Mensaje"));
+    await tester.pumpAndSettle();
+    expect(find.byType(TextField), findsOneWidget);
+    expect(find.byType(RaisedButton), findsOneWidget);
+    expect(find.text("Enviar"), findsOneWidget);
+
+    await tester.tap(find.text("Imagen"));
+    await tester.pumpAndSettle();
+    expect(find.text("No image selected."), findsOneWidget);
+    expect(find.byType(FloatingActionButton), findsOneWidget);
+
+    await tester.tap(find.text("Mapa"));
+    await tester.pumpAndSettle();
+    expect(find.byType(FlutterMap), findsOneWidget);
+
+    await tester.tap(find.text("Sucesos"));
+    await tester.pumpAndSettle();
+    expect(find.byType(ListTile), findsWidgets);
+
+    await tester.tap(find.byType(BackButton));
+    await tester.pumpAndSettle();
+    expect(find.byType(FlutterMap), findsOneWidget);
 
 
   });
+
+
 }
