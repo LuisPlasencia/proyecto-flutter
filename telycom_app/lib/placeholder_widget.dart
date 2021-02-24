@@ -7,6 +7,7 @@ import "misIncidencias.dart";
 import 'package:flutter/services.dart';
 import "Mapa.dart";
 import 'package:telycom_app/misIncidencias.dart';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 
 import 'placeholder_widget.dart';
 
@@ -84,249 +85,367 @@ class _PlaceholderWidget extends State<PlaceholderWidget> {
     );
   }
 
-    Widget _landscapeMode() {
+  Widget _landscapeMode() {
       return OrientationBuilder(
         builder: (context, orientation){
           final screenWidth = MediaQuery.of(context).size.width/3;
-          return GridView.count(
-              childAspectRatio: screenWidth /150,
-              crossAxisCount: 2,
-              physics: NeverScrollableScrollPhysics(),
-              children: [
-                Column(
-                  children: [
-                    Container(
-                      width: double.infinity,
-                      child: Card(
-                        key: Key("description"),
-                        color: Colors.grey,
-                        child: Padding(
-                          padding: EdgeInsets.only(left: 10.0),
-                          child: Text(
-                            "Descripción",
-                            style: TextStyle(fontSize: 20),
-                            textAlign: TextAlign.left,
-                          ),
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.only(left: 10.0),
-                      child: Text(
-                        description,
-                        style: TextStyle(fontSize: 15),
-                        textAlign: TextAlign.right,
-                      ),
-                    ),
-                    Container(
-                      width: double.infinity,
-                      child: Card(
-                        key: Key("code"),
-                        color: Colors.grey,
-                        child: Padding(
-                          padding: EdgeInsets.only(left: 10.0),
-                          child: Text(
-                            "Código",
-                            style: TextStyle(fontSize: 20),
-                            textAlign: TextAlign.left,
-                          ),
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.only(left: 10.0),
-                      child: Text(
-                        reference,
-                        style: TextStyle(fontSize: 15),
-                        textAlign: TextAlign.right,
-                      ),
-                    ),
-                    Container(
-                      width: double.infinity,
-                      child: Card(
-                        key: Key("creation"),
-                        color: Colors.grey,
-                        child: Padding(
-                          padding: EdgeInsets.only(left: 10.0),
-                          child: Text(
-                            "Creación",
-                            style: TextStyle(fontSize: 20),
-                            textAlign: TextAlign.left,
-                          ),
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.only(left: 10.0),
-                      child: Text(
-                        creation,
-                        style: TextStyle(fontSize: 15),
-                        textAlign: TextAlign.right,
-                      ),
-                    ),
-                    Container(
-                      width: double.infinity,
-                      child: Card(
-                        key: Key("direction"),
-                        color: Colors.grey,
-                        child: Padding(
-                          padding: EdgeInsets.only(left: 10.0),
-                          child: Text(
-                            "Dirección",
-                            style: TextStyle(fontSize: 20),
-                            textAlign: TextAlign.left,
-                          ),
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.only(left: 10.0),
-                      child: Text(
-                        direction,
-                        style: TextStyle(fontSize: 15),
-                        textAlign: TextAlign.right,
-                      ),
-                    ),
-                ],
-            ),
-          new Expanded(
-            child: ListView.builder(
+          return Container(
+            margin: EdgeInsets.only(top: 5),
+            child: new StaggeredGridView.countBuilder(
+              crossAxisCount: 4,
               itemCount: sucesosList.length,
-              itemBuilder: (context, index) {
+              itemBuilder: (BuildContext context, int index) {
                 if (sucesosList[index].tipoMsg == "atendido") {
-                  return Card(
-                    child: Container(
-                      child: ListTile(
-                        // onTap: () {
-                        //   Navigator.push(
-                        //       context,
-                        //       MaterialPageRoute(
-                        //         builder: (context) => DetalleIncidencias(
-                        //           // creation: itemsList[index].creation,
-                        //           // reference: itemsList[index].reference ,
-                        //           // state: itemsList[index].state,
-                        //           // direction: itemsList[index].direction,
-                        //           // description: itemsList[index].description,
-                        //         ),
-                        //       ));
-                        // },
-                        title: Row(
-                          children: [
-                            RichText(
-                              text: TextSpan(
-                                children: <TextSpan>[
-                                  TextSpan(
-                                    text: sucesosList[index].fecha,
-                                    style: TextStyle(
-                                        fontSize: 16, color: Colors.black),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            SizedBox(width: 20),
-                            RichText(
-                              text: TextSpan(
-                                text: "Suceso atendido por " +
-                                    sucesosList[index].entidad,
-                                style: TextStyle(
-                                    fontSize: 16, color: Colors.black),
-                              ),
+                return new Container(
+                  // margin: EdgeInsets.only(top: 10, bottom: 10),
+                  padding: EdgeInsets.only(left:10, right:10, top: 10, bottom: 10),
+                  color: Colors.grey[350],
+                  child: Row(
+                    children: [
+                      RichText(
+                        text: TextSpan(
+                          children: <TextSpan>[
+                            TextSpan(
+                              text: sucesosList[index].fecha,
+                              style: TextStyle(
+                                  fontSize: 16, color: Colors.black),
                             ),
                           ],
                         ),
                       ),
-                    ),
-                  );
-                } else {
-                  return Card(
-                    child: Container(
-                      child: ListTile(
-                        // onTap: () {
-                        //   Navigator.push(
-                        //       context,
-                        //       MaterialPageRoute(
-                        //         builder: (context) => DetalleIncidencias(
-                        //           // creation: itemsList[index].creation,
-                        //           // reference: itemsList[index].reference ,
-                        //           // state: itemsList[index].state,
-                        //           // direction: itemsList[index].direction,
-                        //           // description: itemsList[index].description,
-                        //         ),
-                        //       ));
-                        // },
-                        title: Row(
-                          children: [
-                            RichText(
-                              text: TextSpan(
-                                text: sucesosList[index].fecha,
-                                style: TextStyle(
-                                    fontSize: 16, color: Colors.black),
-                              ),
-                            ),
-                            SizedBox(width: 20),
-                            RichText(
-                              text: TextSpan(
-                                children: <TextSpan>[
-                                  TextSpan(
-                                    text: "Incidente creado por " +
-                                        sucesosList[index].entidad,
-                                    style: TextStyle(
-                                        fontSize: 16, color: Colors.black),
-                                  ),
-                                  TextSpan(
-                                    text: "\nTipificación:",
-                                    style: TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.black),
-                                  ),
-                                  TextSpan(
-                                    text:
-                                        "\n" + sucesosList[index].tipificacion,
-                                    style: TextStyle(
-                                        fontSize: 16, color: Colors.black),
-                                  ),
-                                  TextSpan(
-                                    text: "\nLocalización:",
-                                    style: TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.black),
-                                  ),
-                                  TextSpan(
-                                    text:
-                                        "\n" + sucesosList[index].localizacion,
-                                    style: TextStyle(
-                                        fontSize: 16, color: Colors.black),
-                                  ),
-                                  TextSpan(
-                                    text: "\nAgencia asignada:",
-                                    style: TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.black),
-                                  ),
-                                  TextSpan(
-                                    text: "\n" + sucesosList[index].agencia,
-                                    style: TextStyle(
-                                        fontSize: 16, color: Colors.black),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
+                      SizedBox(width: 20),
+                      RichText(
+                        text: TextSpan(
+                          text: "Suceso atendido por " +
+                              sucesosList[index].entidad,
+                          style: TextStyle(
+                              fontSize: 16, color: Colors.black),
                         ),
                       ),
-                    ),
+                    ],
+                  ),
+                );
+                } else{
+                  return new Container(
+                    padding: EdgeInsets.only(left:10, right:10, top: 10, bottom: 10),
+                    color: Colors.grey[350],
+                    child: Row(
+                        children: [
+                          RichText(
+                            text: TextSpan(
+                              text: sucesosList[index].fecha,
+                              style: TextStyle(
+                                  fontSize: 16, color: Colors.black),
+                            ),
+                          ),
+                          SizedBox(width: 20),
+                          RichText(
+                            text: TextSpan(
+                              children: <TextSpan>[
+                                TextSpan(
+                                  text: "Incidente creado por " +
+                                      sucesosList[index].entidad,
+                                  style: TextStyle(
+                                      fontSize: 16, color: Colors.black),
+                                ),
+                                TextSpan(
+                                  text: "\nTipificación:",
+                                  style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.black),
+                                ),
+                                TextSpan(
+                                  text:
+                                  "\n" + sucesosList[index].tipificacion,
+                                  style: TextStyle(
+                                      fontSize: 16, color: Colors.black),
+                                ),
+                                TextSpan(
+                                  text: "\nLocalización:",
+                                  style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.black),
+                                ),
+                                TextSpan(
+                                  text:
+                                  "\n" + sucesosList[index].localizacion,
+                                  style: TextStyle(
+                                      fontSize: 16, color: Colors.black),
+                                ),
+                                TextSpan(
+                                  text: "\nAgencia asignada:",
+                                  style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.black),
+                                ),
+                                TextSpan(
+                                  text: "\n" + sucesosList[index].agencia,
+                                  style: TextStyle(
+                                      fontSize: 16, color: Colors.black),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
                   );
                 }
               },
-            ),
-          ),
-        ],
-      );
+              staggeredTileBuilder: (int index) =>
+              new StaggeredTile.count(2, index.isEven ? 1 : 1),
+              mainAxisSpacing: 4.0,
+              crossAxisSpacing: 4.0,
+        ),
+          );
     });
   }
+
+  // Widget _landscapeMode() {
+  //   return OrientationBuilder(
+  //       builder: (context, orientation){
+  //         final screenWidth = MediaQuery.of(context).size.width/3;
+  //         return GridView.count(
+  //           childAspectRatio: screenWidth /150,
+  //           crossAxisCount: 2,
+  //           physics: NeverScrollableScrollPhysics(),
+  //           children: [
+  //             Column(
+  //               children: [
+  //                 Container(
+  //                   width: double.infinity,
+  //                   child: Card(
+  //                     key: Key("description"),
+  //                     color: Colors.grey,
+  //                     child: Padding(
+  //                       padding: EdgeInsets.only(left: 10.0),
+  //                       child: Text(
+  //                         "Descripción",
+  //                         style: TextStyle(fontSize: 20),
+  //                         textAlign: TextAlign.left,
+  //                       ),
+  //                     ),
+  //                   ),
+  //                 ),
+  //                 Padding(
+  //                   padding: EdgeInsets.only(left: 10.0),
+  //                   child: Text(
+  //                     description,
+  //                     style: TextStyle(fontSize: 15),
+  //                     textAlign: TextAlign.right,
+  //                   ),
+  //                 ),
+  //                 Container(
+  //                   width: double.infinity,
+  //                   child: Card(
+  //                     key: Key("code"),
+  //                     color: Colors.grey,
+  //                     child: Padding(
+  //                       padding: EdgeInsets.only(left: 10.0),
+  //                       child: Text(
+  //                         "Código",
+  //                         style: TextStyle(fontSize: 20),
+  //                         textAlign: TextAlign.left,
+  //                       ),
+  //                     ),
+  //                   ),
+  //                 ),
+  //                 Padding(
+  //                   padding: EdgeInsets.only(left: 10.0),
+  //                   child: Text(
+  //                     reference,
+  //                     style: TextStyle(fontSize: 15),
+  //                     textAlign: TextAlign.right,
+  //                   ),
+  //                 ),
+  //                 Container(
+  //                   width: double.infinity,
+  //                   child: Card(
+  //                     key: Key("creation"),
+  //                     color: Colors.grey,
+  //                     child: Padding(
+  //                       padding: EdgeInsets.only(left: 10.0),
+  //                       child: Text(
+  //                         "Creación",
+  //                         style: TextStyle(fontSize: 20),
+  //                         textAlign: TextAlign.left,
+  //                       ),
+  //                     ),
+  //                   ),
+  //                 ),
+  //                 Padding(
+  //                   padding: EdgeInsets.only(left: 10.0),
+  //                   child: Text(
+  //                     creation,
+  //                     style: TextStyle(fontSize: 15),
+  //                     textAlign: TextAlign.right,
+  //                   ),
+  //                 ),
+  //                 Container(
+  //                   width: double.infinity,
+  //                   child: Card(
+  //                     key: Key("direction"),
+  //                     color: Colors.grey,
+  //                     child: Padding(
+  //                       padding: EdgeInsets.only(left: 10.0),
+  //                       child: Text(
+  //                         "Dirección",
+  //                         style: TextStyle(fontSize: 20),
+  //                         textAlign: TextAlign.left,
+  //                       ),
+  //                     ),
+  //                   ),
+  //                 ),
+  //                 Padding(
+  //                   padding: EdgeInsets.only(left: 10.0),
+  //                   child: Text(
+  //                     direction,
+  //                     style: TextStyle(fontSize: 15),
+  //                     textAlign: TextAlign.right,
+  //                   ),
+  //                 ),
+  //               ],
+  //             ),
+  //             new Expanded(
+  //               child: ListView.builder(
+  //                 itemCount: sucesosList.length,
+  //                 itemBuilder: (context, index) {
+  //                   if (sucesosList[index].tipoMsg == "atendido") {
+  //                     return Card(
+  //                       child: Container(
+  //                         child: ListTile(
+  //                           // onTap: () {
+  //                           //   Navigator.push(
+  //                           //       context,
+  //                           //       MaterialPageRoute(
+  //                           //         builder: (context) => DetalleIncidencias(
+  //                           //           // creation: itemsList[index].creation,
+  //                           //           // reference: itemsList[index].reference ,
+  //                           //           // state: itemsList[index].state,
+  //                           //           // direction: itemsList[index].direction,
+  //                           //           // description: itemsList[index].description,
+  //                           //         ),
+  //                           //       ));
+  //                           // },
+  //                           title: Row(
+  //                             children: [
+  //                               RichText(
+  //                                 text: TextSpan(
+  //                                   children: <TextSpan>[
+  //                                     TextSpan(
+  //                                       text: sucesosList[index].fecha,
+  //                                       style: TextStyle(
+  //                                           fontSize: 16, color: Colors.black),
+  //                                     ),
+  //                                   ],
+  //                                 ),
+  //                               ),
+  //                               SizedBox(width: 20),
+  //                               RichText(
+  //                                 text: TextSpan(
+  //                                   text: "Suceso atendido por " +
+  //                                       sucesosList[index].entidad,
+  //                                   style: TextStyle(
+  //                                       fontSize: 16, color: Colors.black),
+  //                                 ),
+  //                               ),
+  //                             ],
+  //                           ),
+  //                         ),
+  //                       ),
+  //                     );
+  //                   } else {
+  //                     return Card(
+  //                       child: Container(
+  //                         child: ListTile(
+  //                           // onTap: () {
+  //                           //   Navigator.push(
+  //                           //       context,
+  //                           //       MaterialPageRoute(
+  //                           //         builder: (context) => DetalleIncidencias(
+  //                           //           // creation: itemsList[index].creation,
+  //                           //           // reference: itemsList[index].reference ,
+  //                           //           // state: itemsList[index].state,
+  //                           //           // direction: itemsList[index].direction,
+  //                           //           // description: itemsList[index].description,
+  //                           //         ),
+  //                           //       ));
+  //                           // },
+  //                           title: Row(
+  //                             children: [
+  //                               RichText(
+  //                                 text: TextSpan(
+  //                                   text: sucesosList[index].fecha,
+  //                                   style: TextStyle(
+  //                                       fontSize: 16, color: Colors.black),
+  //                                 ),
+  //                               ),
+  //                               SizedBox(width: 20),
+  //                               RichText(
+  //                                 text: TextSpan(
+  //                                   children: <TextSpan>[
+  //                                     TextSpan(
+  //                                       text: "Incidente creado por " +
+  //                                           sucesosList[index].entidad,
+  //                                       style: TextStyle(
+  //                                           fontSize: 16, color: Colors.black),
+  //                                     ),
+  //                                     TextSpan(
+  //                                       text: "\nTipificación:",
+  //                                       style: TextStyle(
+  //                                           fontSize: 16,
+  //                                           fontWeight: FontWeight.bold,
+  //                                           color: Colors.black),
+  //                                     ),
+  //                                     TextSpan(
+  //                                       text:
+  //                                       "\n" + sucesosList[index].tipificacion,
+  //                                       style: TextStyle(
+  //                                           fontSize: 16, color: Colors.black),
+  //                                     ),
+  //                                     TextSpan(
+  //                                       text: "\nLocalización:",
+  //                                       style: TextStyle(
+  //                                           fontSize: 16,
+  //                                           fontWeight: FontWeight.bold,
+  //                                           color: Colors.black),
+  //                                     ),
+  //                                     TextSpan(
+  //                                       text:
+  //                                       "\n" + sucesosList[index].localizacion,
+  //                                       style: TextStyle(
+  //                                           fontSize: 16, color: Colors.black),
+  //                                     ),
+  //                                     TextSpan(
+  //                                       text: "\nAgencia asignada:",
+  //                                       style: TextStyle(
+  //                                           fontSize: 16,
+  //                                           fontWeight: FontWeight.bold,
+  //                                           color: Colors.black),
+  //                                     ),
+  //                                     TextSpan(
+  //                                       text: "\n" + sucesosList[index].agencia,
+  //                                       style: TextStyle(
+  //                                           fontSize: 16, color: Colors.black),
+  //                                     ),
+  //                                   ],
+  //                                 ),
+  //                               ),
+  //                             ],
+  //                           ),
+  //                         ),
+  //                       ),
+  //                     );
+  //                   }
+  //                 },
+  //               ),
+  //             ),
+  //           ],
+  //         );
+  //       });
+  // }
 
   Widget _portraitMode() {
       return Column(
