@@ -436,19 +436,6 @@ class _PlaceholderWidget extends State<PlaceholderWidget> {
                 return Card(
                   child: Container(
                     child: ListTile(
-                      // onTap: () {
-                      //   Navigator.push(
-                      //       context,
-                      //       MaterialPageRoute(
-                      //         builder: (context) => DetalleIncidencias(
-                      //           // creation: itemsList[index].creation,
-                      //           // reference: itemsList[index].reference ,
-                      //           // state: itemsList[index].state,
-                      //           // direction: itemsList[index].direction,
-                      //           // description: itemsList[index].description,
-                      //         ),
-                      //       ));
-                      // },
                       title: Row(
                         children: [
                           RichText(
@@ -480,19 +467,7 @@ class _PlaceholderWidget extends State<PlaceholderWidget> {
                 return Card(
                   child: Container(
                     child: ListTile(
-                      // onTap: () {
-                      //   Navigator.push(
-                      //       context,
-                      //       MaterialPageRoute(
-                      //         builder: (context) => DetalleIncidencias(
-                      //           // creation: itemsList[index].creation,
-                      //           // reference: itemsList[index].reference ,
-                      //           // state: itemsList[index].state,
-                      //           // direction: itemsList[index].direction,
-                      //           // description: itemsList[index].description,
-                      //         ),
-                      //       ));
-                      // },
+
                       title: Row(
                         children: [
                           RichText(
