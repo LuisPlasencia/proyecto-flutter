@@ -50,7 +50,6 @@ class _PlaceholderWidgetTresState extends State<PlaceholderWidgetTres> {
   @override
   Widget build(BuildContext context) {
     // Mostramos el botón para enviar la imagen si existe
-    if(_image == null){
       return Scaffold(
         body: Column(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -75,6 +74,5 @@ class _PlaceholderWidgetTresState extends State<PlaceholderWidgetTres> {
           child: Icon(Icons.add_a_photo),
         ),
       );
-    }
   }
 }
