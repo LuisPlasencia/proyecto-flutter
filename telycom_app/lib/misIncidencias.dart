@@ -14,6 +14,7 @@ import "ElementList.dart";
 import "Mapa.dart";
 
 import 'package:telycom_app/lat_long_bloc.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 void main() => runApp(MisIncidencias());
 
@@ -112,6 +113,7 @@ class _MisIncidenciasState extends State<MisIncidencias> {
 
 
         ExpansionTile(
+            childrenPadding: EdgeInsets.only(bottom: 5),
             title: Text("Incidencias"),
             backgroundColor: Colors.amberAccent[100],
             children: [
@@ -220,7 +222,9 @@ class _MisIncidenciasState extends State<MisIncidencias> {
                     return Text("${snapshot.error}");
                   }
                   // By default, show a loading spinner.
-                  return CircularProgressIndicator();
+                  return Container(
+                    padding: EdgeInsets.only(bottom:15),
+                      child: SpinKitHourGlass(color: Colors.white));
                 },
               ),
 
@@ -253,8 +257,6 @@ class _MisIncidenciasState extends State<MisIncidencias> {
               new MarkerLayerOptions(
                 markers: _markers,
               ),
-
-
             ],
           ),
         ),
