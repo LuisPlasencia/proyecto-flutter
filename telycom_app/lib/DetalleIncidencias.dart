@@ -128,9 +128,12 @@ class _DetalleIncidencias extends State<DetalleIncidencias> {
             textTheme: Theme.of(context)
                 .textTheme
                 .copyWith(caption: new TextStyle(color: Colors.yellow))),
+
         // sets the inactive color of the `BottomNavigationBar`
         child: new BottomNavigationBar(
           type: BottomNavigationBarType.fixed,
+          unselectedItemColor: Colors.yellow,
+          selectedItemColor: Colors.white,
           currentIndex: _currentIndex,
           onTap: onTabTapped,
           items: [
