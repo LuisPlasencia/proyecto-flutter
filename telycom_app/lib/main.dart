@@ -44,7 +44,7 @@ class _FirstRouteState extends State<FirstRoute> {
 
     child: Scaffold(
       //propiedad que utilizamos para que no se cambie el tamaño de la columna al abrir el teclado
-      resizeToAvoidBottomPadding: false,
+      resizeToAvoidBottomInset: false,
       body:
       Center(
         child: Column(

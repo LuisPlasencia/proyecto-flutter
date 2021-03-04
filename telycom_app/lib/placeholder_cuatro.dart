@@ -3,7 +3,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:telycom_app/ElementList.dart';
 import 'package:telycom_app/SucesosList.dart';
-import 'package:flutter_map_arcgis/flutter_map_arcgis.dart';
 import 'package:flutter_map/flutter_map.dart';
 import "misIncidencias.dart";
 import 'package:flutter/services.dart';
@@ -105,7 +104,6 @@ class _PlaceholderWidgetCuatro extends State<PlaceholderWidgetCuatro> {
           minZoom: 10,
           center: LatLng(latitud, longitud),
           zoom: 12.0,
-          plugins: [EsriPlugin()],
         ),
 
 
@@ -164,22 +162,7 @@ class _PlaceholderWidgetCuatro extends State<PlaceholderWidgetCuatro> {
           //   },
           // ),
 
-          FeatureLayerOptions(
-            url: "https://services8.arcgis.com/1p2fLWyjYVpl96Ty/arcgis/rest/services/Forest_Service_Recreation_Opportunities/FeatureServer/0",
-            geometryType: "point",
-            render: (dynamic attributes) {
-              // You can render by attribute
-              return Marker(
-                point: LatLng(28.096288, -15.412257),
-                width: 30.0,
-                height: 30.0,
-                builder: (ctx) => Icon(Icons.pin_drop),
-              );
-            },
-            onTap: (attributes, LatLng location) {
-              print(attributes);
-            },
-          ),
+
         ],
       );
 
