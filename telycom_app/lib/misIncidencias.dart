@@ -133,21 +133,21 @@ class _MisIncidenciasState extends State<MisIncidencias> {
                             child: Container(
                               color: colorTarjeta,
                               child: ListTile(
-                                // onTap: () {
-                                //   Navigator.push(
-                                //       context,
-                                //       MaterialPageRoute(
-                                //         builder: (context) => DetalleIncidencias(
-                                //           creation: itemsList[index].creation,
-                                //           reference: itemsList[index].reference,
-                                //           state: itemsList[index].state,
-                                //           direction: itemsList[index].direction,
-                                //           description: itemsList[index].description,
-                                //           latitud: itemsList[index].latitud,
-                                //           longitud: itemsList[index].longitud,
-                                //         ),
-                                //       ));
-                                // },
+                                onTap: () {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => DetalleIncidencias(
+                                          creation: itemsList[index].creation,
+                                          reference: itemsList[index].reference,
+                                          state: itemsList[index].state,
+                                          direction: itemsList[index].direction,
+                                          description: itemsList[index].description,
+                                          latitud: itemsList[index].latitud,
+                                          longitud: itemsList[index].longitud,
+                                        ),
+                                      ));
+                                },
                                 title: RichText(
                                   // le pasamos la posicion para poder testearlo luego!
                                   key: Key("listElement" + index.toString()),
@@ -177,37 +177,37 @@ class _MisIncidenciasState extends State<MisIncidencias> {
                                     ],
                                   ),
                                 ),
-                                // leading: GestureDetector(
-                                //   key: Key("centerInMap" + index.toString()),
-                                //   onTap: () {
-                                //     setState(() {
-                                //       var latlng = LatLng(itemsList[index].latitud,
-                                //           itemsList[index].longitud);
-                                //       final snackBar = SnackBar(
-                                //           content: Text(latlng.latitude.toString() +
-                                //               " " +
-                                //               latlng.longitude.toString()));
-                                //       Scaffold.of(context).showSnackBar(snackBar);
-                                //       double zoom = 12.0; //the zoom you want
-                                //       _mapController.move(latlng, zoom);
-                                //     });
-                                //   },
-                                //   child: ClipRRect(
-                                //     borderRadius: BorderRadius.circular(60.0),
-                                //     child: Container(
-                                //       margin: const EdgeInsets.only(
-                                //           top: 5.0, bottom: 5.0),
-                                //       height: 70.0,
-                                //       width: 60.0,
-                                //       color: Colors.blue,
-                                //       child: Icon(
-                                //         Icons.place,
-                                //         color: Colors.black,
-                                //         size: 30.0,
-                                //       ),
-                                //     ),
-                                //   ),
-                                // ),
+                                leading: GestureDetector(
+                                  key: Key("centerInMap" + index.toString()),
+                                  onTap: () {
+                                    setState(() {
+                                      var latlng = LatLng(itemsList[index].latitud,
+                                          itemsList[index].longitud);
+                                      final snackBar = SnackBar(
+                                          content: Text(latlng.latitude.toString() +
+                                              " " +
+                                              latlng.longitude.toString()));
+                                      Scaffold.of(context).showSnackBar(snackBar);
+                                      double zoom = 12.0; //the zoom you want
+                                      _mapController.move(latlng, zoom);
+                                    });
+                                  },
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(60.0),
+                                    child: Container(
+                                      margin: const EdgeInsets.only(
+                                          top: 5.0, bottom: 5.0),
+                                      height: 70.0,
+                                      width: 60.0,
+                                      color: Colors.blue,
+                                      child: Icon(
+                                        Icons.place,
+                                        color: Colors.black,
+                                        size: 30.0,
+                                      ),
+                                    ),
+                                  ),
+                                ),
                               ),
                             ),
                           );
