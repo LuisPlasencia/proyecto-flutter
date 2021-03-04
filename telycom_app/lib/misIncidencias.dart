@@ -7,6 +7,8 @@ import 'package:latlong/latlong.dart';
 import 'package:telycom_app/DetalleIncidencias.dart';
 import 'package:geolocator/geolocator.dart';
 import 'dart:developer' as developer;
+import 'Album.dart';
+import 'package:telycom_app/llamarServicio.dart';
 
 import "ElementList.dart";
 import "Mapa.dart";
@@ -21,6 +23,7 @@ class MisIncidencias extends StatefulWidget {
 }
 
 class _MisIncidenciasState extends State<MisIncidencias> {
+  Future<List<Album>> futureAlbum;
   List<ElementList> itemsList = [
     ElementList('12:45 05/02/21', 'LPA21/0011', 'No Atendido', 'Las Palmas G.C.', 'Atacascos', 28.0713516, -15.45598),
     ElementList('12:45 05/02/21', 'LPA21/0011', 'Atendido', 'Las Palmas G.C.', 'Accidentes de coche', 28.114198, -15.425447),
@@ -106,105 +109,121 @@ class _MisIncidenciasState extends State<MisIncidencias> {
   Widget _portraitMode() {
     return Column(
       children: [
+
+
         ExpansionTile(
             title: Text("Incidencias"),
             backgroundColor: Colors.amberAccent[100],
             children: [
-              Container(
-                height: 200,
-                child: ListView.builder(
-                  itemCount: itemsList.length,
-                  itemBuilder: (context, index) {
-                    if (itemsList[index].state == "Atendido") {
-                      colorTarjeta = Colors.green[400];
-                    } else {
-                      colorTarjeta = Colors.red[400];
-                    }
-                    return Card(
-                      child: Container(
-                        color: colorTarjeta,
-                        child: ListTile(
-                          onTap: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => DetalleIncidencias(
-                                    creation: itemsList[index].creation,
-                                    reference: itemsList[index].reference,
-                                    state: itemsList[index].state,
-                                    direction: itemsList[index].direction,
-                                    description: itemsList[index].description,
-                                    latitud: itemsList[index].latitud,
-                                    longitud: itemsList[index].longitud,
+              FutureBuilder<List<Album>>(
+                future: futureAlbum,
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    return Container(
+                      height: 200,
+                      child: ListView.builder(
+                        itemCount: snapshot.data.length,
+                        itemBuilder: (context, index) {
+                          // if (itemsList[index].state == "Atendido") {
+                          //   colorTarjeta = Colors.green[400];
+                          // } else {
+                            colorTarjeta = Colors.red[400];
+                          // }
+                          return Card(
+                            child: Container(
+                              color: colorTarjeta,
+                              child: ListTile(
+                                // onTap: () {
+                                //   Navigator.push(
+                                //       context,
+                                //       MaterialPageRoute(
+                                //         builder: (context) => DetalleIncidencias(
+                                //           creation: itemsList[index].creation,
+                                //           reference: itemsList[index].reference,
+                                //           state: itemsList[index].state,
+                                //           direction: itemsList[index].direction,
+                                //           description: itemsList[index].description,
+                                //           latitud: itemsList[index].latitud,
+                                //           longitud: itemsList[index].longitud,
+                                //         ),
+                                //       ));
+                                // },
+                                title: RichText(
+                                  // le pasamos la posicion para poder testearlo luego!
+                                  key: Key("listElement" + index.toString()),
+                                  text: TextSpan(
+                                    children: <TextSpan>[
+                                      TextSpan(
+                                          text: snapshot.data[index].title,
+                                          style: TextStyle(color: Colors.white)),
+                                      TextSpan(
+                                          text: " | ",
+                                          style: TextStyle(color: Colors.deepOrange)),
+                                      TextSpan(
+                                          text: "itemsList[index].reference",
+                                          style: TextStyle(color: Colors.white)),
+                                      TextSpan(
+                                          text: " | ",
+                                          style: TextStyle(color: Colors.deepOrange)),
+                                      TextSpan(
+                                          text: "itemsList[index].state",
+                                          style: TextStyle(color: Colors.white)),
+                                      TextSpan(
+                                          text: " | ",
+                                          style: TextStyle(color: Colors.deepOrange)),
+                                      TextSpan(
+                                          text: "itemsList[index].direction",
+                                          style: TextStyle(color: Colors.white)),
+                                    ],
                                   ),
-                                ));
-                          },
-                          title: RichText(
-                            // le pasamos la posicion para poder testearlo luego!
-                            key: Key("listElement" + index.toString()),
-                            text: TextSpan(
-                              children: <TextSpan>[
-                                TextSpan(
-                                    text: itemsList[index].creation,
-                                    style: TextStyle(color: Colors.white)),
-                                TextSpan(
-                                    text: " | ",
-                                    style: TextStyle(color: Colors.deepOrange)),
-                                TextSpan(
-                                    text: itemsList[index].reference,
-                                    style: TextStyle(color: Colors.white)),
-                                TextSpan(
-                                    text: " | ",
-                                    style: TextStyle(color: Colors.deepOrange)),
-                                TextSpan(
-                                    text: itemsList[index].state,
-                                    style: TextStyle(color: Colors.white)),
-                                TextSpan(
-                                    text: " | ",
-                                    style: TextStyle(color: Colors.deepOrange)),
-                                TextSpan(
-                                    text: itemsList[index].direction,
-                                    style: TextStyle(color: Colors.white)),
-                              ],
-                            ),
-                          ),
-                          leading: GestureDetector(
-                            key: Key("centerInMap" + index.toString()),
-                            onTap: () {
-                              setState(() {
-                                var latlng = LatLng(itemsList[index].latitud,
-                                    itemsList[index].longitud);
-                                final snackBar = SnackBar(
-                                    content: Text(latlng.latitude.toString() +
-                                        " " +
-                                        latlng.longitude.toString()));
-                                Scaffold.of(context).showSnackBar(snackBar);
-                                double zoom = 12.0; //the zoom you want
-                                _mapController.move(latlng, zoom);
-                              });
-                            },
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(60.0),
-                              child: Container(
-                                margin: const EdgeInsets.only(
-                                    top: 5.0, bottom: 5.0),
-                                height: 70.0,
-                                width: 60.0,
-                                color: Colors.blue,
-                                child: Icon(
-                                  Icons.place,
-                                  color: Colors.black,
-                                  size: 30.0,
                                 ),
+                                // leading: GestureDetector(
+                                //   key: Key("centerInMap" + index.toString()),
+                                //   onTap: () {
+                                //     setState(() {
+                                //       var latlng = LatLng(itemsList[index].latitud,
+                                //           itemsList[index].longitud);
+                                //       final snackBar = SnackBar(
+                                //           content: Text(latlng.latitude.toString() +
+                                //               " " +
+                                //               latlng.longitude.toString()));
+                                //       Scaffold.of(context).showSnackBar(snackBar);
+                                //       double zoom = 12.0; //the zoom you want
+                                //       _mapController.move(latlng, zoom);
+                                //     });
+                                //   },
+                                //   child: ClipRRect(
+                                //     borderRadius: BorderRadius.circular(60.0),
+                                //     child: Container(
+                                //       margin: const EdgeInsets.only(
+                                //           top: 5.0, bottom: 5.0),
+                                //       height: 70.0,
+                                //       width: 60.0,
+                                //       color: Colors.blue,
+                                //       child: Icon(
+                                //         Icons.place,
+                                //         color: Colors.black,
+                                //         size: 30.0,
+                                //       ),
+                                //     ),
+                                //   ),
+                                // ),
                               ),
                             ),
-                          ),
-                        ),
+                          );
+                        },
                       ),
                     );
-                  },
-                ),
+
+                      // Text(snapshot.data.title);
+                  } else if (snapshot.hasError) {
+                    return Text("${snapshot.error}");
+                  }
+                  // By default, show a loading spinner.
+                  return CircularProgressIndicator();
+                },
               ),
+
             ]),
         Flexible(
           child: FlutterMap(
@@ -421,6 +440,8 @@ class _MisIncidenciasState extends State<MisIncidencias> {
   @override
   void initState() {
     super.initState();
+    futureAlbum = llamarServicio.fetchAlbum();
+
     posicionActual = _determinePosition();
     developer.log('log me', name: 'my.app.category');
 

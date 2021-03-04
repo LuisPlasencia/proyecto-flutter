@@ -3,6 +3,8 @@ import "misIncidencias.dart";
 import 'package:flutter/services.dart';
 
 
+
+
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget{
@@ -25,6 +27,11 @@ class _FirstRouteState extends State<FirstRoute> {
 
   final TextEditingController textFieldController = TextEditingController();
   final TextEditingController textFieldController2 = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -58,6 +65,7 @@ class _FirstRouteState extends State<FirstRoute> {
                 image: AssetImage('images/logo.png'),
               )
             ),
+
 
             Column(
               children: [
