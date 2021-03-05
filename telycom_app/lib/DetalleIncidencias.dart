@@ -139,20 +139,20 @@ class _DetalleIncidencias extends State<DetalleIncidencias> {
           items: [
             new BottomNavigationBarItem(
               icon: new Icon(Icons.wysiwyg),
-              title: new Text("Sucesos"),
+              label: 'Sucesos',
             ),
             new BottomNavigationBarItem(
               icon: new Icon(Icons.add_comment),
-              title: new Text("Mensaje"),
+              label: 'Mensaje',
 
             ),
             new BottomNavigationBarItem(
               icon: new Icon(Icons.add_photo_alternate),
-              title: new Text("Imagen"),
+              label: 'Imagen',
             ),
             new BottomNavigationBarItem(
               icon: new Icon(Icons.add_location),
-              title: new Text("Mapa"),
+              label: 'Mapa',
             ),
           ],
         ),
