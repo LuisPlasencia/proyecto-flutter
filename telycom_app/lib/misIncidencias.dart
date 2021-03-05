@@ -8,7 +8,7 @@ import 'package:telycom_app/DetalleIncidencias.dart';
 import 'package:geolocator/geolocator.dart';
 import 'dart:developer' as developer;
 import 'Album.dart';
-import 'package:telycom_app/llamarServicio.dart';
+import 'package:telycom_app/ServiceCall.dart';
 
 import "ElementList.dart";
 import "Mapa.dart";
@@ -17,6 +17,17 @@ import 'package:telycom_app/lat_long_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 void main() => runApp(MisIncidencias());
+
+class MyAppMisIncidencias extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      title: 'MisIncidencias',
+      home: MisIncidencias(),
+    );
+  }
+}
 
 class MisIncidencias extends StatefulWidget {
   @override
@@ -442,7 +453,7 @@ class _MisIncidenciasState extends State<MisIncidencias> {
   @override
   void initState() {
     super.initState();
-    futureAlbum = llamarServicio.fetchAlbum();
+    futureAlbum = ServiceCall.fetchAlbum();
 
     posicionActual = _determinePosition();
     developer.log('log me', name: 'my.app.category');

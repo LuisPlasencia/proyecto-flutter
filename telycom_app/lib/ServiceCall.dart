@@ -2,10 +2,11 @@ import 'Album.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
-class llamarServicio{
+class ServiceCall{
   static const String url = 'https://jsonplaceholder.typicode.com/posts';
 
   static Future<List<Album>> fetchAlbum() async {
+
     final response = await http.get(Uri.parse(url));
 
     if (response.statusCode == 200) {
