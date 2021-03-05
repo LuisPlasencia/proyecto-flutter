@@ -20,21 +20,21 @@ class PlaceholderWidgetDos extends StatelessWidget {
          ),
         ),
 
-        RaisedButton(
-          color: Colors.blue,
-          shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(18.0),
-              side: BorderSide(color: Colors.black)
+        ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            primary: Colors.blue,
+            onPrimary: Colors.white,
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(18.0),
+                side: BorderSide(color: Colors.black)
+            ),
+            padding: EdgeInsets.only(left: 50, right:50, top: 10, bottom: 10),
           ),
-          padding: EdgeInsets.only(left: 50, right:50, top: 10, bottom: 10),
-          child: Text('Enviar', style: TextStyle(fontSize: 26, color: Colors.white)),
+          child: Text('Entrar', style: TextStyle(fontSize: 26, color: Colors.white)),
           onPressed: () {
-            // Navigator.push(
-            //   context,
-            //   MaterialPageRoute(builder: (context) => MisIncidencias()),
-            // );
           },
         ),
+
       ],
     );
   }

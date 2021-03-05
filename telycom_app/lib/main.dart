@@ -1,9 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'AuthCall.dart';
+import 'Token.dart';
 import "misIncidencias.dart";
 import 'package:flutter/services.dart';
 
 
 
+import 'dart:async';
+import 'dart:convert';
+
+import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 
 void main() => runApp(MyApp());
 
@@ -27,11 +35,18 @@ class _FirstRouteState extends State<FirstRoute> {
 
   final TextEditingController textFieldController = TextEditingController();
   final TextEditingController textFieldController2 = TextEditingController();
+  Future<Token> futureToken;
+  String usuario = "";
+  bool cargando = false;
+
 
   @override
   void initState() {
     super.initState();
+    futureToken = AuthCall.fetchToken(usuario);
+
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -108,22 +123,95 @@ class _FirstRouteState extends State<FirstRoute> {
               ],
             ),
 
+            cargando ? FutureBuilder<Token>(
+              future: futureToken,
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  return Text(
+                      snapshot.data.body
+                  );
+                } else if (snapshot.hasError) {
+                  final snackbar = SnackBar(
+                      backgroundColor: Colors.yellow,
+                      content: Text(
+                        "Error 202",
+                        style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
+                      ));
+
+                  ScaffoldMessenger.of(context).showSnackBar(snackbar);
+
+                  // return Text("${snapshot.error}");
+                }
+                // By default, show a loading spinner.
+                return Container(
+                    padding: EdgeInsets.only(bottom:15),
+                    child: SpinKitHourGlass(color: Colors.black));
+              },
+            ) : SizedBox(),
+
+
+            // FutureBuilder<Token>(
+            //   future: futureToken,
+            //   builder: (context, snapshot) {
+            //     if (snapshot.hasData) {
+            //       return Text(
+            //         snapshot.data.body
+            //       );
+            //     } else if (snapshot.hasError) {
+            //       return Text("${snapshot.error}");
+            //     }
+            //     // By default, show a loading spinner.
+            //     return Container(
+            //         padding: EdgeInsets.only(bottom:15),
+            //         child: SpinKitHourGlass(color: Colors.white));
+            //   },
+            // ),
+
+
+
+
 
             Container(
               // margin: const EdgeInsets.only(bottom: 80.0),
-              child: RaisedButton(
-                color: Colors.blue,
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(18.0),
-                    side: BorderSide(color: Colors.black)
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  primary: Colors.blue,
+                  onPrimary: Colors.white,
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(18.0),
+                      side: BorderSide(color: Colors.black)
+                  ),
+                  padding: EdgeInsets.only(left: 50, right:50, top: 10, bottom: 10),
                 ),
-                padding: EdgeInsets.only(left: 50, right:50, top: 10, bottom: 10),
                 child: Text('Entrar', style: TextStyle(fontSize: 26, color: Colors.white)),
                 onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => MisIncidencias()),
+
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => MisIncidencias()),
                   );
+
+                  // textoError = 'horrible';
+                  setState(() {
+                    // cargando = true;
+                  });
+
+                  // FutureBuilder<Token>(
+                  //   future: futureToken,
+                  //   builder: (context, snapshot) {
+                  //     if (snapshot.hasData) {
+                  //         Navigator.push(
+                  //           context,
+                  //           MaterialPageRoute(builder: (context) => MisIncidencias()),
+                  //       );
+                  //     } else if (snapshot.hasError) {
+                  //       return Text("${snapshot.error}");
+                  //     }
+                  //     // By default, show a loading spinner.
+                  //     return Container(
+                  //         padding: EdgeInsets.only(bottom:15),
+                  //         child: SpinKitHourGlass(color: Colors.white));
+                  //   },
+                  // );
+
                 },
               ),
             ),
@@ -134,38 +222,5 @@ class _FirstRouteState extends State<FirstRoute> {
     );
   }
 }
-
-// class FirstRoute extends StatelessWidget {
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       body:
-//       Align(
-//         alignment: Alignment.bottomCenter,
-//         child:
-//         Container(
-//           margin: const EdgeInsets.only(bottom: 80.0),
-//           child: RaisedButton(
-//             color: Colors.blue,
-//             shape: RoundedRectangleBorder(
-//                 borderRadius: BorderRadius.circular(18.0),
-//                 side: BorderSide(color: Colors.black)
-//             ),
-//             padding: EdgeInsets.only(left: 50, right:50, top: 10, bottom: 10),
-//             child: Text('Entrar', style: TextStyle(fontSize: 26, color: Colors.white)),
-//             onPressed: () {
-//               Navigator.push(
-//                 context,
-//                 MaterialPageRoute(builder: (context) => MisIncidencias()),
-//               );
-//             },
-//           ),
-//         ),
-//       ),
-//
-//     );
-//   }
-// }
-
 
 

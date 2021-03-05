@@ -26,12 +26,12 @@ class DetalleIncidencias extends StatefulWidget {
   DetalleIncidencias(
       {Key key,
       @required this.state,
-      this.creation,
-      this.reference,
-      this.direction,
-      this.description,
-      this.latitud,
-      this.longitud})
+      @required this.creation,
+      @required this.reference,
+      @required this.direction,
+      @required this.description,
+      @required this.latitud,
+      @required this.longitud})
       : super(key: key);
 
   @override
