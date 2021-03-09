@@ -41,24 +41,20 @@ void main() {
 
     // Create the Finders.
     final textField1 = find.byKey(Key('user'));
-    final textField2 = find.byKey(Key('password'));
     final imagen = find.byType(Image);
     final boton = find.byType(ElevatedButton);
 
     final textoTextField1 = find.text('Usuario');
-    final textoTextField2 = find.text('Contraseña');
     final textoBoton = find.text('Entrar');
 
 
     // Use the `findsOneWidget` matcher provided by flutter_test to verify
     // that the Text widgets appear exactly once in the widget tree.
     expect(textField1, findsOneWidget);
-    expect(textField2, findsOneWidget);
     expect(imagen, findsOneWidget);
     expect(boton, findsOneWidget);
 
     expect(textoTextField1, findsOneWidget);
-    expect(textoTextField2, findsOneWidget);
     expect(textoBoton, findsOneWidget);
   });
 
@@ -79,7 +75,6 @@ void main() {
     final lista = find.byType(ListView);
 
     final textoTextField1 = find.text('Usuario');
-    final textoTextField2 = find.text('Contraseña');
     final textoBoton = find.text('Entrar');
 
 
@@ -95,23 +90,19 @@ void main() {
     // expect(boton, findsOneWidget);
 
     // expect(textoTextField1, findsOneWidget);
-    // expect(textoTextField2, findsOneWidget);
     // expect(textoBoton, findsOneWidget);
   });
 
 
-  testWidgets('Test 2: Poniendo texto en el textfield y contraseña', (WidgetTester tester) async {
+  testWidgets('Test 2: Poniendo texto en el textfield', (WidgetTester tester) async {
     // Build our app and trigger a frame.
     final user = find.byKey(ValueKey("user"));
-    final password = find.byKey(ValueKey("password"));
 
     await tester.pumpWidget(MaterialApp(home:FirstRoute()));
     await tester.enterText(user, "holahola");
-    await tester.enterText(password, "caca");
     await tester.pump();
 
     expect(find.text("holahola"), findsOneWidget);
-    expect(find.text("caca"), findsOneWidget);
   });
 
   testWidgets('Test 3: Pasando a la pantalla de MisIncidencias', (WidgetTester tester) async {

@@ -6,7 +6,6 @@ import "misIncidencias.dart";
 import 'package:flutter/services.dart';
 import 'dart:async';
 import 'package:flutter/material.dart';
-
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget{
