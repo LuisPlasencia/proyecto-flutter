@@ -6,6 +6,8 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong/latlong.dart';
 import 'package:telycom_app/DetalleIncidencias.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:telycom_app/Logout.dart';
+import 'package:telycom_app/LogoutCall.dart';
 import 'dart:developer' as developer;
 import 'Album.dart';
 import 'package:telycom_app/ServiceCall.dart';
@@ -30,11 +32,21 @@ class MyAppMisIncidencias extends StatelessWidget {
 }
 
 class MisIncidencias extends StatefulWidget {
+  // Para recuperar el Token
+  final String tk;
+  MisIncidencias({Key key, @required this.tk}) : super(key: key);
+
   @override
-  _MisIncidenciasState createState() => _MisIncidenciasState();
+  _MisIncidenciasState createState() => _MisIncidenciasState(tk);
+
 }
 
 class _MisIncidenciasState extends State<MisIncidencias> {
+
+  Future<Logout> futureLogout;
+  String tk;
+  _MisIncidenciasState(this.tk);
+
   Future<List<Album>> futureAlbum;
   List<ElementList> itemsList = [
     ElementList('12:45 05/02/21', 'LPA21/0011', 'No Atendido', 'Las Palmas G.C.', 'Atacascos', 28.0713516, -15.45598),
@@ -53,14 +65,13 @@ class _MisIncidenciasState extends State<MisIncidencias> {
   Position posicionado;
   double latitudCenter = 28.1364; //28.0713516;
   double longitudCenter = 120.29; // -15.45598;
-
   MapController _mapController = MapController();
 
   Future<bool> _onBackPressed() {
     return showDialog(
           context: context,
           builder: (context) => new AlertDialog(
-            title: new Text('Are you sure?'),
+            title: new Text(tk),
             content: new Text('Do you want to exit an App'),
             actions: <Widget>[
               new GestureDetector(
@@ -73,6 +84,7 @@ class _MisIncidenciasState extends State<MisIncidencias> {
                 key: Key("YES"),
                 onTap: () {
                   latLongBloc.dispose();
+                  futureLogout = LogoutCall.fetchLogout(tk);
                   Navigator.of(context).pop(true);
                 },
                 child: Text("YES"),

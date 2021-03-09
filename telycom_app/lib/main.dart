@@ -28,6 +28,7 @@ class FirstRoute extends StatefulWidget {
 class _FirstRouteState extends State<FirstRoute> {
 
   final TextEditingController textFieldController = TextEditingController();
+
   Future<Token> futureToken;
   String usuario = "lolo";
   bool cargando = false;
@@ -122,7 +123,7 @@ class _FirstRouteState extends State<FirstRoute> {
                           if (snapshot.hasData) {
                             if (snapshot.data.statusTelyAPI == '200' || snapshot.data.statusTelyAPI == '202' || snapshot.data.statusTelyAPI == '203') {
                                 WidgetsBinding.instance.addPostFrameCallback((_) {
-                                  Navigator.push(context, MaterialPageRoute(builder: (context) => MisIncidencias())).then((value) {
+                                  Navigator.push(context, MaterialPageRoute(builder: (context) => MisIncidencias(tk: snapshot.data.tk,))).then((value) {
                                     setState(() {
                                       cargando = false;
                                       _isButtonDisabled = false;
