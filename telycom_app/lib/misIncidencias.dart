@@ -110,16 +110,14 @@ class _MisIncidenciasState extends State<MisIncidencias> {
 
     permission = await Geolocator.checkPermission();
     if (permission == LocationPermission.deniedForever) {
-      return Future.error(
-          'Location permissions are permantly denied, we cannot request permissions.');
+      return Future.error('Location permissions are permantly denied, we cannot request permissions.');
     }
 
     if (permission == LocationPermission.denied) {
       permission = await Geolocator.requestPermission();
       if (permission != LocationPermission.whileInUse &&
           permission != LocationPermission.always) {
-        return Future.error(
-            'Location permissions are denied (actual value: $permission).');
+        return Future.error('Location permissions are denied (actual value: $permission).');
       }
     }
 
@@ -479,8 +477,8 @@ class _MisIncidenciasState extends State<MisIncidencias> {
 
     latLongBloc.updateLatLong(LatLng(latitudCenter, longitudCenter));
 
-    _markers = new List<Marker>();
-    _points = new List<LatLng>();
+    _markers = <Marker>[];
+    _points = <LatLng>[];
 
     for (var i = 0; i < itemsList.length; i++) {
       _points.add(LatLng(itemsList[i].latitud, itemsList[i].longitud));

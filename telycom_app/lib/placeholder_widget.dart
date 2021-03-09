@@ -88,7 +88,6 @@ class _PlaceholderWidget extends State<PlaceholderWidget> {
   Widget _landscapeMode() {
       return OrientationBuilder(
         builder: (context, orientation){
-          final screenWidth = MediaQuery.of(context).size.width/3;
           return Container(
             margin: EdgeInsets.only(top: 5),
             child: new StaggeredGridView.countBuilder(

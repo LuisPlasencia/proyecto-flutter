@@ -127,7 +127,6 @@ class _PlaceholderWidgetCuatro extends State<PlaceholderWidgetCuatro> {
               ),
             ]
           ),
-
           // FeatureLayerOptions(
           //   url: "https://services.arcgis.com/P3ePLMYs2RVChkJx/arcgis/rest/services/USA_Congressional_Districts/FeatureServer/0",
           //   geometryType:"polygon",
@@ -161,8 +160,6 @@ class _PlaceholderWidgetCuatro extends State<PlaceholderWidgetCuatro> {
           //     print(attributes);
           //   },
           // ),
-
-
         ],
       );
 
