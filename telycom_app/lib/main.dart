@@ -36,15 +36,13 @@ class _FirstRouteState extends State<FirstRoute> {
   final TextEditingController textFieldController = TextEditingController();
   final TextEditingController textFieldController2 = TextEditingController();
   Future<Token> futureToken;
-  String usuario = "";
+  String usuario = "lolo";
   bool cargando = false;
 
 
   @override
   void initState() {
     super.initState();
-    futureToken = AuthCall.fetchToken(usuario);
-
   }
 
 
@@ -127,20 +125,42 @@ class _FirstRouteState extends State<FirstRoute> {
               future: futureToken,
               builder: (context, snapshot) {
                 if (snapshot.hasData) {
-                  return Text(
-                      snapshot.data.body
-                  );
+                  if(snapshot.data.statusTelyAPI == '200' || snapshot.data.statusTelyAPI == '202' || snapshot.data.statusTelyAPI == '203'){
+                    final snackbar = SnackBar(
+                        backgroundColor: Colors.yellow,
+                        content: Text(
+                          "Error: " + snapshot.data.statusTelyAPI,
+                          style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
+                        ));
+
+                    WidgetsBinding.instance.addPostFrameCallback((_){
+                      // Add Your Code here.
+                      ScaffoldMessenger.of(context).showSnackBar(snackbar);
+                    });
+                    return SizedBox();
+
+                  } else{
+                    final snackbar = SnackBar(
+                        backgroundColor: Colors.yellow,
+                        content: Text(
+                          "Error: " + snapshot.data.statusTelyAPI,
+                          style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
+                        ));
+
+                    ScaffoldMessenger.of(context).showSnackBar(snackbar);
+                  }
+
                 } else if (snapshot.hasError) {
                   final snackbar = SnackBar(
                       backgroundColor: Colors.yellow,
                       content: Text(
-                        "Error 202",
+                        snapshot.error.toString(),
                         style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
                       ));
 
-                  ScaffoldMessenger.of(context).showSnackBar(snackbar);
+                  // ScaffoldMessenger.of(context).showSnackBar(snackbar);
 
-                  // return Text("${snapshot.error}");
+                  return Text("${snapshot.error}");
                 }
                 // By default, show a loading spinner.
                 return Container(
@@ -185,14 +205,16 @@ class _FirstRouteState extends State<FirstRoute> {
                 ),
                 child: Text('Entrar', style: TextStyle(fontSize: 26, color: Colors.white)),
                 onPressed: () {
+                  futureToken = AuthCall.fetchToken(usuario);
+                  setState(() {
+                    cargando = true;
+                  });
 
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => MisIncidencias()),
-                  );
+                  // Navigator.push(context, MaterialPageRoute(builder: (context) => MisIncidencias()),
+                  // );
 
                   // textoError = 'horrible';
-                  setState(() {
-                    // cargando = true;
-                  });
+
 
                   // FutureBuilder<Token>(
                   //   future: futureToken,

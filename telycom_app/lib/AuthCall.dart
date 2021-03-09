@@ -3,13 +3,14 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 class AuthCall{
-  static const  String dominioTelyApiServer = '192.168.15.38';
-  static const  String licencia = ' ';
-  static const  String tipoAplicacion = ' ';
-  static const  String perfil = ' ';
+  static const  String dominioTelyApiServer = '';
+  static const  String licencia = '';
+  static const  String id = '';
+  static const  String perfil = '';
+  static const  String tipoAplicacion = '';
 
   static Future<Token> fetchToken(String usuario) async {
-    String url = 'https://' + dominioTelyApiServer + '/TelyApiServer/?l=' + licencia + '&ta=' + tipoAplicacion + '&p=' + perfil + '&usuario=' + usuario ;
+    String url = 'http://' + dominioTelyApiServer + '/TelyApiServer/?l=' + licencia + '&id=' + id + '&p=' + perfil + '&ta=' + tipoAplicacion + '&usuario=' + usuario ;
 
     final response = await http.get(Uri.parse(url));
 
@@ -28,11 +29,11 @@ class AuthCall{
         break;
       case 462: throw Exception('462: Nº de peticiones superado');
         break;
-      case 464: throw Exception('464: Error interno del Servidor');
+      case 464: throw Exception('464: La licencia no admite usuarios de terceros');
         break;
-      case 552: throw Exception('552: Error interno del servidor');
+      case 552: throw Exception('552: Error de acceso a base de datos');
         break;
-      case 553: throw Exception('553: Error interno del servidor');
+      case 553: throw Exception('553: Error de acceso a base de datos');
         break;
       default: throw Exception('Failed to load token');
     }
