@@ -35,10 +35,20 @@ class _FirstRouteState extends State<FirstRoute> {
   Future<Token> futureToken;
   String usuario = "lolo";
   bool cargando = false;
+  bool _isButtonDisabled;
 
   @override
   void initState() {
     super.initState();
+    _isButtonDisabled = false;
+  }
+
+  void _pulsandoEntrar(){
+    setState(() {
+      _isButtonDisabled = true;
+      futureToken = AuthCall.fetchToken(usuario);
+      cargando = true;
+    });
   }
 
   @override
@@ -109,6 +119,7 @@ class _FirstRouteState extends State<FirstRoute> {
                 ),
 
                 // Comprobando el loading
+
                 cargando ? FutureBuilder<Token>(
                         future: futureToken,
                         builder: (context, snapshot) {
@@ -117,8 +128,12 @@ class _FirstRouteState extends State<FirstRoute> {
                                 snapshot.data.statusTelyAPI == '202' ||
                                 snapshot.data.statusTelyAPI == '203') {
                               WidgetsBinding.instance.addPostFrameCallback((_) {
-                                Navigator.push(context, MaterialPageRoute(
-                                      builder: (context) => MisIncidencias()),);
+                                Navigator.push(context, MaterialPageRoute(builder: (context) => MisIncidencias())).then((value) {
+                                  setState(() {
+                                    cargando = false;
+                                    _isButtonDisabled = false;
+                                  });
+                                });
                               });
                               cargando = true;
                               return new Container(
@@ -161,6 +176,7 @@ class _FirstRouteState extends State<FirstRoute> {
                               height: 100,
                               padding: EdgeInsets.only(bottom: 15),
                               child: SpinKitHourGlass(color: Colors.black));
+
                         },
                       )
                     : new Container(
@@ -182,12 +198,7 @@ class _FirstRouteState extends State<FirstRoute> {
                     ),
                     child: Text('Entrar',
                         style: TextStyle(fontSize: 26, color: Colors.white)),
-                    onPressed: () {
-                      futureToken = AuthCall.fetchToken(usuario);
-                      setState(() {
-                        cargando = true;
-                      });
-                    },
+                      onPressed: _isButtonDisabled ? null : _pulsandoEntrar,
                   ),
                 ),
               ],
