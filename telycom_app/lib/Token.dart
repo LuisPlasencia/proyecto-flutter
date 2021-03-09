@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 class Token {
   final String statusTelyAPI;
   final String tk;

@@ -5,7 +5,7 @@ import 'dart:convert';
 class AuthCall{
   static const  String dominioTelyApiServer = '192.168.15.38';
   static const  String licencia = 'LicenciaTerceros';
-  static const String id = 'Puesto1';
+  static const  String id = 'Puesto1';
   static const  String perfil = 'TELYCALL_REMOTO';
   static const  String tipoAplicacion = 'TelyGES';
 

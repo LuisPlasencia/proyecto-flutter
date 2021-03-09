@@ -10,7 +10,7 @@ import 'package:telycom_app/Logout.dart';
 import 'package:telycom_app/LogoutCall.dart';
 import 'dart:developer' as developer;
 import 'Album.dart';
-import 'package:telycom_app/ServiceCall.dart';
+import 'package:telycom_app/ServiceCalzl.dart';
 
 import "ElementList.dart";
 import "Mapa.dart";
@@ -464,7 +464,7 @@ class _MisIncidenciasState extends State<MisIncidencias> {
   @override
   void initState() {
     super.initState();
-    futureAlbum = ServiceCall.fetchAlbum();
+    futureAlbum = ServiceCalzl.fetchAlbum();
 
     posicionActual = _determinePosition();
     developer.log('log me', name: 'my.app.category');

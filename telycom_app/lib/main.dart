@@ -30,7 +30,7 @@ class _FirstRouteState extends State<FirstRoute> {
   final TextEditingController textFieldController = TextEditingController();
 
   Future<Token> futureToken;
-  String usuario = "lolo";
+  String usuario = "";
   bool cargando = false;
   bool _isButtonDisabled;
   bool _isTextFieldEnable;
