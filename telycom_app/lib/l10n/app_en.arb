@@ -7,7 +7,60 @@
   "sBnoUserWarning": "You must enter a username",
   "@sBnoUserWarning": {
     "description": "Displays a warning when no user is typed in login screen"
+  },
+
+  "labelUser": "User",
+  "@labelUser": {
+    "description": "Label text at user textfield in Login"
+  },
+
+  "buttonSubmitLogin": "Login",
+  "@buttonEnterLogin": {
+    "description": "Submit button text at Login"
+  },
+
+  "sBErrorText": "Error",
+  "@sBErrorText": {
+    "description": "Error text at snackbar"
+  },
+
+  "renewButtonHint": "Renew",
+  "@srenewButtonHint": {
+    "description": "Text displayed when when hovering on the renew button"
+  },
+
+  "bNBI_events": "Events",
+  "@bNBI_events": {
+    "description": "Text displayed at Item1 of the button navigation bar"
+  },
+
+  "bNBI_message": "Message",
+  "@bNBI_message": {
+    "description": "Text displayed at Item2 of the button navigation bar"
+  },
+
+  "bNBI_image": "Image",
+  "@bNBI_image": {
+    "description": "Text displayed at Item3 of the button navigation bar"
+  },
+
+  "bNBI_map": "Map",
+  "@bNBI_map": {
+    "description": "Text displayed at Item4 of the button navigation bar"
+  },
+
+  "dialogExitAppTitle": "Do you want to exit the App?",
+  "@dialogExitAppTitle": {
+    "description": "Text displayed at showDialog when exiting the app"
+  },
+
+  "dialogExitAppYes": "YES",
+  "@dialogExitAppYes": {
+    "description": "Text displayed at showDialog when exiting the app"
+  },
+
+  "dialogExitAppNo": "NO",
+  "@dialogExitAppNo": {
+    "description": "Text displayed at showDialog when exiting the app"
   }
-
-
 }

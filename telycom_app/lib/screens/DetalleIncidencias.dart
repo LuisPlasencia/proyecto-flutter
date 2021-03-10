@@ -5,10 +5,24 @@ import 'package:telycom_app/screens/placeholder_cuatro.dart';
 import 'package:telycom_app/screens/placeholder_dos.dart';
 import 'package:telycom_app/screens/placeholder_tres.dart';
 import 'placeholder_widget.dart';
+import 'package:telycom_app/l10n/l10n.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 void main() {
   runApp(MaterialApp(
-    title: '',
+    localizationsDelegates: [
+      // ... app-specific localization delegate[s] here
+      // uncomment the line below after codegen
+      AppLocalizations.delegate,
+
+      GlobalMaterialLocalizations.delegate,
+      GlobalWidgetsLocalizations.delegate,
+      GlobalCupertinoLocalizations.delegate,
+    ],
+    supportedLocales: L10n.all,
+
+    title: 'IncidenciasDetail',
     home: DetalleIncidencias(),
   ));
 }
@@ -110,7 +124,7 @@ class _DetalleIncidencias extends State<DetalleIncidencias> {
           actions: <Widget>[
             IconButton(
               icon: const Icon(Icons.autorenew),
-              tooltip: 'Actualizar',
+              tooltip: AppLocalizations.of(context).renewButtonHint,
               // cuando lo mantenemos pulsado no saldra este texto
               onPressed: () {
 
@@ -139,20 +153,20 @@ class _DetalleIncidencias extends State<DetalleIncidencias> {
           items: [
             new BottomNavigationBarItem(
               icon: new Icon(Icons.wysiwyg),
-              label: 'Sucesos',
+              label: AppLocalizations.of(context).bNBI_events,
             ),
             new BottomNavigationBarItem(
               icon: new Icon(Icons.add_comment),
-              label: 'Mensaje',
+              label: AppLocalizations.of(context).bNBI_message,
 
             ),
             new BottomNavigationBarItem(
               icon: new Icon(Icons.add_photo_alternate),
-              label: 'Imagen',
+              label: AppLocalizations.of(context).bNBI_image,
             ),
             new BottomNavigationBarItem(
               icon: new Icon(Icons.add_location),
-              label: 'Mapa',
+              label: AppLocalizations.of(context).bNBI_map,
             ),
           ],
         ),

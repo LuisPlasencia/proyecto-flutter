@@ -6,14 +6,12 @@ import 'package:flutter/material.dart';
 
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:telycom_app/l10n/l10n.dart';
 import 'package:telycom_app/httpService/AuthCall.dart';
 import 'package:telycom_app/httpService/Token.dart';
-import 'package:telycom_app/l10n/l10n.dart';
+
 
 import 'MisIncidencias.dart';
-
-
-
 
 void main() => runApp(MyApp());
 
@@ -33,7 +31,7 @@ class MyApp extends StatelessWidget{
       supportedLocales: L10n.all,
 
       debugShowCheckedModeBanner: false,
-      title: 'Navigation Basics',
+      title: 'Login',
       home: FirstRoute(),
 
     );
@@ -141,7 +139,7 @@ class _FirstRouteState extends State<FirstRoute> {
                             decoration: InputDecoration(
                               prefixIcon: Icon(Icons.account_circle),
                               border: OutlineInputBorder(),
-                              labelText: 'Usuario',
+                              labelText: AppLocalizations.of(context).labelUser,
                             ),
                             style:TextStyle(
                               fontSize: 20,
@@ -161,7 +159,7 @@ class _FirstRouteState extends State<FirstRoute> {
                           ),
                           padding: EdgeInsets.only(left: 22, right:22, top: 10, bottom: 10),
                         ),
-                        child: Text('Entrar', style: TextStyle(fontSize: 22, color: Colors.white)),
+                        child: Text(AppLocalizations.of(context).buttonSubmitLogin, style: TextStyle(fontSize: 22, color: Colors.white)),
                         //null cuando isbuttondisabled es true y pulsandoEntrar cuando es false
                         onPressed: _isButtonDisabled ? null : _pulsandoEntrar,
                       ),
@@ -194,7 +192,7 @@ class _FirstRouteState extends State<FirstRoute> {
                                   final snackbar = SnackBar(
                                       backgroundColor: Colors.yellow,
                                       content: Text(
-                                        "Error: " + snapshot.data.statusTelyAPI,
+                                        AppLocalizations.of(context).sBErrorText + ": " + snapshot.data.statusTelyAPI,
                                         style: TextStyle(
                                             color: Colors.red,
                                             fontWeight: FontWeight.bold),

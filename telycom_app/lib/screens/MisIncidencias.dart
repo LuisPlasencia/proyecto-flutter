@@ -15,6 +15,9 @@ import '../ElementList.dart';
 
 import 'package:telycom_app/lat_long_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:telycom_app/l10n/l10n.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import 'DetalleIncidencias.dart';
 import 'Login.dart';
@@ -25,6 +28,17 @@ class MyAppMisIncidencias extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      localizationsDelegates: [
+        // ... app-specific localization delegate[s] here
+        // uncomment the line below after codegen
+        AppLocalizations.delegate,
+
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: L10n.all,
+
       debugShowCheckedModeBanner: false,
       title: 'MisIncidencias',
       home: MisIncidencias(),
@@ -73,16 +87,16 @@ class _MisIncidenciasState extends State<MisIncidencias> {
           context: context,
           builder: (context) => new AlertDialog(
             title: new Text(tk),
-            content: new Text('Do you want to exit an App'),
+            content: new Text(AppLocalizations.of(context).dialogExitAppTitle),
             actions: <Widget>[
               new GestureDetector(
-                key: Key("NO"),
+                key: Key(AppLocalizations.of(context).dialogExitAppNo),
                 onTap: () => Navigator.of(context).pop(false),
                 child: Text("NO"),
               ),
               SizedBox(height: 16),
               new GestureDetector(
-                key: Key("YES"),
+                key: Key(AppLocalizations.of(context).dialogExitAppYes),
                 onTap: () {
                   latLongBloc.dispose();
                   futureLogout = LogoutCall.fetchLogout(tk);

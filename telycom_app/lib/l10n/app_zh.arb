@@ -1,4 +1,15 @@
 {
-  "language": "中文",
-  "sBnoUserWarning": "您必须输入一个用户名"
+    "language": "中文",
+    "sBnoUserWarning": "您必须输入一个用户名",
+    "labelUser": "User",
+    "buttonSubmitLogin": "Login",
+    "sBErrorText": "Error",
+    "renewButtonHint": "Renew",
+    "bNBI_events": "Events",
+    "bNBI_message": "Message",
+    "bNBI_image": "Image",
+    "bNBI_map": "Map",
+  "dialogExitAppTitle": "Do you want to exit the App?",
+  "dialogExitAppYes": "YES",
+  "dialogExitAppNo": "NO"
 }

@@ -1,4 +1,15 @@
 {
     "language": "Spanish",
-    "sBnoUserWarning": "Ha de introducir un usuario"
+    "sBnoUserWarning": "Ha de introducir un usuario",
+    "labelUser": "Usuario",
+    "buttonSubmitLogin": "Entrar",
+    "sBErrorText": "Error",
+    "renewButtonHint": "Actualizar",
+    "bNBI_events": "Sucesos",
+    "bNBI_message": "Mensaje",
+    "bNBI_image": "Imagen",
+    "bNBI_map": "Mapa",
+    "dialogExitAppTitle": "¿Quiere salir de la App?",
+    "dialogExitAppYes": "SÍ",
+    "dialogExitAppNo": "NO"
 }
