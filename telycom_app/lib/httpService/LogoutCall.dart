@@ -1,8 +1,7 @@
-import 'package:telycom_app/Logout.dart';
-
-import 'Token.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+
+import 'Logout.dart';
 
 class LogoutCall{
 

@@ -1,10 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:telycom_app/SucesosList.dart';
-import 'package:telycom_app/placeholder_tres.dart';
+import 'package:telycom_app/screens/placeholder_cuatro.dart';
+import 'package:telycom_app/screens/placeholder_dos.dart';
+import 'package:telycom_app/screens/placeholder_tres.dart';
 import 'placeholder_widget.dart';
-import 'placeholder_dos.dart';
-import 'placeholder_cuatro.dart';
 
 void main() {
   runApp(MaterialApp(

@@ -4,19 +4,20 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong/latlong.dart';
-import 'package:telycom_app/DetalleIncidencias.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:telycom_app/Logout.dart';
-import 'package:telycom_app/LogoutCall.dart';
+import 'package:telycom_app/httpService/Album.dart';
+import 'package:telycom_app/httpService/Logout.dart';
+import 'package:telycom_app/httpService/LogoutCall.dart';
+import 'package:telycom_app/httpService/ServiceCalzl.dart';
 import 'dart:developer' as developer;
-import 'Album.dart';
-import 'package:telycom_app/ServiceCalzl.dart';
 
-import "ElementList.dart";
-import "Mapa.dart";
+import '../ElementList.dart';
 
 import 'package:telycom_app/lat_long_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+
+import 'DetalleIncidencias.dart';
+import 'Login.dart';
 
 void main() => runApp(MisIncidencias());
 

@@ -4,14 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:telycom_app/ElementList.dart';
 import 'package:telycom_app/SucesosList.dart';
 import 'package:flutter_map/flutter_map.dart';
-import "misIncidencias.dart";
+import 'MisIncidencias.dart';
 import 'package:flutter/services.dart';
 import 'package:latlong/latlong.dart';
-import "Mapa.dart";
-import 'package:telycom_app/misIncidencias.dart';
 
 import 'package:telycom_app/lat_long_bloc.dart';
-import 'placeholder_widget.dart';
 
 class PlaceholderWidgetCuatro extends StatefulWidget {
 

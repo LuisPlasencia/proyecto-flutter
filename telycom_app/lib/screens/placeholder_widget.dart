@@ -3,10 +3,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:telycom_app/ElementList.dart';
 import 'package:telycom_app/SucesosList.dart';
-import "misIncidencias.dart";
+import "MisIncidencias.dart";
 import 'package:flutter/services.dart';
 import "Mapa.dart";
-import 'package:telycom_app/misIncidencias.dart';
+import 'file:///C:/Users/luisp/AndroidStudioProjects/proyecto-flutter/telycom_app/lib/screens/MisIncidencias.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 
 import 'placeholder_widget.dart';

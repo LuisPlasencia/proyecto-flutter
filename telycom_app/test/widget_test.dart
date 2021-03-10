@@ -7,10 +7,10 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:telycom_app/DetalleIncidencias.dart';
+import 'package:telycom_app/screens/DetalleIncidencias.dart';
+import 'package:telycom_app/screens/Login.dart';
+import 'package:telycom_app/screens/MisIncidencias.dart';
 
-import 'package:telycom_app/main.dart';
-import 'package:telycom_app/misIncidencias.dart';
 
 void main() {
   // testWidgets('Counter increments smoke test', (WidgetTester tester) async {
@@ -110,7 +110,7 @@ void main() {
     // provideMockedNetworkImages(() async {
     // final enterButton = find.byType(RaisedButton);
 
-    await tester.pumpWidget(MaterialApp(home:MisIncidencias()));
+    await tester.pumpWidget(MaterialApp(home: MisIncidencias()));
     // await tester.tap(enterButton);
     // await tester.pumpAndSettle();
 
