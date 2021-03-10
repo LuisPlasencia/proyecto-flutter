@@ -1,18 +1,34 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_login/flutter_login.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'AuthCall.dart';
 import 'Token.dart';
+import 'l10n/l10n.dart';
 import "misIncidencias.dart";
 import 'package:flutter/services.dart';
 import 'dart:async';
 import 'package:flutter/material.dart';
+
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
+
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget{
   @override
   Widget build(BuildContext context){
     return MaterialApp(
+      localizationsDelegates: [
+        // ... app-specific localization delegate[s] here
+        // TODO: uncomment the line below after codegen
+        AppLocalizations.delegate,
+
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: L10n.all,
+
       debugShowCheckedModeBanner: false,
       title: 'Navigation Basics',
       home: FirstRoute(),
@@ -56,7 +72,7 @@ class _FirstRouteState extends State<FirstRoute> {
       final snackbar = SnackBar(
           backgroundColor: Colors.yellow,
           content: Text(
-            "Ha de introducir un usuario",
+            AppLocalizations.of(context).sBnoUserWarning,
             style: TextStyle(
                 color: Colors.red,
                 fontWeight: FontWeight.bold),

@@ -24,6 +24,10 @@ dependencies:
   flutter:
     sdk: flutter
 
+  flutter_localizations:  # Localization
+    sdk: flutter          # Localization
+  intl: ^0.17.0           # Localization
+
   flutter_map: any
 #  flutter_map_arcgis: any # or the latest version on Pub
   dio: any # or the latest version on Pub
@@ -42,7 +46,6 @@ dependencies:
 
   flutter_spinkit: ^4.1.2
 
-#  flutter_login: ^1.0.14
 
 dev_dependencies:
   integration_test: ^1.0.1
@@ -58,6 +61,7 @@ dev_dependencies:
 
 # The following section is specific to Flutter.
 flutter:
+  generate: true    # Localization
 
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in

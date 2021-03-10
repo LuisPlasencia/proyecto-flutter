@@ -1,0 +1,13 @@
+{
+  "language": "English",
+  "@language": {
+    "description": "The current language"
+  },
+
+  "sBnoUserWarning": "You must enter a username",
+  "@sBnoUserWarning": {
+    "description": "Displays a warning when no user is typed in login screen"
+  }
+
+
+}
