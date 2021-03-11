@@ -15,7 +15,7 @@ import 'dart:developer' as developer;
 
 import 'MisIncidencias.dart';
 
-void main() => runApp(MyApp());
+void main() async => runApp(MyApp());
 
 class MyApp extends StatelessWidget{
   @override
@@ -66,6 +66,7 @@ class _FirstRouteState extends State<FirstRoute> {
     _isButtonDisabled = false;
     _isTextFieldEnable = true;
   }
+
 
   void _pulsandoEntrar() {
     if (textFieldController.text != "") {
@@ -141,11 +142,11 @@ class _FirstRouteState extends State<FirstRoute> {
             ),
             child: Center(
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
                   Container(
-                      margin: EdgeInsets.only(top: 150),
+                      // margin: EdgeInsets.only(top: 150),
                       child: Image(
                         width: 300,
                         image: AssetImage('images/logo.png'),
@@ -153,7 +154,7 @@ class _FirstRouteState extends State<FirstRoute> {
                   // Text('Running on: $_platformImei\n is equal to : $uniqueId'),
 
               Container(
-                margin: EdgeInsets.only(bottom: 30.0, left: 50.0, right: 50.0),
+                margin: EdgeInsets.only( left: 50.0, right: 50.0),
                 height: 200,
                 width: 400,
                 child: Card(
@@ -251,7 +252,7 @@ class _FirstRouteState extends State<FirstRoute> {
                                 });
 
                                 return new Container(
-                                  height: 100,
+                                  height: 75,
                                   padding: EdgeInsets.only(bottom: 15),
                                 );
                               }
@@ -291,20 +292,19 @@ class _FirstRouteState extends State<FirstRoute> {
                               });
 
                               return new Container(
-                                height: 100,
+                                height: 75,
                                 padding: EdgeInsets.only(bottom: 15),
                               );
                             }
                             // By default, show a loading spinner.
                             return Container(
-
-                                height: 100,
+                                height: 75,
                                 padding: EdgeInsets.only(bottom: 15),
                                 child: SpinKitHourGlass(color: Colors.white));
                           },
                         )
                         : new Container(
-                          height: 100,
+                          height: 75,
                           padding: EdgeInsets.only(bottom: 15),
                         ),
                 ],
