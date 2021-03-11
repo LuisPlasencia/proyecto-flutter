@@ -9,6 +9,8 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:telycom_app/l10n/l10n.dart';
 import 'package:telycom_app/httpService/AuthCall.dart';
 import 'package:telycom_app/httpService/Token.dart';
+import 'package:imei_plugin/imei_plugin.dart';
+import 'dart:developer' as developer;
 
 
 import 'MisIncidencias.dart';
@@ -53,33 +55,63 @@ class _FirstRouteState extends State<FirstRoute> {
   bool _isButtonDisabled;
   bool _isTextFieldEnable;
 
+  // IMEI
+  String _platformImei = 'Unknown';
+  String uniqueId = "Unknown";
+
   @override
   void initState() {
     super.initState();
+    initPlatformState();
     _isButtonDisabled = false;
     _isTextFieldEnable = true;
   }
 
-  void _pulsandoEntrar(){
-    if(textFieldController.text != ""){
+  void _pulsandoEntrar() {
+    if (textFieldController.text != "") {
       setState(() {
         cargando = true;
         _isButtonDisabled = true;
         _isTextFieldEnable = false;
         usuario = textFieldController.text;
-        futureToken = AuthCall.fetchToken(usuario);
+        futureToken = AuthCall.fetchToken(usuario).timeout(Duration(seconds: 20));
       });
-    } else{
+    } else {
       final snackbar = SnackBar(
           backgroundColor: Colors.yellow,
           content: Text(
             AppLocalizations.of(context).sBnoUserWarning,
-            style: TextStyle(
-                color: Colors.red,
-                fontWeight: FontWeight.bold),
+            style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
           ));
       ScaffoldMessenger.of(context).showSnackBar(snackbar);
     }
+  }
+
+  // Platform messages are asynchronous, so we initialize in an async method.
+  Future<void> initPlatformState() async {
+    String platformImei;
+    String idunique;
+    // Platform messages may fail, so we use a try/catch PlatformException.
+    try {
+      platformImei =
+          await ImeiPlugin.getImei(shouldShowRequestPermissionRationale: false);
+      List<String> multiImei = await ImeiPlugin.getImeiMulti();
+      print(multiImei);
+      idunique = await ImeiPlugin.getId();
+    } on PlatformException {
+      platformImei = 'Failed to get platform version.';
+    }
+
+    // If the widget was removed from the tree while the asynchronous platform
+    // message was in flight, we want to discard the reply rather than calling
+    // setState to update our non-existent appearance.
+    if (!mounted) return;
+
+    setState(() {
+      _platformImei = platformImei;
+      uniqueId = idunique;
+      developer.log("Este es el IMEI: "+_platformImei, name: 'my.app.category');
+    });
   }
 
   @override
@@ -118,6 +150,7 @@ class _FirstRouteState extends State<FirstRoute> {
                         width: 300,
                         image: AssetImage('images/logo.png'),
                       )),
+                  // Text('Running on: $_platformImei\n is equal to : $uniqueId'),
 
               Container(
                 margin: EdgeInsets.only(bottom: 30.0, left: 50.0, right: 50.0),
@@ -168,26 +201,33 @@ class _FirstRouteState extends State<FirstRoute> {
                 ),
               ),
 
-
                   // Comprobando el loading
                   cargando ? FutureBuilder<Token>(
                           future: futureToken,
                           builder: (context, snapshot) {
                             if (snapshot.hasData) {
-                              if (snapshot.data.statusTelyAPI == '200' || snapshot.data.statusTelyAPI == '202' || snapshot.data.statusTelyAPI == '203') {
-                                  WidgetsBinding.instance.addPostFrameCallback((_) {
-                                    Navigator.push(context, MaterialPageRoute(builder: (context) => MisIncidencias(tk: snapshot.data.tk,))).then((value) {
-                                      setState(() {
-                                        cargando = false;
-                                        _isButtonDisabled = false;
-                                        _isTextFieldEnable = true;
-                                      });
+                              if (snapshot.data.statusTelyAPI == '200' ||
+                                  snapshot.data.statusTelyAPI == '202' ||
+                                  snapshot.data.statusTelyAPI == '203') {
+                                WidgetsBinding.instance
+                                    .addPostFrameCallback((_) {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => MisIncidencias(
+                                                tk: snapshot.data.tk,
+                                              ))).then((value) {
+                                    setState(() {
+                                      cargando = false;
+                                      _isButtonDisabled = false;
+                                      _isTextFieldEnable = true;
                                     });
                                   });
-                                  return new Container(
-                                    height: 100,
-                                    padding: EdgeInsets.only(bottom: 15),
-                                  );
+                                });
+                                return new Container(
+                                  height: 100,
+                                  padding: EdgeInsets.only(bottom: 15),
+                                );
                               } else {
                                   final snackbar = SnackBar(
                                       backgroundColor: Colors.yellow,
@@ -198,63 +238,79 @@ class _FirstRouteState extends State<FirstRoute> {
                                             fontWeight: FontWeight.bold),
                                       ));
 
-                                  WidgetsBinding.instance.addPostFrameCallback((_) {
-                                    // Add Your Code here.
-                                    ScaffoldMessenger.of(context)
-                                        .showSnackBar(snackbar);
-                                  });
+                                WidgetsBinding.instance
+                                    .addPostFrameCallback((_) {
+                                  // Add Your Code here.
+                                  ScaffoldMessenger.of(context)
+                                      .showSnackBar(snackbar);
                                   setState(() {
                                     cargando = false;
                                     _isButtonDisabled = false;
                                     _isTextFieldEnable = true;
                                   });
-                                  return new Container(
-                                    height: 100,
-                                    padding: EdgeInsets.only(bottom: 15),
-                                  );
+                                });
+
+                                return new Container(
+                                  height: 100,
+                                  padding: EdgeInsets.only(bottom: 15),
+                                );
+                              }
+                            } else if (snapshot.hasError) {
+                              developer.log(snapshot.error.toString().substring(0,16),name:"error");
+                              SnackBar snackbar;
+                              if(snapshot.error.toString().substring(0,16) == "TimeoutException"){
+                                snackbar = SnackBar(
+                                    backgroundColor: Colors.yellow,
+                                    content: Text(
+                                      AppLocalizations.of(context).sBTimeoutText,
+                                      style: TextStyle(
+                                          color: Colors.red,
+                                          fontWeight: FontWeight.bold),
+                                    ));
+                              } else {
+                                snackbar = SnackBar(
+                                    backgroundColor: Colors.yellow,
+                                    content: Text(
+                                      snapshot.error.toString(),
+                                      style: TextStyle(
+                                          color: Colors.red,
+                                          fontWeight: FontWeight.bold),
+                                    ));
+                              }
+
+                              // ScaffoldMessenger.of(context).showSnackBar(snackbar);
+                              WidgetsBinding.instance.addPostFrameCallback((_) {
+                                // Add Your Code here.
+                                ScaffoldMessenger.of(context)
+                                    .showSnackBar(snackbar);
+                                setState(() {
+                                  cargando = false;
+                                  _isButtonDisabled = false;
+                                  _isTextFieldEnable = true;
+                                });
+                              });
+
+                              return new Container(
+                                height: 100,
+                                padding: EdgeInsets.only(bottom: 15),
+                              );
                             }
-                          } else if (snapshot.hasError) {
-                            final snackbar = SnackBar(
-                                backgroundColor: Colors.yellow,
-                                content: Text(
-                                  snapshot.error.toString(),
-                                  style: TextStyle(
-                                      color: Colors.red,
-                                      fontWeight: FontWeight.bold),
-                                ));
-                            // ScaffoldMessenger.of(context).showSnackBar(snackbar);
-                            WidgetsBinding.instance.addPostFrameCallback((_) {
-                              // Add Your Code here.
-                              ScaffoldMessenger.of(context).showSnackBar(snackbar);
-                            });
-                            setState(() {
-                              cargando = false;
-                              _isButtonDisabled = false;
-                              _isTextFieldEnable = true;
-                            });
-                            return new Container(
-                              height: 100,
-                              padding: EdgeInsets.only(bottom: 15),
-                            );
-                          }
-                          // By default, show a loading spinner.
-                          return Container(
-                              height: 100,
-                              padding: EdgeInsets.only(bottom: 15),
-                              child: SpinKitHourGlass(color: Colors.black));
-                        },
-                      )
-                    : new Container(
+                            // By default, show a loading spinner.
+                            return Container(
+
+                                height: 100,
+                                padding: EdgeInsets.only(bottom: 15),
+                                child: SpinKitHourGlass(color: Colors.orange));
+                          },
+                        )
+                        : new Container(
                           height: 100,
                           padding: EdgeInsets.only(bottom: 15),
-                      ),
-            ],
-        ),
-      ),
+                        ),
+                ],
+              ),
+            ),
           ),
-    )
-    );
+        ));
   }
 }
-
-

@@ -82,5 +82,60 @@
   "dialogExitAppContent": "You will be logged out of the service",
   "@dialogExitAppContent": {
     "description": "Text displayed at showDialog content when exiting the app"
+  },
+
+  "msgType": "Attended",
+  "@msgType": {
+    "description": "Indicates if the event was attended or not"
+  },
+
+  "eventOpenedBy": "Event attended by",
+  "@eventOpenedBy": {
+    "description": "Indicates who is the entity of THE event"
+  },
+
+  "incidentCreatedBy": "Incident created by",
+  "@incidentCreatedBy": {
+    "description": "Indicates who created the event"
+  },
+
+  "typification": "Typification",
+  "@typification": {
+    "description": "Indicates the typification"
+  },
+
+  "localization": "Localization",
+  "@localization": {
+    "description": "Indicates the localization"
+  },
+
+  "agencyAsigned": "Agency asigned",
+  "@agencyAsigned": {
+    "description": "Indicates which agency is asigned"
+  },
+
+  "description": "Description",
+  "@description": {
+    "description": "Description"
+  },
+
+  "code": "Code",
+  "@code": {
+    "description": "Code"
+  },
+
+  "creation": "Creation",
+  "@creation": {
+    "description": "Creation"
+  },
+
+  "direction": "Direction",
+  "@direction": {
+    "description": "Direction"
+  },
+
+  "sBTimeoutText": "Service unreacheable (Timeout)",
+  "@sBTimeoutText": {
+    "description": "Timeout warning text"
   }
 }
