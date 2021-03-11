@@ -28,17 +28,6 @@ class MyAppMisIncidencias extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      localizationsDelegates: [
-        // ... app-specific localization delegate[s] here
-        // uncomment the line below after codegen
-        AppLocalizations.delegate,
-
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
-      ],
-      supportedLocales: L10n.all,
-
       debugShowCheckedModeBanner: false,
       title: 'MisIncidencias',
       home: MisIncidencias(),
@@ -86,23 +75,23 @@ class _MisIncidenciasState extends State<MisIncidencias> {
     return showDialog(
           context: context,
           builder: (context) => new AlertDialog(
-            title: new Text(tk),
-            content: new Text(AppLocalizations.of(context).dialogExitAppTitle),
+            title: new Text(AppLocalizations.of(context).dialogExitAppTitle),
+            content: new Text(AppLocalizations.of(context).dialogExitAppContent),
             actions: <Widget>[
               new GestureDetector(
-                key: Key(AppLocalizations.of(context).dialogExitAppNo),
+                key: Key('YES'),
                 onTap: () => Navigator.of(context).pop(false),
-                child: Text("NO"),
+                child: Text(AppLocalizations.of(context).dialogExitAppYes),
               ),
               SizedBox(height: 16),
               new GestureDetector(
-                key: Key(AppLocalizations.of(context).dialogExitAppYes),
+                key: Key('NO'),
                 onTap: () {
                   latLongBloc.dispose();
                   futureLogout = LogoutCall.fetchLogout(tk);
                   Navigator.of(context).pop(true);
                 },
-                child: Text("YES"),
+                child: Text(AppLocalizations.of(context).dialogExitAppNo),
               ),
             ],
           ),
@@ -148,7 +137,7 @@ class _MisIncidenciasState extends State<MisIncidencias> {
       children: [
         ExpansionTile(
             childrenPadding: EdgeInsets.only(bottom: 5),
-            title: Text("Incidencias"),
+            title: Text(AppLocalizations.of(context).incidentsLabel),
             backgroundColor: Colors.amberAccent[100],
             children: [
               FutureBuilder<List<Album>>(
@@ -428,39 +417,6 @@ class _MisIncidenciasState extends State<MisIncidencias> {
                      "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
                      subdomains: ['a', 'b', 'c']),
 
-                 // FeatureLayerOptions(
-                 //   url: "https://services.arcgis.com/P3ePLMYs2RVChkJx/arcgis/rest/services/USA_Congressional_Districts/FeatureServer/0",
-                 //   geometryType:"polygon",
-                 //   onTap: (attributes, LatLng location) {
-                 //     print(attributes);
-                 //   },
-                 //   render: (dynamic attributes){
-                 //     // You can render by attribute
-                 //     return PolygonOptions(
-                 //         borderColor: Colors.blueAccent,
-                 //         color: Colors.black12,
-                 //         borderStrokeWidth: 2
-                 //     );
-                 //   },
-                 //
-                 // ),
-                 // FeatureLayerOptions(
-                 //   url: "https://services8.arcgis.com/1p2fLWyjYVpl96Ty/arcgis/rest/services/Forest_Service_Recreation_Opportunities/FeatureServer/0",
-                 //   geometryType:"point",
-                 //   render:(dynamic attributes){
-                 //     // You can render by attribute
-                 //     return Marker(
-                 //       width: 30.0,
-                 //       height: 30.0,
-                 //       point: new LatLng(28.0713516, -15.455989),
-                 //       builder: (ctx) =>
-                 //           Icon(Icons.pin_drop),
-                 //     );
-                 //   },
-                 //   onTap: (attributes, LatLng location) {
-                 //     print(attributes);
-                 //   },
-                 // ),
                  new MarkerLayerOptions(
                    markers: _markers,
                  ),

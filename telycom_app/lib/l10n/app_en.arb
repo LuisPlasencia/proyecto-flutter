@@ -51,7 +51,7 @@
 
   "dialogExitAppTitle": "Do you want to exit the App?",
   "@dialogExitAppTitle": {
-    "description": "Text displayed at showDialog when exiting the app"
+    "description": "Text displayed at showDialog title when exiting the app"
   },
 
   "dialogExitAppYes": "YES",
@@ -62,5 +62,25 @@
   "dialogExitAppNo": "NO",
   "@dialogExitAppNo": {
     "description": "Text displayed at showDialog when exiting the app"
+  },
+
+  "incidentsLabel": "Incidents",
+  "@incidentsLabel": {
+    "description": "Incidents text label"
+  },
+
+  "textFieldHintEnterMessage": "Message",
+  "@textFieldHintEnterMessage": {
+    "description": "Incidents text label"
+  },
+
+  "submitButtonMessageTab": "Submit",
+  "@submitButtonMessageTab": {
+    "description": "submitButtonMessageTab"
+  },
+
+  "dialogExitAppContent": "You will be logged out of the service",
+  "@dialogExitAppContent": {
+    "description": "Text displayed at showDialog content when exiting the app"
   }
 }

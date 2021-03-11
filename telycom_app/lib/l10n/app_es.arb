@@ -11,5 +11,9 @@
     "bNBI_map": "Mapa",
     "dialogExitAppTitle": "¿Quiere salir de la App?",
     "dialogExitAppYes": "SÍ",
-    "dialogExitAppNo": "NO"
+    "dialogExitAppNo": "NO",
+    "incidentsLabel": "Incidencias",
+    "textFieldHintEnterMessage": "Introduzca su mensaje",
+    "submitButtonMessageTab": "Entrar",
+    "dialogExitAppContent": "Será desconectado del servicio"
 }

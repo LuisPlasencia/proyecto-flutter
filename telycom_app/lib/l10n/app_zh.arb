@@ -9,7 +9,11 @@
     "bNBI_message": "Message",
     "bNBI_image": "Image",
     "bNBI_map": "Map",
-  "dialogExitAppTitle": "Do you want to exit the App?",
-  "dialogExitAppYes": "YES",
-  "dialogExitAppNo": "NO"
+    "dialogExitAppTitle": "Do you want to exit the App?",
+    "dialogExitAppYes": "YES",
+    "dialogExitAppNo": "NO",
+    "incidentsLabel": "Incidents",
+    "textFieldHintEnterMessage": "Message",
+    "submitButtonMessageTab": "Submit",
+    "dialogExitAppContent": "You will be logged out of the service"
 }

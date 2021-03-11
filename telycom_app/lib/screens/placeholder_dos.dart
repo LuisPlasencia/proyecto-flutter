@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class PlaceholderWidgetDos extends StatelessWidget {
 
@@ -15,7 +16,7 @@ class PlaceholderWidgetDos extends StatelessWidget {
          child: TextField(
            decoration: InputDecoration(
              border: OutlineInputBorder(),
-             labelText: 'Introduzca su mensaje',
+             labelText: AppLocalizations.of(context).textFieldHintEnterMessage,
            ),
          ),
         ),
@@ -30,7 +31,7 @@ class PlaceholderWidgetDos extends StatelessWidget {
             ),
             padding: EdgeInsets.only(left: 50, right:50, top: 10, bottom: 10),
           ),
-          child: Text('Entrar', style: TextStyle(fontSize: 26, color: Colors.white)),
+          child: Text( AppLocalizations.of(context).submitButtonMessageTab, style: TextStyle(fontSize: 26, color: Colors.white)),
           onPressed: () {
           },
         ),
