@@ -300,7 +300,7 @@ class _FirstRouteState extends State<FirstRoute> {
 
                                 height: 100,
                                 padding: EdgeInsets.only(bottom: 15),
-                                child: SpinKitHourGlass(color: Colors.orange));
+                                child: SpinKitHourGlass(color: Colors.white));
                           },
                         )
                         : new Container(

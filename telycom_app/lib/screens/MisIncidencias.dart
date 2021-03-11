@@ -79,19 +79,19 @@ class _MisIncidenciasState extends State<MisIncidencias> {
             content: new Text(AppLocalizations.of(context).dialogExitAppContent),
             actions: <Widget>[
               new GestureDetector(
-                key: Key('YES'),
+                key: Key('NO'),
                 onTap: () => Navigator.of(context).pop(false),
-                child: Text(AppLocalizations.of(context).dialogExitAppYes),
+                child: Text(AppLocalizations.of(context).dialogExitAppNo),
               ),
               SizedBox(height: 16),
               new GestureDetector(
-                key: Key('NO'),
+                key: Key('YES'),
                 onTap: () {
                   latLongBloc.dispose();
                   futureLogout = LogoutCall.fetchLogout(tk);
                   Navigator.of(context).pop(true);
                 },
-                child: Text(AppLocalizations.of(context).dialogExitAppNo),
+                child: Text(AppLocalizations.of(context).dialogExitAppYes),
               ),
             ],
           ),
