@@ -25,7 +25,6 @@ class MyApp extends StatelessWidget{
         // ... app-specific localization delegate[s] here
         // uncomment the line below after codegen
         AppLocalizations.delegate,
-
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,
@@ -215,9 +214,7 @@ class _FirstRouteState extends State<FirstRoute> {
                                   Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                          builder: (context) => MisIncidencias(
-                                                tk: snapshot.data.tk,
-                                              ))).then((value) {
+                                          builder: (context) => MisIncidencias(tk: snapshot.data.tk,))).then((value) {
                                     setState(() {
                                       cargando = false;
                                       _isButtonDisabled = false;
@@ -257,30 +254,19 @@ class _FirstRouteState extends State<FirstRoute> {
                                 );
                               }
                             } else if (snapshot.hasError) {
-                              developer.log(snapshot.error.toString().substring(0,16),name:"error");
+                              developer.log(snapshot.error.toString(),name:"error");
                               SnackBar snackbar;
-                              if(snapshot.error.toString().substring(0,16) == "TimeoutException"){
-                                snackbar = SnackBar(
-                                    backgroundColor: Colors.yellow,
-                                    content: Text(
-                                      AppLocalizations.of(context).sBTimeoutText,
-                                      style: TextStyle(
-                                          color: Colors.red,
-                                          fontWeight: FontWeight.bold),
-                                    ));
-                              } else {
-                                snackbar = SnackBar(
-                                    backgroundColor: Colors.yellow,
-                                    content: Text(
-                                      snapshot.error.toString(),
-                                      style: TextStyle(
-                                          color: Colors.red,
-                                          fontWeight: FontWeight.bold),
-                                    ));
-                              }
+                              snackbar = SnackBar(
+                                  backgroundColor: Colors.yellow,
+                                  content: Text(
+                                    AppLocalizations.of(context).sBTimeoutText,
+                                    style: TextStyle(
+                                        color: Colors.red,
+                                        fontWeight: FontWeight.bold),
+                                  ));
 
-                              // ScaffoldMessenger.of(context).showSnackBar(snackbar);
-                              WidgetsBinding.instance.addPostFrameCallback((_) {
+                                // ScaffoldMessenger.of(context).showSnackBar(snackbar);
+                                WidgetsBinding.instance.addPostFrameCallback((_) {
                                 // Add Your Code here.
                                 ScaffoldMessenger.of(context)
                                     .showSnackBar(snackbar);
