@@ -12,26 +12,10 @@ import 'package:telycom_app/screens/Login.dart';
 import 'package:telycom_app/screens/MisIncidencias.dart';
 
 void main() {
-  // testWidgets('Counter increments smoke test', (WidgetTester tester) async {
-  //   // Build our app and trigger a frame.
-  //   await tester.pumpWidget(MyApp());
-  //
-  //   // Verify that our counter starts at 0.
-  //   expect(find.text('0'), findsOneWidget);
-  //   expect(find.text('1'), findsNothing);
-  //
-  //   // Tap the '+' icon and trigger a frame.
-  //   await tester.tap(find.byIcon(Icons.add));
-  //   await tester.pump();
-  //
-  //   // Verify that our counter has incremented.
-  //   expect(find.text('0'), findsNothing);
-  //   expect(find.text('1'), findsOneWidget);
-  // });
-
   // Define a test. The TestWidgets function also provides a WidgetTester
   // to work with. The WidgetTester allows you to build and interact
   // with widgets in the test environment.
+
   testWidgets('Test 1 : Comprobando elementos del login', (WidgetTester tester) async {
     // final FirstRoute myWidgetState = tester.state(find.byType(FirstRoute));
 
