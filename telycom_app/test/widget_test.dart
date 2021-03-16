@@ -4,12 +4,27 @@
 // utility that Flutter provides. For example, you can send tap and scroll
 // gestures. You can also use WidgetTester to find child widgets in the widget
 // tree, read text, and verify that the values of widget properties are correct.
-
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:telycom_app/screens/DetalleIncidencias.dart';
 import 'package:telycom_app/screens/Login.dart';
 import 'package:telycom_app/screens/MisIncidencias.dart';
+
+
+import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:flutter/services.dart';
+import 'dart:async';
+import 'package:flutter/material.dart';
+
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:telycom_app/l10n/l10n.dart';
+import 'package:telycom_app/httpService/AuthCall.dart';
+import 'package:telycom_app/httpService/Token.dart';
+import 'package:imei_plugin/imei_plugin.dart';
+import 'dart:developer' as developer;
+
 
 
 void main() {
@@ -37,15 +52,15 @@ void main() {
     // final FirstRoute myWidgetState = tester.state(find.byType(FirstRoute));
 
     // Test code goes here.
-    await tester.pumpWidget(MaterialApp(home: FirstRoute()));
+    await tester.pumpWidget(Login());
 
     // Create the Finders.
     final textField1 = find.byKey(Key('user'));
     final imagen = find.byType(Image);
     final boton = find.byType(ElevatedButton);
 
-    final textoTextField1 = find.text('Usuario');
-    final textoBoton = find.text('Entrar');
+    final textoTextField1 = find.text('User');
+    final textoBoton = find.text('Login');
 
 
     // Use the `findsOneWidget` matcher provided by flutter_test to verify
@@ -58,7 +73,29 @@ void main() {
     expect(textoBoton, findsOneWidget);
   });
 
+  testWidgets('Test 2: Poniendo texto en el textfield', (WidgetTester tester) async {
+    // Build our app and trigger a frame.
+    final user = find.byKey(ValueKey("user"));
 
+    await tester.pumpWidget(MaterialApp(home:FirstRoute()));
+    await tester.enterText(user, "holahola");
+    await tester.pump();
+
+    expect(find.text("holahola"), findsOneWidget);
+  });
+
+  testWidgets('Test 3: Pasando a la pantalla de MisIncidencias', (WidgetTester tester) async {
+    // Build our app and trigger a frame.
+    // provideMockedNetworkImages(() async {
+    // final enterButton = find.byType(RaisedButton);
+
+    await tester.pumpWidget(MaterialApp(home: MisIncidencias()));
+    // await tester.tap(enterButton);
+    // await tester.pumpAndSettle();
+
+    expect(1+1, 2);
+    // });
+  });
 
   testWidgets('Test 4 : Comrpobando elementos del detalle', (WidgetTester tester) async {
     // final FirstRoute myWidgetState = tester.state(find.byType(FirstRoute));
@@ -94,29 +131,7 @@ void main() {
   });
 
 
-  testWidgets('Test 2: Poniendo texto en el textfield', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
-    final user = find.byKey(ValueKey("user"));
 
-    await tester.pumpWidget(MaterialApp(home:FirstRoute()));
-    await tester.enterText(user, "holahola");
-    await tester.pump();
-
-    expect(find.text("holahola"), findsOneWidget);
-  });
-
-  testWidgets('Test 3: Pasando a la pantalla de MisIncidencias', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
-    // provideMockedNetworkImages(() async {
-    // final enterButton = find.byType(RaisedButton);
-
-    await tester.pumpWidget(MaterialApp(home: MisIncidencias()));
-    // await tester.tap(enterButton);
-    // await tester.pumpAndSettle();
-
-    expect(1+1, 2);
-    // });
-  });
 
 
 

@@ -15,12 +15,14 @@ import 'dart:developer' as developer;
 
 import 'MisIncidencias.dart';
 
-void main() async => runApp(MyApp());
+void main() async => runApp(Login());
 
-class MyApp extends StatelessWidget{
+class Login extends StatelessWidget{
   @override
   Widget build(BuildContext context){
     return MaterialApp(
+      title: 'Login',
+      home: FirstRoute(),
       localizationsDelegates: [
         // ... app-specific localization delegate[s] here
         // uncomment the line below after codegen
@@ -30,10 +32,7 @@ class MyApp extends StatelessWidget{
         GlobalCupertinoLocalizations.delegate,
       ],
       supportedLocales: L10n.all,
-
       debugShowCheckedModeBanner: false,
-      title: 'Login',
-      home: FirstRoute(),
 
     );
   }
@@ -66,7 +65,7 @@ class _FirstRouteState extends State<FirstRoute> {
     _isTextFieldEnable = true;
   }
 
-
+  //
   void _pulsandoEntrar() {
     if (textFieldController.text != "") {
       setState(() {
@@ -74,6 +73,7 @@ class _FirstRouteState extends State<FirstRoute> {
         _isButtonDisabled = true;
         _isTextFieldEnable = false;
         usuario = textFieldController.text;
+        developer.log(usuario.toString(),name:"emote");
         futureToken = AuthCall.fetchToken(usuario).timeout(Duration(seconds: 20));
       });
     } else {
@@ -169,6 +169,7 @@ class _FirstRouteState extends State<FirstRoute> {
                             controller:textFieldController,
                             //la llave es necesaria para realizar el test de integración
                             key: Key('user'),
+
                             decoration: InputDecoration(
                               prefixIcon: Icon(Icons.account_circle),
                               border: OutlineInputBorder(),

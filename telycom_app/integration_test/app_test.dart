@@ -13,7 +13,7 @@ void main() {
 
 
   testWidgets("Test 1 : No se ha escrito nombre de usuario, lo que impide el paso de pantalla", (WidgetTester tester) async{
-    await tester.pumpWidget(MyApp());
+    await tester.pumpWidget(Login());
     final texto = "Luisito";
     await tester.enterText(find.byKey(Key('user')), texto);
     expect(find.text(texto), findsWidgets);
@@ -29,7 +29,7 @@ void main() {
 
 
   testWidgets("Test 2: Comprobamos que el texto que escribimos concuerda", (WidgetTester tester) async{
-    await tester.pumpWidget(MyApp());
+    await tester.pumpWidget(Login());
 
     final inputText = 'hola soy el sojha';
     await tester.enterText(find.byKey(Key('user')),inputText);
@@ -38,7 +38,7 @@ void main() {
   });
 
   testWidgets("Paso de pantalla a Mis Incidencias", (WidgetTester tester) async{
-    await tester.pumpWidget(MyApp());
+    await tester.pumpWidget(Login());
 
     await tester.tap(find.byType(ElevatedButton));
 
@@ -48,7 +48,7 @@ void main() {
   });
 
   testWidgets("Test 3: Paso de pantalla a Mis Incidencias no se muestra las incidencias", (WidgetTester tester) async{
-    await tester.pumpWidget(MyApp());
+    await tester.pumpWidget(Login());
 
     await tester.tap(find.byType(ElevatedButton));
 
@@ -59,7 +59,7 @@ void main() {
   });
 
   testWidgets("Test 4: Paso de pantalla a Mis Incidencias SE muestra las incidencias", (WidgetTester tester) async{
-    await tester.pumpWidget(MyApp());
+    await tester.pumpWidget(Login());
 
     await tester.tap(find.byType(ElevatedButton));
 
@@ -72,7 +72,7 @@ void main() {
   });
 
   testWidgets("Test 5: En la pantalla Mis incidencias: pulsamos primera card de la lista -> icono", (WidgetTester tester) async{
-    await tester.pumpWidget(MyApp());
+    await tester.pumpWidget(Login());
 
       await tester.tap(find.byType(ElevatedButton));
 
@@ -98,7 +98,7 @@ void main() {
   });
 
   testWidgets("Test 6: En la pantalla del detalle del primer card apareceran la descripción, código, creación y dirección", (WidgetTester tester) async{
-    await tester.pumpWidget(MyApp());
+    await tester.pumpWidget(Login());
     await tester.tap(find.byType(ElevatedButton));
     await tester.pumpAndSettle();
 
@@ -120,7 +120,7 @@ void main() {
   });
 
   testWidgets("Test 7: Detalle completo y vuelta", (WidgetTester tester) async{
-    await tester.pumpWidget(MyApp());
+    await tester.pumpWidget(Login());
     await tester.tap(find.byType(ElevatedButton));
     await tester.pumpAndSettle();
 
@@ -161,7 +161,7 @@ void main() {
   });
 
   testWidgets("Test 8: Giro de pantalla de la vista MisIncidencias", (WidgetTester tester) async{
-    await tester.pumpWidget(MyApp());
+    await tester.pumpWidget(Login());
     await tester.tap(find.byType(ElevatedButton));
     await tester.pumpAndSettle();
 
