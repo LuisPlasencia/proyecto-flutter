@@ -6,26 +6,10 @@
 // tree, read text, and verify that the values of widget properties are correct.
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:image_test_utils/image_test_utils.dart';
 import 'package:telycom_app/screens/DetalleIncidencias.dart';
 import 'package:telycom_app/screens/Login.dart';
 import 'package:telycom_app/screens/MisIncidencias.dart';
-
-
-import 'package:flutter/material.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:flutter/services.dart';
-import 'dart:async';
-import 'package:flutter/material.dart';
-
-import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:telycom_app/l10n/l10n.dart';
-import 'package:telycom_app/httpService/AuthCall.dart';
-import 'package:telycom_app/httpService/Token.dart';
-import 'package:imei_plugin/imei_plugin.dart';
-import 'dart:developer' as developer;
-
-
 
 void main() {
   // testWidgets('Counter increments smoke test', (WidgetTester tester) async {
@@ -73,31 +57,49 @@ void main() {
     expect(textoBoton, findsOneWidget);
   });
 
-  testWidgets('Test 2: Poniendo texto en el textfield', (WidgetTester tester) async {
+  testWidgets('Test 2: Escribiendo texto en el textfield', (WidgetTester tester) async {
     // Build our app and trigger a frame.
     final user = find.byKey(ValueKey("user"));
 
-    await tester.pumpWidget(MaterialApp(home:FirstRoute()));
+    await tester.pumpWidget(Login());
     await tester.enterText(user, "holahola");
     await tester.pump();
 
     expect(find.text("holahola"), findsOneWidget);
   });
 
-  testWidgets('Test 3: Pasando a la pantalla de MisIncidencias', (WidgetTester tester) async {
+  testWidgets('Test 3: Comprobando snackbar sin introducir usuario', (WidgetTester tester) async {
     // Build our app and trigger a frame.
+    final enterButton = find.byType(ElevatedButton);
+
+    await tester.pumpWidget(Login());
+    await tester.tap(enterButton);
+    await tester.pumpAndSettle();
+
+    expect(find.byType(SnackBar),findsOneWidget);
+
+  });
+
+  testWidgets('Test 4: Introducir usuario y tap', (WidgetTester tester) async {
+    // Build our app and trigger a frame.
+
+
     // provideMockedNetworkImages(() async {
-    // final enterButton = find.byType(RaisedButton);
+      await tester.pumpWidget(Login());
+      final user = find.byKey(ValueKey("user"));
+      final enterButton = find.byType(ElevatedButton);
 
-    await tester.pumpWidget(MaterialApp(home: MisIncidencias()));
-    // await tester.tap(enterButton);
-    // await tester.pumpAndSettle();
 
-    expect(1+1, 2);
+      await tester.enterText(user, "holahola");
+      await tester.pumpAndSettle();
+      await tester.tap(enterButton);
+      await tester.pumpAndSettle();
+
+      expect(find.byType(SnackBar),findsOneWidget);
     // });
   });
 
-  testWidgets('Test 4 : Comrpobando elementos del detalle', (WidgetTester tester) async {
+  testWidgets('Test x : Comrpobando elementos del detalle', (WidgetTester tester) async {
     // final FirstRoute myWidgetState = tester.state(find.byType(FirstRoute));
 
     // Test code goes here.
