@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter/services.dart';
 import 'dart:async';
-
-import 'package:http/http.dart' as http;
+import 'package:flutter/material.dart';
 
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -61,12 +60,7 @@ class _FirstRouteState extends State<FirstRoute> {
   // IMEI
   String _platformImei = 'Unknown';
   String uniqueId = "Unknown";
-
-  String dominioTelyApiServer = '192.168.15.38';
-  String imei = '987654321';
   String token = 'f10c6424772941cda5bb0bbd0d128ca5';
-
-
 
   @override
   void initState() {
@@ -77,7 +71,7 @@ class _FirstRouteState extends State<FirstRoute> {
     futureSuceso = SucesoCall.fetchSuceso(token);
   }
 
-  //🚶🚶🚶🚶🚶🚶🚶🚶🚶🚶🚶🚶🚶🚶🚶🚶🚶🚶🚶🚶🚶🚶🚶🚶🚶🚶🚶🚶🚶🚶🚶🚶🚶🚶🚶🚶🚶🚶🚶🚶
+  //
   void _pulsandoEntrar() {
     if (textFieldController.text != "") {
       setState(() {
@@ -178,22 +172,24 @@ class _FirstRouteState extends State<FirstRoute> {
                           Padding(
                             padding: const EdgeInsets.only(bottom: 45, top: 25, left: 15, right: 15),
                             child: TextField(
-                                enabled: _isTextFieldEnable,
-                                controller:textFieldController,
-                                //la llave es necesaria para realizar el test de integración
-                                key: Key('user'),
+                              maxLength: 30,
+                              enabled: _isTextFieldEnable,
+                              controller:textFieldController,
+                              //la llave es necesaria para realizar el test de integración
+                              key: Key('user'),
 
-                                decoration: InputDecoration(
-                                  prefixIcon: Icon(Icons.account_circle),
-                                  border: OutlineInputBorder(),
-                                  labelText: AppLocalizations.of(context).labelUser,
-                                ),
-                                style:TextStyle(
-                                  fontSize: 20,
-                                  color:Colors.black,
-                                )
-                            ),
+                              decoration: InputDecoration(
+                                prefixIcon: Icon(Icons.account_circle),
+                                border: OutlineInputBorder(),
+                                labelText: AppLocalizations.of(context).labelUser,
+                                counterText: "",
+                              ),
+                              style:TextStyle(
+                                fontSize: 20,
+                                color:Colors.black,
+                              )
                           ),
+                      ),
 
                           SizedBox(),
 
@@ -219,22 +215,20 @@ class _FirstRouteState extends State<FirstRoute> {
                     future: futureSuceso,
                     builder: (context, snapshot) {
                       if(snapshot.hasData){
-                 WidgetsBinding.instance
-                 .addPostFrameCallback((_) {
-                   return
-                   TextField(
-                       decoration: InputDecoration(
-                         prefixIcon: Icon(Icons.account_circle),
-                         border: OutlineInputBorder(),
-                         labelText: "dehfrefrerfrefr",
-                       ),
-                       style:TextStyle(
-                         fontSize: 20,
-                         color:Colors.black,
-                       )
-                   );
-                    });
-
+                         WidgetsBinding.instance.addPostFrameCallback((_) {
+                           return
+                           TextField(
+                               decoration: InputDecoration(
+                                 prefixIcon: Icon(Icons.account_circle),
+                                 border: OutlineInputBorder(),
+                                 labelText: "dehfrefrerfrefr",
+                               ),
+                               style:TextStyle(
+                                 fontSize: 20,
+                                 color:Colors.black,
+                               )
+                           );
+                         });
                       }
                       return TextField(
                           decoration: InputDecoration(
