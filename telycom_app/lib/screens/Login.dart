@@ -60,7 +60,6 @@ class _FirstRouteState extends State<FirstRoute> {
   // IMEI
   String _platformImei = 'Unknown';
   String uniqueId = "Unknown";
-  String token = 'f10c6424772941cda5bb0bbd0d128ca5';
 
   @override
   void initState() {
@@ -68,7 +67,6 @@ class _FirstRouteState extends State<FirstRoute> {
     initPlatformState();
     _isButtonDisabled = false;
     _isTextFieldEnable = true;
-    futureSuceso = SucesoCall.fetchSuceso(token);
   }
 
   //
@@ -209,40 +207,6 @@ class _FirstRouteState extends State<FirstRoute> {
                         ],
                       ),
                     ),
-                  ),
-
-                  FutureBuilder<Suceso>(
-                    future: futureSuceso,
-                    builder: (context, snapshot) {
-                      if(snapshot.hasData){
-                         WidgetsBinding.instance.addPostFrameCallback((_) {
-                           return
-                           TextField(
-                               decoration: InputDecoration(
-                                 prefixIcon: Icon(Icons.account_circle),
-                                 border: OutlineInputBorder(),
-                                 labelText: "dehfrefrerfrefr",
-                               ),
-                               style:TextStyle(
-                                 fontSize: 20,
-                                 color:Colors.black,
-                               )
-                           );
-                         });
-                      }
-                      return TextField(
-                          decoration: InputDecoration(
-                            prefixIcon: Icon(Icons.account_circle),
-                            border: OutlineInputBorder(),
-                            labelText: snapshot.data.idSuceso,
-                          ),
-                          style:TextStyle(
-                            fontSize: 20,
-                            color:Colors.black,
-                          )
-                      );
-                    }
-
                   ),
 
                   // Comprobando el loading

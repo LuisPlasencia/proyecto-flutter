@@ -19,19 +19,27 @@ class SucesoCall{
     String latitude;
     String longitude;
 
+    var idSucesoArray;
+    var refSucesoArray;
+    var descriptionArray;
+    var latitudeArray;
+    var longitudeArray;
+
     final response = await http.get(Uri.parse(url));
 
     // Array de String.
     var datos = response.body.split('\$');
     tipo = datos[0];
-    idSuceso = datos[1].substring(9);
-    refSuceso = datos[2].substring(10);
-    description = datos[3].substring(12);
-    latitude = datos[4].substring(9);
-    longitude = datos[5].substring(10);
+    idSucesoArray = datos[1].split(';'); //[1702,1703,1704]
+    refSucesoArray = datos[2].split(';');
+    descriptionArray = datos[3].split(';');
+    latitudeArray = datos[4].split(';');
+    longitudeArray = datos[5].split(';');
 
-    Suceso suceso = new Suceso(tipo, idSuceso, refSuceso, description
-        , double.parse(latitude), double.parse(longitude));
+
+
+    Suceso suceso = new Suceso(tipo, idSucesoArray[3].toString(), "refSuceso", "description"
+        , 20, 23);
 
       switch (response.statusCode) {
         case 200:
