@@ -9,6 +9,7 @@ import 'package:telycom_app/httpService/Album.dart';
 import 'package:telycom_app/httpService/Logout.dart';
 import 'package:telycom_app/httpService/LogoutCall.dart';
 import 'package:telycom_app/httpService/ServiceCalzl.dart';
+import 'package:telycom_app/httpService/Suceso.dart';
 import 'dart:developer' as developer;
 
 import '../ElementList.dart';
@@ -46,6 +47,8 @@ class MisIncidencias extends StatefulWidget {
 }
 
 class _MisIncidenciasState extends State<MisIncidencias> {
+
+  Future<Suceso> futureSuceso;
 
   Future<Logout> futureLogout;
   String tk;

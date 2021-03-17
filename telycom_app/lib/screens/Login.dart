@@ -2,10 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter/services.dart';
 import 'dart:async';
-import 'package:flutter/material.dart';
+
+import 'package:http/http.dart' as http;
 
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:telycom_app/httpService/Suceso.dart';
+import 'package:telycom_app/httpService/SucesoCall.dart';
 import 'package:telycom_app/l10n/l10n.dart';
 import 'package:telycom_app/httpService/AuthCall.dart';
 import 'package:telycom_app/httpService/Token.dart';
@@ -52,11 +55,18 @@ class _FirstRouteState extends State<FirstRoute> {
   bool cargando = false;
   bool _isButtonDisabled;
   bool _isTextFieldEnable;
+  Future<Suceso> futureSuceso;
 
 
   // IMEI
   String _platformImei = 'Unknown';
   String uniqueId = "Unknown";
+
+  String dominioTelyApiServer = '192.168.15.38';
+  String imei = '987654321';
+  String token = 'f10c6424772941cda5bb0bbd0d128ca5';
+
+
 
   @override
   void initState() {
@@ -64,9 +74,10 @@ class _FirstRouteState extends State<FirstRoute> {
     initPlatformState();
     _isButtonDisabled = false;
     _isTextFieldEnable = true;
+    futureSuceso = SucesoCall.fetchSuceso(token);
   }
 
-  //
+  //🚶🚶🚶🚶🚶🚶🚶🚶🚶🚶🚶🚶🚶🚶🚶🚶🚶🚶🚶🚶🚶🚶🚶🚶🚶🚶🚶🚶🚶🚶🚶🚶🚶🚶🚶🚶🚶🚶🚶🚶
   void _pulsandoEntrar() {
     if (textFieldController.text != "") {
       setState(() {
@@ -133,7 +144,8 @@ class _FirstRouteState extends State<FirstRoute> {
         child: Scaffold(
           //propiedad que utilizamos para que no se cambie el tamaño de la columna al abrir el teclado
           resizeToAvoidBottomInset: false,
-          body: Container(
+          body: Transform.scale(scale: 1,
+          child:Container(
             decoration: BoxDecoration(
               image: DecorationImage(
                 fit: BoxFit.fill,
@@ -146,159 +158,197 @@ class _FirstRouteState extends State<FirstRoute> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
                   Container(
-                      // margin: EdgeInsets.only(top: 150),
+                    // margin: EdgeInsets.only(top: 150),
                       child: Image(
                         width: 300,
                         image: AssetImage('images/logo.png'),
                       )),
                   // Text('Running on: $_platformImei\n is equal to : $uniqueId'),
 
-              Container(
-                margin: EdgeInsets.only( left: 50.0, right: 50.0),
-                height: 200,
-                width: 400,
-                child: Card(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(15.0),),
-                  elevation: 5,
-                  child: Column(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.only(bottom: 45, top: 25, left: 15, right: 15),
-                        child: TextField(
-                            enabled: _isTextFieldEnable,
-                            controller:textFieldController,
-                            //la llave es necesaria para realizar el test de integración
-                            key: Key('user'),
+                  Container(
+                    margin: EdgeInsets.only( left: 50.0, right: 50.0),
+                    height: 200,
+                    width: 400,
+                    child: Card(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15.0),),
+                      elevation: 5,
+                      child: Column(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 45, top: 25, left: 15, right: 15),
+                            child: TextField(
+                                enabled: _isTextFieldEnable,
+                                controller:textFieldController,
+                                //la llave es necesaria para realizar el test de integración
+                                key: Key('user'),
 
-                            decoration: InputDecoration(
-                              prefixIcon: Icon(Icons.account_circle),
-                              border: OutlineInputBorder(),
-                              labelText: AppLocalizations.of(context).labelUser,
+                                decoration: InputDecoration(
+                                  prefixIcon: Icon(Icons.account_circle),
+                                  border: OutlineInputBorder(),
+                                  labelText: AppLocalizations.of(context).labelUser,
+                                ),
+                                style:TextStyle(
+                                  fontSize: 20,
+                                  color:Colors.black,
+                                )
                             ),
-                            style:TextStyle(
-                              fontSize: 20,
-                              color:Colors.black,
-                            )
-                        ),
-                      ),
-
-                      SizedBox(),
-
-                      ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          primary: Colors.blue,
-                          onPrimary: Colors.white,
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(18.0),
                           ),
-                          padding: EdgeInsets.only(left: 22, right:22, top: 10, bottom: 10),
-                        ),
-                        child: Text(AppLocalizations.of(context).buttonSubmitLogin, style: TextStyle(fontSize: 22, color: Colors.white)),
-                        //null cuando isbuttondisabled es true y pulsandoEntrar cuando es false
-                        onPressed: _isButtonDisabled ? null : _pulsandoEntrar,
+
+                          SizedBox(),
+
+                          ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              primary: Colors.blue,
+                              onPrimary: Colors.white,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(18.0),
+                              ),
+                              padding: EdgeInsets.only(left: 22, right:22, top: 10, bottom: 10),
+                            ),
+                            child: Text(AppLocalizations.of(context).buttonSubmitLogin, style: TextStyle(fontSize: 22, color: Colors.white)),
+                            //null cuando isbuttondisabled es true y pulsandoEntrar cuando es false
+                            onPressed: _isButtonDisabled ? null : _pulsandoEntrar,
+                          ),
+                        ],
                       ),
-                    ],
+                    ),
                   ),
-                ),
-              ),
+
+                  FutureBuilder<Suceso>(
+                    future: futureSuceso,
+                    builder: (context, snapshot) {
+                      if(snapshot.hasData){
+                 WidgetsBinding.instance
+                 .addPostFrameCallback((_) {
+                   return
+                   TextField(
+                       decoration: InputDecoration(
+                         prefixIcon: Icon(Icons.account_circle),
+                         border: OutlineInputBorder(),
+                         labelText: "dehfrefrerfrefr",
+                       ),
+                       style:TextStyle(
+                         fontSize: 20,
+                         color:Colors.black,
+                       )
+                   );
+                    });
+
+                      }
+                      return TextField(
+                          decoration: InputDecoration(
+                            prefixIcon: Icon(Icons.account_circle),
+                            border: OutlineInputBorder(),
+                            labelText: snapshot.data.idSuceso,
+                          ),
+                          style:TextStyle(
+                            fontSize: 20,
+                            color:Colors.black,
+                          )
+                      );
+                    }
+
+                  ),
 
                   // Comprobando el loading
                   cargando ? FutureBuilder<Token>(
-                          future: futureToken,
-                          builder: (context, snapshot) {
-                            if (snapshot.hasData) {
-                              if (snapshot.data.statusTelyAPI == '200' ||
-                                  snapshot.data.statusTelyAPI == '202' ||
-                                  snapshot.data.statusTelyAPI == '203') {
-                                WidgetsBinding.instance
-                                    .addPostFrameCallback((_) {
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) => MisIncidencias(tk: snapshot.data.tk,))).then((value) {
-                                    setState(() {
-                                      cargando = false;
-                                      _isButtonDisabled = false;
-                                      _isTextFieldEnable = true;
-                                    });
-                                  });
-                                });
-                                return new Container(
-                                  height: 100,
-                                  padding: EdgeInsets.only(bottom: 15),
-                                );
-                              } else {
-                                  final snackbar = SnackBar(
-                                      backgroundColor: Colors.yellow,
-                                      content: Text(
-                                        AppLocalizations.of(context).sBErrorText + ": " + snapshot.data.statusTelyAPI,
-                                        style: TextStyle(
-                                            color: Colors.red,
-                                            fontWeight: FontWeight.bold),
-                                      ));
-
-                                WidgetsBinding.instance
-                                    .addPostFrameCallback((_) {
-                                  // Add Your Code here.
-                                  ScaffoldMessenger.of(context)
-                                      .showSnackBar(snackbar);
-                                  setState(() {
-                                    cargando = false;
-                                    _isButtonDisabled = false;
-                                    _isTextFieldEnable = true;
-                                  });
-                                });
-
-                                return new Container(
-                                  height: 75,
-                                  padding: EdgeInsets.only(bottom: 15),
-                                );
-                              }
-                            } else if (snapshot.hasError) {
-                              developer.log(snapshot.error.toString(),name:"error");
-                              SnackBar snackbar;
-                              snackbar = SnackBar(
-                                  backgroundColor: Colors.yellow,
-                                  content: Text(
-                                    AppLocalizations.of(context).sBTimeoutText,
-                                    style: TextStyle(
-                                        color: Colors.red,
-                                        fontWeight: FontWeight.bold),
-                                  ));
-
-                                // ScaffoldMessenger.of(context).showSnackBar(snackbar);
-                                WidgetsBinding.instance.addPostFrameCallback((_) {
-                                // Add Your Code here.
-                                ScaffoldMessenger.of(context)
-                                    .showSnackBar(snackbar);
-                                setState(() {
-                                  cargando = false;
-                                  _isButtonDisabled = false;
-                                  _isTextFieldEnable = true;
-                                });
+                    future: futureToken,
+                    builder: (context, snapshot) {
+                      if (snapshot.hasData) {
+                        if (snapshot.data.statusTelyAPI == '200' ||
+                            snapshot.data.statusTelyAPI == '202' ||
+                            snapshot.data.statusTelyAPI == '203') {
+                          WidgetsBinding.instance
+                              .addPostFrameCallback((_) {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => MisIncidencias(tk: snapshot.data.tk,))).then((value) {
+                              setState(() {
+                                cargando = false;
+                                _isButtonDisabled = false;
+                                _isTextFieldEnable = true;
                               });
+                            });
+                          });
+                          return new Container(
+                            height: 100,
+                            padding: EdgeInsets.only(bottom: 15),
+                          );
+                        } else {
+                          final snackbar = SnackBar(
+                              backgroundColor: Colors.yellow,
+                              content: Text(
+                                AppLocalizations.of(context).sBErrorText + ": " + snapshot.data.statusTelyAPI,
+                                style: TextStyle(
+                                    color: Colors.red,
+                                    fontWeight: FontWeight.bold),
+                              ));
 
-                              return new Container(
-                                height: 75,
-                                padding: EdgeInsets.only(bottom: 15),
-                              );
-                            }
-                            // By default, show a loading spinner.
-                            return Container(
-                                height: 75,
-                                padding: EdgeInsets.only(bottom: 15),
-                                child: SpinKitHourGlass(color: Colors.white));
-                          },
-                        )
-                        : new Container(
+                          WidgetsBinding.instance
+                              .addPostFrameCallback((_) {
+                            // Add Your Code here.
+                            ScaffoldMessenger.of(context)
+                                .showSnackBar(snackbar);
+                            setState(() {
+                              cargando = false;
+                              _isButtonDisabled = false;
+                              _isTextFieldEnable = true;
+                            });
+                          });
+
+                          return new Container(
+                            height: 75,
+                            padding: EdgeInsets.only(bottom: 15),
+                          );
+                        }
+                      } else if (snapshot.hasError) {
+                        developer.log(snapshot.error.toString(),name:"error");
+                        SnackBar snackbar;
+                        snackbar = SnackBar(
+                            backgroundColor: Colors.yellow,
+                            content: Text(
+                              AppLocalizations.of(context).sBTimeoutText,
+                              style: TextStyle(
+                                  color: Colors.red,
+                                  fontWeight: FontWeight.bold),
+                            ));
+
+                        // ScaffoldMessenger.of(context).showSnackBar(snackbar);
+                        WidgetsBinding.instance.addPostFrameCallback((_) {
+                          // Add Your Code here.
+                          ScaffoldMessenger.of(context)
+                              .showSnackBar(snackbar);
+                          setState(() {
+                            cargando = false;
+                            _isButtonDisabled = false;
+                            _isTextFieldEnable = true;
+                          });
+                        });
+
+                        return new Container(
                           height: 75,
                           padding: EdgeInsets.only(bottom: 15),
-                        ),
+                        );
+                      }
+                      // By default, show a loading spinner.
+                      return Container(
+                          height: 75,
+                          padding: EdgeInsets.only(bottom: 15),
+                          child: SpinKitHourGlass(color: Colors.white));
+                    },
+                  )
+                      : new Container(
+                    height: 75,
+                    padding: EdgeInsets.only(bottom: 15),
+                  ),
                 ],
               ),
             ),
           ),
+          ),
+
         ));
   }
 }
