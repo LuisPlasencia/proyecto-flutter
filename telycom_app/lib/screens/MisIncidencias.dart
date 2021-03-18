@@ -137,8 +137,8 @@ class _MisIncidenciasState extends State<MisIncidencias> {
   }
 
   static const _markerSize = 80.0;
-  List<Marker> _markers;
-  List<LatLng> _points;
+  List<Marker> _markers = <Marker>[];
+  List<LatLng> _points = <LatLng>[];
 
   Widget _portraitMode() {
     return Column(
@@ -157,6 +157,23 @@ class _MisIncidenciasState extends State<MisIncidencias> {
                       child: ListView.builder(
                         itemCount: snapshot.data.length,
                         itemBuilder: (context, index) {
+                          _points.add(LatLng(snapshot.data[index].latitude, snapshot.data[index].longitude));
+                          if(index == snapshot.data.length){
+                            _markers = _points
+                                .map(
+                                  (LatLng point) => Marker(
+                                  point: point,
+                                  width: _markerSize,
+                                  height: _markerSize,
+                                  builder: (ctx) => Image(
+                                    image: AssetImage('images/sirena.png'),
+                                  )
+
+                              ),
+                            )
+                                .toList();
+                          }
+
                           // if (itemsList[index].state == "Atendido") {
                           //   colorTarjeta = Colors.green[400];
                           // } else {
@@ -454,25 +471,25 @@ class _MisIncidenciasState extends State<MisIncidencias> {
           _mapController.move(LatLng(latitudCenter, longitudCenter), 12.0),
         });
 
-    _markers = <Marker>[];
-    _points = <LatLng>[];
+    // _markers = <Marker>[];
+    // _points = <LatLng>[];
 
-    for (var i = 0; i < itemsList.length; i++) {
-      _points.add(LatLng(itemsList[i].latitud, itemsList[i].longitud));
-    }
-    _markers = _points
-        .map(
-          (LatLng point) => Marker(
-              point: point,
-              width: _markerSize,
-              height: _markerSize,
-              builder: (ctx) => Image(
-                    image: AssetImage('images/sirena.png'),
-                  )
-
-              ),
-        )
-        .toList();
+    // for (var i = 0; i < itemsList.length; i++) {
+    //   _points.add(LatLng(itemsList[i].latitud, itemsList[i].longitud));
+    // }
+    // _markers = _points
+    //     .map(
+    //       (LatLng point) => Marker(
+    //           point: point,
+    //           width: _markerSize,
+    //           height: _markerSize,
+    //           builder: (ctx) => Image(
+    //                 image: AssetImage('images/sirena.png'),
+    //               )
+    //
+    //           ),
+    //     )
+    //     .toList();
   }
 
   @override
