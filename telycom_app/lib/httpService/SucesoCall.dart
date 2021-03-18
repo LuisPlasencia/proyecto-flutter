@@ -8,11 +8,11 @@ import 'Suceso.dart';
 class SucesoCall{
 
   static const String dominioTelyApiServer = '192.168.15.38';
-  static const String imei = '987654321';
+  // static const String imei = '987654321';
 
-  static Future<List<Suceso>> fetchSuceso(String token) async {
+  static Future<List<Suceso>> fetchSuceso(String token, String imei) async {
     String url = "http://$dominioTelyApiServer/TelyGIS/AndroidServlet?tk=$token&q=getsucesos&imei=$imei";
-    List<Suceso> list_sucesos;
+    List<Suceso> listsucesos = [];
 
     var tipo;
     var idSucesoArray;
@@ -59,20 +59,28 @@ class SucesoCall{
     // }
 
 
-    for(int i = 0; i<idSucesoArray.length; i++){
-      Suceso suceso = new Suceso(tipo, idSucesoArray[i], refSucesoArray[i], descriptionArray[i], latitudeArray[i], longitudeArray[i]);
-      list_sucesos.add(suceso);
+    // List<Suceso> itemsList = [
+    //   Suceso("tipo"," idSucesoArray[i]", "refSucesoArray[i]", "descriptionArray[i]", -15.4263325, 28.11023),
+    //   Suceso("tipo"," idSucesoArray[i]", "refSucesoArray[i]", "descriptionArray[i]", -15.4263325, 28.11023),
+    //   Suceso("tipo"," idSucesoArray[i]", "refSucesoArray[i]", "descriptionArray[i]", -15.4263325, 28.11023),
+    // ];
+
+
+
+    for(int i = 0; i<idSucesoArray.length-1; i++){
+      Suceso suceso = new Suceso(tipo, idSucesoArray[i+1], refSucesoArray[i+1], descriptionArray[i+1], double.parse(latitudeArray[i+1]), double.parse(longitudeArray[i+1]));
+      listsucesos.add(suceso);
     }
 
     switch (response.statusCode) {
       case 200:
-        return list_sucesos;
+        return listsucesos;
         break;
       case 202:
-        return list_sucesos;
+        return listsucesos;
         break;
       case 203:
-        return list_sucesos;
+        return listsucesos;
         break;
       case 451:
         throw Exception('451: Petición no válida');

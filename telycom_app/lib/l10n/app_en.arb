@@ -137,5 +137,10 @@
   "sBTimeoutText": "Service unreacheable (Timeout)",
   "@sBTimeoutText": {
     "description": "Timeout warning text"
+  },
+
+  "sBnoImeiFail": "Failed to get platform version.",
+  "@sBnoImeiFail": {
+    "description": "Couldn't get the IMEI"
   }
 }

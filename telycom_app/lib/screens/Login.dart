@@ -80,7 +80,15 @@ class _FirstRouteState extends State<FirstRoute> {
         developer.log(usuario.toString(),name:"emote");
         futureToken = AuthCall.fetchToken(usuario).timeout(Duration(seconds: 20));
       });
-    } else {
+    } else if(_platformImei == 'Failed to get platform version.'){ // no se pudo obtener el IMEI del dispositivo
+      final snackbar = SnackBar(
+          backgroundColor: Colors.yellow,
+          content: Text(
+            AppLocalizations.of(context).sBnoImeiFail,
+            style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
+          ));
+      ScaffoldMessenger.of(context).showSnackBar(snackbar);
+    } else { // Si esta vacio el textfield
       final snackbar = SnackBar(
           backgroundColor: Colors.yellow,
           content: Text(
@@ -222,7 +230,7 @@ class _FirstRouteState extends State<FirstRoute> {
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => MisIncidencias(tk: snapshot.data.tk,))).then((value) {
+                                    builder: (context) => MisIncidencias(tk: snapshot.data.tk, imei: _platformImei,))).then((value) {
                               setState(() {
                                 cargando = false;
                                 _isButtonDisabled = false;

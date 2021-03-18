@@ -26,6 +26,6 @@
     "code": "代码",
     "creation": "创建",
     "direction": "方向",
-    "sBTimeoutText": "服务无法到达（超时）"
-
+    "sBTimeoutText": "服务无法到达（超时）",
+    "sBnoImeiFail": "无法获取IMEI"
 }

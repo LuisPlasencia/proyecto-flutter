@@ -26,5 +26,6 @@
     "incidentsLabel": "Incidencias",
     "textFieldHintEnterMessage": "Introduzca su mensaje",
     "submitButtonMessageTab": "Entrar",
-    "dialogExitAppContent": "Será desconectado del servicio"
+    "dialogExitAppContent": "Será desconectado del servicio",
+    "sBnoImeiFail": "No se pudo obtener el IMEI del dispositivo"
 }
