@@ -20,6 +20,7 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:telycom_app/l10n/l10n.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:map_controller/map_controller.dart';
 
 import 'DetalleIncidencias.dart';
 import 'Login.dart';
@@ -77,7 +78,9 @@ class _MisIncidenciasState extends State<MisIncidencias> {
   Position posicionado;
   double latitudCenter = 28.1364; //28.0713516;
   double longitudCenter = 120.29; // -15.45598;
-  MapController _mapController = MapController();
+  MapController _mapController;
+  StatefulMapController statefulMapController;
+  StreamSubscription<StatefulMapControllerStateChange> sub;
 
   Future<bool> _onBackPressed() {
     return showDialog(
@@ -158,7 +161,15 @@ class _MisIncidenciasState extends State<MisIncidencias> {
                         itemCount: snapshot.data.length,
                         itemBuilder: (context, index) {
                           _points.add(LatLng(snapshot.data[index].latitude, snapshot.data[index].longitude));
-                          if(index == snapshot.data.length){
+                          // statefulMapController.addMarker(marker: Marker(
+                          //     point: LatLng(snapshot.data[index].latitude, snapshot.data[index].longitude),
+                          //     width: _markerSize,
+                          //     height: _markerSize,
+                          //     builder: (ctx) => Image(
+                          //       image: AssetImage('images/sirena.png'),
+                          //     )
+                          // ), name: 'Marker' + index.toString());
+                          if(index == snapshot.data.length-1){
                             _markers = _points
                                 .map(
                                   (LatLng point) => Marker(
@@ -168,7 +179,6 @@ class _MisIncidenciasState extends State<MisIncidencias> {
                                   builder: (ctx) => Image(
                                     image: AssetImage('images/sirena.png'),
                                   )
-
                               ),
                             )
                                 .toList();
@@ -240,7 +250,7 @@ class _MisIncidenciasState extends State<MisIncidencias> {
 
                                       Scaffold.of(context).showSnackBar(snackBar);
                                       double zoom = 12.0; //the zoom you want
-                                      _mapController.move(latlng, zoom);
+                                      statefulMapController.mapController.move(latlng, zoom);
                                     });
                                   },
                                   child: ClipRRect(
@@ -313,183 +323,211 @@ class _MisIncidenciasState extends State<MisIncidencias> {
     );
   }
 
-  // Widget _landscapeMode() {
-  //   return OrientationBuilder(
-  //     builder: (context, orientation) {
-  //      return new Row(
-  //        children: [
-  //          // sin expanded se rompe??
-  //          Container(
-  //            // ajustar este valor para ver mas grande el mapa
-  //            width: 300,
-  //            child: new Expanded(
-  //              child: Container(
-  //                child: ListView.builder(
-  //                  itemCount: itemsList.length,
-  //                  itemBuilder: (context, index) {
-  //                    if (itemsList[index].state == "Atendido") {
-  //                      colorTarjeta = Colors.green[400];
-  //                    } else {
-  //                      colorTarjeta = Colors.red[400];
-  //                    }
-  //                    return Card(
-  //                      child: Container(
-  //                        color: colorTarjeta,
-  //                        child: ListTile(
-  //                          onTap: () {
-  //                            Navigator.push(
-  //                                context,
-  //                                MaterialPageRoute(
-  //                                  builder: (context) => DetalleIncidencias(
-  //                                    creation: itemsList[index].creation,
-  //                                    reference: itemsList[index].reference,
-  //                                    state: itemsList[index].state,
-  //                                    direction: itemsList[index].direction,
-  //                                    description: itemsList[index].description,
-  //                                    latitud: itemsList[index].latitud,
-  //                                    longitud: itemsList[index].longitud,
-  //                                  ),
-  //                                ));
-  //                          },
-  //                          title: RichText(
-  //                            // le pasamos la posicion para poder testearlo luego!
-  //                            key: Key("listElement" + index.toString()),
-  //                            text: TextSpan(
-  //                              children: <TextSpan>[
-  //                                TextSpan(
-  //                                    text: itemsList[index].description,
-  //                                    style: TextStyle(color: Colors.white)),
-  //                                TextSpan(
-  //                                    text: " | ",
-  //                                    style: TextStyle(color: Colors.deepOrange)),
-  //                                TextSpan(
-  //                                    text: itemsList[index].reference,
-  //                                    style: TextStyle(color: Colors.white)),
-  //                                TextSpan(
-  //                                    text: " | ",
-  //                                    style: TextStyle(color: Colors.deepOrange)),
-  //                                TextSpan(
-  //                                    text: itemsList[index].state,
-  //                                    style: TextStyle(color: Colors.white)),
-  //                                TextSpan(
-  //                                    text: " | ",
-  //                                    style: TextStyle(color: Colors.deepOrange)),
-  //                                TextSpan(
-  //                                    text: itemsList[index].direction,
-  //                                    style: TextStyle(color: Colors.white)),
-  //                              ],
-  //                            ),
-  //                          ),
-  //                          leading: GestureDetector(
-  //                            key: Key("centerInMap" + index.toString()),
-  //                            onTap: () {
-  //                              setState(() {
-  //                                var latlng = LatLng(itemsList[index].latitud,
-  //                                    itemsList[index].longitud);
-  //                                final snackBar = SnackBar(
-  //                                    content: Text(latlng.latitude.toString() +
-  //                                        " " +
-  //                                        latlng.longitude.toString()));
-  //                                Scaffold.of(context).showSnackBar(snackBar);
-  //                                double zoom = 12.0; //the zoom you want
-  //                                _mapController.move(latlng, zoom);
-  //                              });
-  //                            },
-  //                            child: ClipRRect(
-  //                              borderRadius: BorderRadius.circular(60.0),
-  //                              child: Container(
-  //                                margin:
-  //                                const EdgeInsets.only(top: 5.0, bottom: 5.0),
-  //                                height: 70.0,
-  //                                width: 60.0,
-  //                                color: Colors.blue,
-  //                                child: Icon(
-  //                                  Icons.place,
-  //                                  color: Colors.black,
-  //                                  size: 30.0,
-  //                                ),
-  //                              ),
-  //                            ),
-  //                          ),
-  //                        ),
-  //                      ),
-  //                    );
-  //                  },
-  //                ),
-  //              ),
-  //            ),
-  //          ),
-  //          Flexible(
-  //            child: FlutterMap(
-  //              mapController: _mapController,
-  //              options: MapOptions(
-  //                maxZoom: 19,
-  //                minZoom: 10,
-  //                // center: LatLng(latLog.latitude, latLog.longitude),
-  //                center: LatLng(latitudCenter, longitudCenter),
-  //                zoom: 12.0,
-  //              ),
-  //              layers: [
-  //                // TileLayerOptions(
-  //                //   urlTemplate:
-  //                //   'http://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}',
-  //                //   subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
-  //                //   tileProvider: CachedNetworkTileProvider(),
-  //                // ),
-  //
-  //                new TileLayerOptions(
-  //                    urlTemplate:
-  //                    "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-  //                    subdomains: ['a', 'b', 'c']),
-  //
-  //                new MarkerLayerOptions(
-  //                  markers: _markers,
-  //                ),
-  //
-  //              ],
-  //            ),
-  //          ),
-  //        ],
-  //      );
-  //     },
-  //   );
-  // }
+  Widget _landscapeMode() {
+    return OrientationBuilder(
+      builder: (context, orientation) {
+       return Row(
+         children: [
+           // sin expanded se rompe??
+           Container(
+             // ajustar este valor para ver mas grande el mapa
+             width: 300,
+             child: new Expanded(
+               child: FutureBuilder<List<Suceso>>(
+                 future: futureSuceso,
+                 builder: (context, snapshot) {
+                   if (snapshot.hasData) {
+                     return Container(
+                       height: 200,
+                       child: ListView.builder(
+                         itemCount: snapshot.data.length,
+                         itemBuilder: (context, index) {
+                           _points.add(LatLng(snapshot.data[index].latitude, snapshot.data[index].longitude));
+                           if(index == snapshot.data.length-1){
+                             _markers = _points
+                                 .map(
+                                   (LatLng point) => Marker(
+                                   point: point,
+                                   width: _markerSize,
+                                   height: _markerSize,
+                                   builder: (ctx) => Image(
+                                     image: AssetImage('images/sirena.png'),
+                                   )
+                               ),
+                             )
+                                 .toList();
+                           }
+                           // if (itemsList[index].state == "Atendido") {
+                           //   colorTarjeta = Colors.green[400];
+                           // } else {
+                           colorTarjeta = Colors.red[400];
+                           // }
+                           return Card(
+                             child: Container(
+                               color: colorTarjeta,
+                               child: ListTile(
+                                 onTap: () {
+                                   Navigator.push(
+                                       context,
+                                       MaterialPageRoute(
+                                         builder: (context) => DetalleIncidencias(
+                                           creation: snapshot.data[index].description,
+                                           reference: snapshot.data[index].refSuceso,
+                                           state: "Atendido",
+                                           direction: snapshot.data[index].description,
+                                           description: snapshot.data[index].description,
+                                           latitud: snapshot.data[index].latitude,
+                                           longitud: snapshot.data[index].longitude,
+                                         ),
+                                       ));
+                                 },
+                                 title: RichText(
+                                   // le pasamos la posicion para poder testearlo luego!
+                                   key: Key("listElement" + index.toString()),
+                                   text: TextSpan(
+                                     children: <TextSpan>[
+                                       TextSpan(
+                                           text: snapshot.data[index].tipo,
+                                           style: TextStyle(color: Colors.white)),
+                                       TextSpan(
+                                           text: " | ",
+                                           style: TextStyle(color: Colors.deepOrange)),
+                                       TextSpan(
+                                           text: snapshot.data[index].refSuceso,
+                                           style: TextStyle(color: Colors.white)),
+                                       TextSpan(
+                                           text: " | ",
+                                           style: TextStyle(color: Colors.deepOrange)),
+                                       TextSpan(
+                                           text: snapshot.data[index].description,
+                                           style: TextStyle(color: Colors.white)),
+                                       TextSpan(
+                                           text: " | ",
+                                           style: TextStyle(color: Colors.deepOrange)),
+                                       TextSpan(
+                                           text: snapshot.data[index].description,
+                                           style: TextStyle(color: Colors.white)),
+                                     ],
+                                   ),
+                                 ),
+                                 leading: GestureDetector(
+                                   key: Key("centerInMap" + index.toString()),
+                                   onTap: () {
+                                     setState(() {
+                                       var latlng = LatLng(snapshot.data[index].latitude,
+                                           snapshot.data[index].longitude);
+                                       final snackBar = SnackBar(
+                                           content: Text(latlng.latitude.toString() +
+                                               " " +
+                                               latlng.longitude.toString()));
+
+                                       Scaffold.of(context).showSnackBar(snackBar);
+                                       double zoom = 12.0; //the zoom you want
+                                       statefulMapController.mapController.move(latlng, zoom);
+                                     });
+                                   },
+                                   child: ClipRRect(
+                                     borderRadius: BorderRadius.circular(60.0),
+                                     child: Container(
+                                       margin: const EdgeInsets.only(
+                                           top: 5.0, bottom: 5.0),
+                                       height: 70.0,
+                                       width: 60.0,
+                                       color: Colors.blue,
+                                       child: Icon(
+                                         Icons.place,
+                                         color: Colors.black,
+                                         size: 30.0,
+                                       ),
+                                     ),
+                                   ),
+                                 ),
+                               ),
+                             ),
+                           );
+                         },
+                       ),
+                     );
+
+                     // Text(snapshot.data.title);
+                   } else if (snapshot.hasError) {
+                     return Text("${snapshot.error}");
+                   }
+                   // By default, show a loading spinner.
+                   return Container(
+                       padding: EdgeInsets.only(bottom:15),
+                       child: SpinKitHourGlass(color: Colors.white));
+                 },
+               ),
+             ),
+           ),
+           Flexible(
+             child: FlutterMap(
+               mapController: _mapController,
+               options: MapOptions(
+                 maxZoom: 19,
+                 minZoom: 10,
+                 // center: LatLng(latLog.latitude, latLog.longitude),
+                 center: LatLng(latitudCenter, longitudCenter),
+                 zoom: 12.0,
+               ),
+               layers: [
+                 // TileLayerOptions(
+                 //   urlTemplate:
+                 //   'http://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}',
+                 //   subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
+                 //   tileProvider: CachedNetworkTileProvider(),
+                 // ),
+
+                 new TileLayerOptions(
+                   // {s} means one of the available subdomains (used sequentially to help with browser parallel requests per domain limitation; subdomain values are specified in options;
+                   // a, b or c by default, can be omitted), {z} — zoom level, {x} and {y} — tile coordinates.
+                     urlTemplate:
+                     "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+                     subdomains: ['a', 'b', 'c']),
+
+                 new MarkerLayerOptions(
+                   markers: _markers,
+                 ),
+               ],
+             ),
+           ),
+         ],
+       );
+      },
+    );
+  }
 
   @override
   void initState() {
+
+
+    // intialize the controllers
+    _mapController = MapController();
+
+    // wait for the controller to be ready before using it
+    statefulMapController = StatefulMapController(mapController: _mapController);
+    statefulMapController.onReady.then((_) => print("The map controller is ready"));
+
+    /// [Important] listen to the changefeed to rebuild the map on changes:
+    /// this will rebuild the map when for example addMarker or any method
+    /// that mutates the map assets is called
+    sub = statefulMapController.changeFeed.listen((change) => setState((){}));
+
     super.initState();
-    // futureAlbum = ServiceCalzl.fetchAlbum();
+
+    developer.log("hola");
     futureSuceso = SucesoCall.fetchSuceso(tk,'987654321');
     posicionActual = _determinePosition();
     developer.log('log me', name: 'my.app.category');
 
-    // esto es un callback
+    // esto es un callback, determina nuestra posición
     posicionActual.then((value) => {
           developer.log(value.toString(), name: 'my.app.category'),
           latitudCenter = value.latitude,
           longitudCenter = value.longitude,
-          _mapController.move(LatLng(latitudCenter, longitudCenter), 12.0),
+          statefulMapController.mapController.move(LatLng(latitudCenter, longitudCenter), 12.0),
         });
-
-    // _markers = <Marker>[];
-    // _points = <LatLng>[];
-
-    // for (var i = 0; i < itemsList.length; i++) {
-    //   _points.add(LatLng(itemsList[i].latitud, itemsList[i].longitud));
-    // }
-    // _markers = _points
-    //     .map(
-    //       (LatLng point) => Marker(
-    //           point: point,
-    //           width: _markerSize,
-    //           height: _markerSize,
-    //           builder: (ctx) => Image(
-    //                 image: AssetImage('images/sirena.png'),
-    //               )
-    //
-    //           ),
-    //     )
-    //     .toList();
   }
 
   @override
@@ -519,7 +557,7 @@ class _MisIncidenciasState extends State<MisIncidencias> {
             if (orientation == Orientation.portrait) {
               return _portraitMode();
             } else {
-              return _portraitMode();
+              return _landscapeMode();
             }
           },
         ),
