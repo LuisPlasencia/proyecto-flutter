@@ -99,6 +99,7 @@ class _MisIncidenciasState extends State<MisIncidencias> {
                 key: Key('YES'),
                 onTap: () {
                   latLongBloc.dispose();
+                  sub.cancel();
                   futureLogout = LogoutCall.fetchLogout(tk);
                   Navigator.of(context).pop(true);
                 },
@@ -140,154 +141,173 @@ class _MisIncidenciasState extends State<MisIncidencias> {
   }
 
   static const _markerSize = 80.0;
-  List<Marker> _markers = <Marker>[];
-  List<LatLng> _points = <LatLng>[];
+  // List<Marker> _markers = <Marker>[];
+  // List<LatLng> _points = <LatLng>[];
 
   Widget _portraitMode() {
     return Column(
       children: [
-        ExpansionTile(
-            childrenPadding: EdgeInsets.only(bottom: 5),
-            title: Text(AppLocalizations.of(context).incidentsLabel),
-            backgroundColor: Colors.amberAccent[100],
-            children: [
               FutureBuilder<List<Suceso>>(
                 future: futureSuceso,
                 builder: (context, snapshot) {
+                  // print("FutureBuilder");
                   if (snapshot.hasData) {
-                    return Container(
-                      height: 200,
-                      child: ListView.builder(
-                        itemCount: snapshot.data.length,
-                        itemBuilder: (context, index) {
-                          _points.add(LatLng(snapshot.data[index].latitude, snapshot.data[index].longitude));
-                          // statefulMapController.addMarker(marker: Marker(
-                          //     point: LatLng(snapshot.data[index].latitude, snapshot.data[index].longitude),
-                          //     width: _markerSize,
-                          //     height: _markerSize,
-                          //     builder: (ctx) => Image(
-                          //       image: AssetImage('images/sirena.png'),
-                          //     )
-                          // ), name: 'Marker' + index.toString());
-                          if(index == snapshot.data.length-1){
-                            _markers = _points
-                                .map(
-                                  (LatLng point) => Marker(
-                                  point: point,
-                                  width: _markerSize,
-                                  height: _markerSize,
-                                  builder: (ctx) => Image(
-                                    image: AssetImage('images/sirena.png'),
-                                  )
-                              ),
-                            )
-                                .toList();
-                          }
+                    if(statefulMapController.markers.length < snapshot.data.length){
+                      for(int i = 0; i<snapshot.data.length; i++){
+                          addMarker(snapshot.data[i], i);
+                      }
+                    }
 
-                          // if (itemsList[index].state == "Atendido") {
-                          //   colorTarjeta = Colors.green[400];
-                          // } else {
-                            colorTarjeta = Colors.red[400];
-                          // }
-                          return Card(
-                            child: Container(
-                              color: colorTarjeta,
-                              child: ListTile(
-                                onTap: () {
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => DetalleIncidencias(
-                                          creation: snapshot.data[index].description,
-                                          reference: snapshot.data[index].refSuceso,
-                                          state: "Atendido",
-                                          direction: snapshot.data[index].description,
-                                          description: snapshot.data[index].description,
-                                          latitud: snapshot.data[index].latitude,
-                                          longitud: snapshot.data[index].longitude,
+                    return ExpansionTile(
+                        childrenPadding: EdgeInsets.only(bottom: 5),
+                        title: Text(AppLocalizations
+                            .of(context)
+                            .incidentsLabel),
+                        backgroundColor: Colors.amberAccent[100],
+                        children: [ Container(
+                          height: 200,
+                          child: ListView.builder(
+                            itemCount: snapshot.data.length,
+                            itemBuilder: (context, index) {
+                              // print("elemento" + index.toString());
+
+                              // if (itemsList[index].state == "Atendido") {
+                              //   colorTarjeta = Colors.green[400];
+                              // } else {
+                              colorTarjeta = Colors.red[400];
+                              // }
+                              return Card(
+                                child: Container(
+                                  color: colorTarjeta,
+                                  child: ListTile(
+                                    onTap: () {
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+                                                DetalleIncidencias(
+                                                  creation: snapshot.data[index]
+                                                      .description,
+                                                  reference: snapshot
+                                                      .data[index].refSuceso,
+                                                  state: "Atendido",
+                                                  direction: snapshot
+                                                      .data[index].description,
+                                                  description: snapshot
+                                                      .data[index].description,
+                                                  latitud: snapshot.data[index]
+                                                      .latitude,
+                                                  longitud: snapshot.data[index]
+                                                      .longitude,
+                                                ),
+                                          ));
+                                    },
+                                    title: RichText(
+                                      // le pasamos la posicion para poder testearlo luego!
+                                      key: Key(
+                                          "listElement" + index.toString()),
+                                      text: TextSpan(
+                                        children: <TextSpan>[
+                                          TextSpan(
+                                              text: snapshot.data[index].tipo,
+                                              style: TextStyle(
+                                                  color: Colors.white)),
+                                          TextSpan(
+                                              text: " | ",
+                                              style: TextStyle(
+                                                  color: Colors.black)),
+                                          TextSpan(
+                                              text: snapshot.data[index]
+                                                  .refSuceso,
+                                              style: TextStyle(
+                                                  color: Colors.white)),
+                                          TextSpan(
+                                              text: " | ",
+                                              style: TextStyle(
+                                                  color: Colors.black)),
+                                          TextSpan(
+                                              text: snapshot.data[index]
+                                                  .description,
+                                              style: TextStyle(
+                                                  color: Colors.white)),
+                                          TextSpan(
+                                              text: " | ",
+                                              style: TextStyle(
+                                                  color: Colors.black)),
+                                          TextSpan(
+                                              text: snapshot.data[index]
+                                                  .description,
+                                              style: TextStyle(
+                                                  color: Colors.white)),
+                                        ],
+                                      ),
+                                    ),
+                                    leading: GestureDetector(
+                                      key: Key(
+                                          "centerInMap" + index.toString()),
+                                      onTap: () {
+                                        setState(() {
+                                          var latlng = LatLng(
+                                              snapshot.data[index].latitude,
+                                              snapshot.data[index].longitude);
+                                          final snackBar = SnackBar(
+                                              content: Text("Lat: " +
+                                                  latlng.latitude.toString() +
+                                                  " | Lon: " +
+                                                  latlng.longitude.toString()));
+
+                                          Scaffold.of(context).showSnackBar(
+                                              snackBar);
+                                          double zoom = 12.0; //the zoom you want
+                                          statefulMapController.mapController
+                                              .move(latlng, zoom);
+                                        });
+                                      },
+                                      child: ClipRRect(
+                                        borderRadius: BorderRadius.circular(
+                                            60.0),
+                                        child: Container(
+                                          margin: const EdgeInsets.only(
+                                              top: 5.0, bottom: 5.0),
+                                          height: 70.0,
+                                          width: 60.0,
+                                          color: Colors.blue,
+                                          child: Icon(
+                                            Icons.place,
+                                            color: Colors.black,
+                                            size: 30.0,
+                                          ),
                                         ),
-                                      ));
-                                },
-                                title: RichText(
-                                  // le pasamos la posicion para poder testearlo luego!
-                                  key: Key("listElement" + index.toString()),
-                                  text: TextSpan(
-                                    children: <TextSpan>[
-                                      TextSpan(
-                                          text: snapshot.data[index].tipo,
-                                          style: TextStyle(color: Colors.white)),
-                                      TextSpan(
-                                          text: " | ",
-                                          style: TextStyle(color: Colors.deepOrange)),
-                                      TextSpan(
-                                          text: snapshot.data[index].refSuceso,
-                                          style: TextStyle(color: Colors.white)),
-                                      TextSpan(
-                                          text: " | ",
-                                          style: TextStyle(color: Colors.deepOrange)),
-                                      TextSpan(
-                                          text: snapshot.data[index].description,
-                                          style: TextStyle(color: Colors.white)),
-                                      TextSpan(
-                                          text: " | ",
-                                          style: TextStyle(color: Colors.deepOrange)),
-                                      TextSpan(
-                                          text: snapshot.data[index].description,
-                                          style: TextStyle(color: Colors.white)),
-                                    ],
-                                  ),
-                                ),
-                                leading: GestureDetector(
-                                  key: Key("centerInMap" + index.toString()),
-                                  onTap: () {
-                                    setState(() {
-                                      var latlng = LatLng(snapshot.data[index].latitude,
-                                          snapshot.data[index].longitude);
-                                      final snackBar = SnackBar(
-                                          content: Text(latlng.latitude.toString() +
-                                              " " +
-                                              latlng.longitude.toString()));
-
-                                      Scaffold.of(context).showSnackBar(snackBar);
-                                      double zoom = 12.0; //the zoom you want
-                                      statefulMapController.mapController.move(latlng, zoom);
-                                    });
-                                  },
-                                  child: ClipRRect(
-                                    borderRadius: BorderRadius.circular(60.0),
-                                    child: Container(
-                                      margin: const EdgeInsets.only(
-                                          top: 5.0, bottom: 5.0),
-                                      height: 70.0,
-                                      width: 60.0,
-                                      color: Colors.blue,
-                                      child: Icon(
-                                        Icons.place,
-                                        color: Colors.black,
-                                        size: 30.0,
                                       ),
                                     ),
                                   ),
                                 ),
-                              ),
-                            ),
-                          );
-                        },
-                      ),
-                    );
+                              );
+                            },
+                          ),
+                        )
+                        ]);
 
-                      // Text(snapshot.data.title);
+                    // Text(snapshot.data.title);
                   } else if (snapshot.hasError) {
                     return Text("${snapshot.error}");
                   }
                   // By default, show a loading spinner.
-                  return Container(
-                    padding: EdgeInsets.only(bottom:15),
-                      child: SpinKitHourGlass(color: Colors.white));
-                },
-              ),
+                  return ExpansionTile(
+                      childrenPadding: EdgeInsets.only(bottom: 5),
+                      title: Text(AppLocalizations
+                          .of(context)
+                          .incidentsLabel),
+                      backgroundColor: Colors.amberAccent[100],
+                      children: [
+                        Container(
+                            padding: EdgeInsets.only(bottom: 15),
+                            child: SpinKitHourGlass(color: Colors.white))
 
-            ]),
+                      ]);
+                }),
+
+
         Flexible(
           child: FlutterMap(
             mapController: _mapController,
@@ -306,6 +326,8 @@ class _MisIncidenciasState extends State<MisIncidencias> {
               //   tileProvider: CachedNetworkTileProvider(),
               // ),
 
+              // statefulMapController.tileLayer,
+
               new TileLayerOptions(
                 // {s} means one of the available subdomains (used sequentially to help with browser parallel requests per domain limitation; subdomain values are specified in options;
                 // a, b or c by default, can be omitted), {z} — zoom level, {x} and {y} — tile coordinates.
@@ -314,11 +336,16 @@ class _MisIncidenciasState extends State<MisIncidencias> {
                   subdomains: ['a', 'b', 'c']),
 
               new MarkerLayerOptions(
-                markers: _markers,
+                markers: statefulMapController.markers,
               ),
             ],
           ),
+
         ),
+      //   Positioned(
+      //       top: 15.0,
+      //       right: 15.0,
+      //       child: TileLayersBar(controller: statefulMapController))
       ],
     );
   }
@@ -342,21 +369,58 @@ class _MisIncidenciasState extends State<MisIncidencias> {
                        child: ListView.builder(
                          itemCount: snapshot.data.length,
                          itemBuilder: (context, index) {
-                           _points.add(LatLng(snapshot.data[index].latitude, snapshot.data[index].longitude));
-                           if(index == snapshot.data.length-1){
-                             _markers = _points
-                                 .map(
-                                   (LatLng point) => Marker(
-                                   point: point,
-                                   width: _markerSize,
-                                   height: _markerSize,
-                                   builder: (ctx) => Image(
-                                     image: AssetImage('images/sirena.png'),
-                                   )
-                               ),
-                             )
-                                 .toList();
-                           }
+                           // _points.add(LatLng(snapshot.data[index].latitude, snapshot.data[index].longitude));
+                           // if(index == snapshot.data.length-1){
+                           //   _markers = _points
+                           //       .map(
+                           //         (LatLng point) => Marker(
+                           //         point: point,
+                           //         width: _markerSize,
+                           //         height: _markerSize,
+                           //         builder: (ctx) => Image(
+                           //           image: AssetImage('images/sirena.png'),
+                           //         )
+                           //     ),
+                           //   )
+                           //       .toList();
+                           // }
+
+                           statefulMapController.onReady.then((_) {
+                             statefulMapController.addStatefulMarker(
+                                 name: "some marker" + index.toString() ,
+                                 statefulMarker: StatefulMarker(
+                                     height: _markerSize,
+                                     width: _markerSize,
+                                     state: <String, dynamic>{"showText": false},
+                                     point: LatLng(snapshot.data[index].latitude, snapshot.data[index].longitude),
+                                     builder: (BuildContext context, Map<String, dynamic> state) {
+                                       Widget w;
+                                       final markerIcon = IconButton(
+                                           icon: Image(image: AssetImage('images/sirena.png'),),
+                                           onPressed: () => statefulMapController.mutateMarker(
+                                               name: "some marker" + index.toString(),
+                                               property: "showText",
+                                               value: !(state["showText"] as bool)));
+                                       if (state["showText"] == true) {
+                                         w = Column(children: <Widget>[
+                                           markerIcon,
+                                           Container(
+                                               color: Colors.white,
+                                               child: Padding(
+                                                   padding: const EdgeInsets.all(5.0),
+                                                   child: Text("LP", textScaleFactor: 1.3))),
+                                         ]);
+                                       } else {
+                                         w = markerIcon;
+                                       }
+                                       return w;
+                                     })
+                             );
+                           });
+
+
+
+
                            // if (itemsList[index].state == "Atendido") {
                            //   colorTarjeta = Colors.green[400];
                            // } else {
@@ -391,19 +455,19 @@ class _MisIncidenciasState extends State<MisIncidencias> {
                                            style: TextStyle(color: Colors.white)),
                                        TextSpan(
                                            text: " | ",
-                                           style: TextStyle(color: Colors.deepOrange)),
+                                           style: TextStyle(color: Colors.black)),
                                        TextSpan(
                                            text: snapshot.data[index].refSuceso,
                                            style: TextStyle(color: Colors.white)),
                                        TextSpan(
                                            text: " | ",
-                                           style: TextStyle(color: Colors.deepOrange)),
+                                           style: TextStyle(color: Colors.black)),
                                        TextSpan(
                                            text: snapshot.data[index].description,
                                            style: TextStyle(color: Colors.white)),
                                        TextSpan(
                                            text: " | ",
-                                           style: TextStyle(color: Colors.deepOrange)),
+                                           style: TextStyle(color: Colors.black)),
                                        TextSpan(
                                            text: snapshot.data[index].description,
                                            style: TextStyle(color: Colors.white)),
@@ -417,8 +481,8 @@ class _MisIncidenciasState extends State<MisIncidencias> {
                                        var latlng = LatLng(snapshot.data[index].latitude,
                                            snapshot.data[index].longitude);
                                        final snackBar = SnackBar(
-                                           content: Text(latlng.latitude.toString() +
-                                               " " +
+                                           content: Text("Lat: " + latlng.latitude.toString() +
+                                               " | Lon: " +
                                                latlng.longitude.toString()));
 
                                        Scaffold.of(context).showSnackBar(snackBar);
@@ -487,7 +551,7 @@ class _MisIncidenciasState extends State<MisIncidencias> {
                      subdomains: ['a', 'b', 'c']),
 
                  new MarkerLayerOptions(
-                   markers: _markers,
+                   markers: statefulMapController.markers,
                  ),
                ],
              ),
@@ -499,8 +563,13 @@ class _MisIncidenciasState extends State<MisIncidencias> {
   }
 
   @override
-  void initState() {
+  void dispose() {
+    sub.cancel();
+    super.dispose();
+  }
 
+  @override
+  void initState() {
 
     // intialize the controllers
     _mapController = MapController();
@@ -509,17 +578,15 @@ class _MisIncidenciasState extends State<MisIncidencias> {
     statefulMapController = StatefulMapController(mapController: _mapController);
     statefulMapController.onReady.then((_) => print("The map controller is ready"));
 
+
     /// [Important] listen to the changefeed to rebuild the map on changes:
     /// this will rebuild the map when for example addMarker or any method
     /// that mutates the map assets is called
     sub = statefulMapController.changeFeed.listen((change) => setState((){}));
 
-    super.initState();
-
-    developer.log("hola");
     futureSuceso = SucesoCall.fetchSuceso(tk,'987654321');
     posicionActual = _determinePosition();
-    developer.log('log me', name: 'my.app.category');
+    developer.log('MisIncidencias', name: 'my.app.category');
 
     // esto es un callback, determina nuestra posición
     posicionActual.then((value) => {
@@ -528,6 +595,9 @@ class _MisIncidenciasState extends State<MisIncidencias> {
           longitudCenter = value.longitude,
           statefulMapController.mapController.move(LatLng(latitudCenter, longitudCenter), 12.0),
         });
+
+
+    super.initState();
   }
 
   @override
@@ -564,5 +634,46 @@ class _MisIncidenciasState extends State<MisIncidencias> {
 
       ),
     );
+  }
+
+
+  /// adds a new marker with unique identifier
+  void addMarker(Suceso data, int index) {
+    statefulMapController.onReady.then((_) {
+      // print("marcador" + index.toString());
+      statefulMapController.addStatefulMarker(
+          name: "some marker" + index.toString() ,
+          statefulMarker: StatefulMarker(
+              height: _markerSize,
+              width: _markerSize,
+              state: <String, dynamic>{"showText": false},
+              point: LatLng(data.latitude, data.longitude),
+              builder: (BuildContext context, Map<String, dynamic> state) {
+
+                Widget w;
+                final markerIcon = IconButton(
+                    icon: Image(image: AssetImage('images/sirena.png'),),
+                    onPressed: () => statefulMapController.mutateMarker(
+                        name: "some marker" + index.toString(),
+                        property: "showText",
+                        value: !(state["showText"] as bool)));
+                if (state["showText"] == true) {
+                  w = Column(children: <Widget>[
+                    markerIcon,
+                    Container(
+                        color: Colors.white,
+                        child: Padding(
+                            padding: const EdgeInsets.all(5.0),
+                            child: Text(data.refSuceso, textScaleFactor: 0.9))),
+                  ]);
+                } else {
+                  w = markerIcon;
+                }
+                return w;
+              }
+
+              )
+      );
+    });
   }
 }
