@@ -167,7 +167,6 @@ class _FirstRouteState extends State<FirstRoute> {
 
                   Container(
                     margin: EdgeInsets.only( left: 50.0, right: 50.0),
-                    height: 200,
                     width: 400,
                     child: Card(
                       shape: RoundedRectangleBorder(
@@ -176,7 +175,7 @@ class _FirstRouteState extends State<FirstRoute> {
                       child: Column(
                         children: [
                           Padding(
-                            padding: const EdgeInsets.only(bottom: 45, top: 25, left: 15, right: 15),
+                            padding: EdgeInsets.only(bottom: MediaQuery.of(context).size.height * 0.08, top: MediaQuery.of(context).size.height * 0.03, left: 15, right: 15),
                             child: TextField(
                               maxLength: 30,
                               enabled: _isTextFieldEnable,
@@ -191,26 +190,29 @@ class _FirstRouteState extends State<FirstRoute> {
                                 counterText: "",
                               ),
                               style:TextStyle(
-                                fontSize: 20,
+                                fontSize: 18,
                                 color:Colors.black,
                               )
                           ),
                       ),
 
-                          SizedBox(),
 
-                          ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              primary: Colors.blue,
-                              onPrimary: Colors.white,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(18.0),
+
+                          Container(
+                            margin: EdgeInsets.only(bottom: 10),
+                            child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                primary: Colors.blue,
+                                onPrimary: Colors.white,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(18.0),
+                                ),
+                                padding: EdgeInsets.only(left: 22, right:22, top: 10, bottom: 10),
                               ),
-                              padding: EdgeInsets.only(left: 22, right:22, top: 10, bottom: 10),
+                              child: Text(AppLocalizations.of(context).buttonSubmitLogin, style: TextStyle(fontSize: 22, color: Colors.white)),
+                              //null cuando isbuttondisabled es true y pulsandoEntrar cuando es false
+                              onPressed: _isButtonDisabled ? null : _pulsandoEntrar,
                             ),
-                            child: Text(AppLocalizations.of(context).buttonSubmitLogin, style: TextStyle(fontSize: 22, color: Colors.white)),
-                            //null cuando isbuttondisabled es true y pulsandoEntrar cuando es false
-                            onPressed: _isButtonDisabled ? null : _pulsandoEntrar,
                           ),
                         ],
                       ),
@@ -239,7 +241,7 @@ class _FirstRouteState extends State<FirstRoute> {
                             });
                           });
                           return new Container(
-                            height: 100,
+                            height: 75,
                             padding: EdgeInsets.only(bottom: 15),
                           );
                         } else {
@@ -294,19 +296,19 @@ class _FirstRouteState extends State<FirstRoute> {
                         });
 
                         return new Container(
-                          height: 75,
+                          height: 73,
                           padding: EdgeInsets.only(bottom: 15),
                         );
                       }
                       // By default, show a loading spinner.
                       return Container(
-                          height: 75,
+                          height: 73,
                           padding: EdgeInsets.only(bottom: 15),
                           child: SpinKitHourGlass(color: Colors.white));
                     },
                   )
                       : new Container(
-                    height: 75,
+                    height: 73,
                     padding: EdgeInsets.only(bottom: 15),
                   ),
                 ],

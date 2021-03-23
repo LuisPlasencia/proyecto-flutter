@@ -150,6 +150,9 @@ class _MisIncidenciasState extends State<MisIncidencias> {
               FutureBuilder<List<Suceso>>(
                 future: futureSuceso,
                 builder: (context, snapshot) {
+                  if(snapshot.connectionState != ConnectionState.done){
+                    return _buildLoading();
+                  }
                   // print("FutureBuilder");
                   if (snapshot.hasData) {
                     if(statefulMapController.markers.length < snapshot.data.length){
@@ -165,7 +168,7 @@ class _MisIncidenciasState extends State<MisIncidencias> {
                             .incidentsLabel),
                         backgroundColor: Colors.amberAccent[100],
                         children: [ Container(
-                          height: 200,
+                          height: MediaQuery.of(context).size.height * 0.25,
                           child: ListView.builder(
                             itemCount: snapshot.data.length,
                             itemBuilder: (context, index) {
@@ -293,18 +296,7 @@ class _MisIncidenciasState extends State<MisIncidencias> {
                     return Text("${snapshot.error}");
                   }
                   // By default, show a loading spinner.
-                  return ExpansionTile(
-                      childrenPadding: EdgeInsets.only(bottom: 5),
-                      title: Text(AppLocalizations
-                          .of(context)
-                          .incidentsLabel),
-                      backgroundColor: Colors.amberAccent[100],
-                      children: [
-                        Container(
-                            padding: EdgeInsets.only(bottom: 15),
-                            child: SpinKitHourGlass(color: Colors.white))
-
-                      ]);
+                  return _buildLoading();
                 }),
 
 
@@ -384,41 +376,6 @@ class _MisIncidenciasState extends State<MisIncidencias> {
                            //   )
                            //       .toList();
                            // }
-
-                           statefulMapController.onReady.then((_) {
-                             statefulMapController.addStatefulMarker(
-                                 name: "some marker" + index.toString() ,
-                                 statefulMarker: StatefulMarker(
-                                     height: _markerSize,
-                                     width: _markerSize,
-                                     state: <String, dynamic>{"showText": false},
-                                     point: LatLng(snapshot.data[index].latitude, snapshot.data[index].longitude),
-                                     builder: (BuildContext context, Map<String, dynamic> state) {
-                                       Widget w;
-                                       final markerIcon = IconButton(
-                                           icon: Image(image: AssetImage('images/sirena.png'),),
-                                           onPressed: () => statefulMapController.mutateMarker(
-                                               name: "some marker" + index.toString(),
-                                               property: "showText",
-                                               value: !(state["showText"] as bool)));
-                                       if (state["showText"] == true) {
-                                         w = Column(children: <Widget>[
-                                           markerIcon,
-                                           Container(
-                                               color: Colors.white,
-                                               child: Padding(
-                                                   padding: const EdgeInsets.all(5.0),
-                                                   child: Text("LP", textScaleFactor: 1.3))),
-                                         ]);
-                                       } else {
-                                         w = markerIcon;
-                                       }
-                                       return w;
-                                     })
-                             );
-                           });
-
-
 
 
                            // if (itemsList[index].state == "Atendido") {
@@ -518,9 +475,7 @@ class _MisIncidenciasState extends State<MisIncidencias> {
                      return Text("${snapshot.error}");
                    }
                    // By default, show a loading spinner.
-                   return Container(
-                       padding: EdgeInsets.only(bottom:15),
-                       child: SpinKitHourGlass(color: Colors.white));
+                   return _buildLoading();
                  },
                ),
              ),
@@ -609,14 +564,24 @@ class _MisIncidenciasState extends State<MisIncidencias> {
           title: Text("Mis incidencias"),
           actions: <Widget>[
             IconButton(
-              icon: const Icon(Icons.add_location),
-              tooltip: 'Mostrar mapa completo',
+              icon: const Icon(Icons.refresh),
+              tooltip: 'Refresh',
               // cuando lo mantenemos pulsado no saldra este texto
               onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => Login()),
-                );
+                setState(() {
+                  futureSuceso = SucesoCall.fetchSuceso(tk,'987654321');
+
+                  posicionActual = _determinePosition();
+
+                  // esto es un callback, determina nuestra posición
+                  posicionActual.then((value) => {
+                    developer.log(value.toString(), name: 'my.app.category'),
+                    latitudCenter = value.latitude,
+                    longitudCenter = value.longitude,
+                    statefulMapController.mapController.move(LatLng(latitudCenter, longitudCenter), 12.0),
+                  });
+
+                });
               },
             ),
           ],
@@ -675,5 +640,20 @@ class _MisIncidenciasState extends State<MisIncidencias> {
               )
       );
     });
+  }
+
+  Widget _buildLoading() {
+    return ExpansionTile(
+        childrenPadding: EdgeInsets.only(bottom: 5),
+        title: Text(AppLocalizations
+            .of(context)
+            .incidentsLabel),
+        backgroundColor: Colors.amberAccent[100],
+        children: [
+          Container(
+              padding: EdgeInsets.only(bottom: 15),
+              child: SpinKitHourGlass(color: Colors.white))
+
+        ]);
   }
 }
