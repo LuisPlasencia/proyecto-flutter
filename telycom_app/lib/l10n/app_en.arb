@@ -142,5 +142,10 @@
   "sBnoImeiFail": "Failed to get platform version.",
   "@sBnoImeiFail": {
     "description": "Couldn't get the IMEI"
+  },
+
+  "refreshButtonMessage": "Refresh",
+  "@refreshButtonMessage": {
+    "description": "Refresh button hint message while hovering over"
   }
 }

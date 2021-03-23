@@ -295,22 +295,16 @@ class _FirstRouteState extends State<FirstRoute> {
                           });
                         });
 
-                        return new Container(
-                          height: 73,
-                          padding: EdgeInsets.only(bottom: 15),
-                        );
+                        return emptyContainer();
                       }
-                      // By default, show a loading spinner.
+                      // By default
                       return Container(
-                          height: 73,
-                          padding: EdgeInsets.only(bottom: 15),
-                          child: SpinKitHourGlass(color: Colors.white));
+                      height: 73,
+                      padding: EdgeInsets.only(bottom: 15),
+                      child: SpinKitHourGlass(color: Colors.white));
                     },
                   )
-                      : new Container(
-                    height: 73,
-                    padding: EdgeInsets.only(bottom: 15),
-                  ),
+                      : emptyContainer(),
                 ],
               ),
             ),
@@ -318,5 +312,12 @@ class _FirstRouteState extends State<FirstRoute> {
           ),
 
         ));
+  }
+
+  Container emptyContainer() {
+    return new Container(
+      height: 73,
+      padding: EdgeInsets.only(bottom: 15),
+    );
   }
 }

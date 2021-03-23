@@ -151,7 +151,7 @@ class _MisIncidenciasState extends State<MisIncidencias> {
                 future: futureSuceso,
                 builder: (context, snapshot) {
                   if(snapshot.connectionState != ConnectionState.done){
-                    return _buildLoading();
+                    return _buildLoadingPortrait();
                   }
                   // print("FutureBuilder");
                   if (snapshot.hasData) {
@@ -296,13 +296,13 @@ class _MisIncidenciasState extends State<MisIncidencias> {
                     return Text("${snapshot.error}");
                   }
                   // By default, show a loading spinner.
-                  return _buildLoading();
+                  return _buildLoadingPortrait();
                 }),
 
 
         Flexible(
           child: FlutterMap(
-            mapController: _mapController,
+            mapController: statefulMapController.mapController,
             options: MapOptions(
               maxZoom: 19,
               minZoom: 10,
@@ -343,39 +343,30 @@ class _MisIncidenciasState extends State<MisIncidencias> {
   }
 
   Widget _landscapeMode() {
-    return OrientationBuilder(
-      builder: (context, orientation) {
        return Row(
          children: [
            // sin expanded se rompe??
            Container(
              // ajustar este valor para ver mas grande el mapa
              width: 300,
-             child: new Expanded(
-               child: FutureBuilder<List<Suceso>>(
+             child: new FutureBuilder<List<Suceso>>(
                  future: futureSuceso,
                  builder: (context, snapshot) {
+                   if(snapshot.connectionState != ConnectionState.done){
+                     return _buildLoadingLandscape();
+                   }
                    if (snapshot.hasData) {
+                     if(statefulMapController.markers.length < snapshot.data.length){
+                       for(int i = 0; i<snapshot.data.length; i++){
+                         addMarker(snapshot.data[i], i);
+                       }
+                     }
+
                      return Container(
-                       height: 200,
+        
                        child: ListView.builder(
                          itemCount: snapshot.data.length,
                          itemBuilder: (context, index) {
-                           // _points.add(LatLng(snapshot.data[index].latitude, snapshot.data[index].longitude));
-                           // if(index == snapshot.data.length-1){
-                           //   _markers = _points
-                           //       .map(
-                           //         (LatLng point) => Marker(
-                           //         point: point,
-                           //         width: _markerSize,
-                           //         height: _markerSize,
-                           //         builder: (ctx) => Image(
-                           //           image: AssetImage('images/sirena.png'),
-                           //         )
-                           //     ),
-                           //   )
-                           //       .toList();
-                           // }
 
 
                            // if (itemsList[index].state == "Atendido") {
@@ -475,14 +466,14 @@ class _MisIncidenciasState extends State<MisIncidencias> {
                      return Text("${snapshot.error}");
                    }
                    // By default, show a loading spinner.
-                   return _buildLoading();
+                   return _buildLoadingLandscape();
                  },
                ),
-             ),
+
            ),
            Flexible(
              child: FlutterMap(
-               mapController: _mapController,
+               mapController: statefulMapController.mapController,
                options: MapOptions(
                  maxZoom: 19,
                  minZoom: 10,
@@ -513,8 +504,6 @@ class _MisIncidenciasState extends State<MisIncidencias> {
            ),
          ],
        );
-      },
-    );
   }
 
   @override
@@ -525,6 +514,7 @@ class _MisIncidenciasState extends State<MisIncidencias> {
 
   @override
   void initState() {
+    developer.log('MisIncidencias', name: 'my.app.category');
 
     // intialize the controllers
     _mapController = MapController();
@@ -539,18 +529,11 @@ class _MisIncidenciasState extends State<MisIncidencias> {
     /// that mutates the map assets is called
     sub = statefulMapController.changeFeed.listen((change) => setState((){}));
 
-    futureSuceso = SucesoCall.fetchSuceso(tk,'987654321');
+    fetchData();
+
     posicionActual = _determinePosition();
-    developer.log('MisIncidencias', name: 'my.app.category');
 
-    // esto es un callback, determina nuestra posición
-    posicionActual.then((value) => {
-          developer.log(value.toString(), name: 'my.app.category'),
-          latitudCenter = value.latitude,
-          longitudCenter = value.longitude,
-          statefulMapController.mapController.move(LatLng(latitudCenter, longitudCenter), 12.0),
-        });
-
+    reloadMapWithGPSPosition();
 
     super.initState();
   }
@@ -565,22 +548,13 @@ class _MisIncidenciasState extends State<MisIncidencias> {
           actions: <Widget>[
             IconButton(
               icon: const Icon(Icons.refresh),
-              tooltip: 'Refresh',
+              tooltip: AppLocalizations.of(context).refreshButtonMessage,
               // cuando lo mantenemos pulsado no saldra este texto
               onPressed: () {
                 setState(() {
-                  futureSuceso = SucesoCall.fetchSuceso(tk,'987654321');
-
+                  fetchData();
                   posicionActual = _determinePosition();
-
-                  // esto es un callback, determina nuestra posición
-                  posicionActual.then((value) => {
-                    developer.log(value.toString(), name: 'my.app.category'),
-                    latitudCenter = value.latitude,
-                    longitudCenter = value.longitude,
-                    statefulMapController.mapController.move(LatLng(latitudCenter, longitudCenter), 12.0),
-                  });
-
+                  reloadMapWithGPSPosition();
                 });
               },
             ),
@@ -642,7 +616,7 @@ class _MisIncidenciasState extends State<MisIncidencias> {
     });
   }
 
-  Widget _buildLoading() {
+  Widget _buildLoadingPortrait() {
     return ExpansionTile(
         childrenPadding: EdgeInsets.only(bottom: 5),
         title: Text(AppLocalizations
@@ -655,5 +629,63 @@ class _MisIncidenciasState extends State<MisIncidencias> {
               child: SpinKitHourGlass(color: Colors.white))
 
         ]);
+  }
+
+  Widget _buildLoadingLandscape() {
+    return Container(
+              padding: EdgeInsets.only(bottom: 15),
+              child: SpinKitHourGlass(color: Colors.grey[600]));
+  }
+
+  void fetchData() {
+    futureSuceso = SucesoCall.fetchSuceso(tk,'987654321');
+  }
+
+  void reloadMapWithGPSPosition() {
+    // esto es un callback, determina nuestra posición
+    posicionActual.then((value) => {
+      developer.log(value.toString(), name: 'my.app.category'),
+      latitudCenter = value.latitude,
+      longitudCenter = value.longitude,
+
+      statefulMapController.onReady.then((_) {
+
+        //Center the map on the GPS position
+        statefulMapController.mapController.move(LatLng(latitudCenter, longitudCenter), 12.0);
+
+        //Create marker with GPS position
+        statefulMapController.addStatefulMarker(
+            name: "markerGPS",
+            statefulMarker: StatefulMarker(
+                height: _markerSize,
+                width: _markerSize,
+                state: <String, dynamic>{"showText": false},
+                point: LatLng(latitudCenter, longitudCenter),
+                builder:
+                    (BuildContext context, Map<String, dynamic> state) {
+                  Widget w;
+                  final markerIcon = IconButton(
+                      icon: Icon(Icons.location_on, color: Colors.blue[900],),
+                      onPressed: () => statefulMapController.mutateMarker(
+                          name: "markerGPS",
+                          property: "showText",
+                          value: !(state["showText"] as bool)));
+                  if (state["showText"] == true) {
+                    w = Column(children: <Widget>[
+                      markerIcon,
+                      Container(
+                          color: Colors.white,
+                          child: Padding(
+                              padding: const EdgeInsets.all(5.0),
+                              child: Text('GPS',
+                                  textScaleFactor: 0.9))),
+                    ]);
+                  } else {
+                    w = markerIcon;
+                  }
+                  return w;
+                }));
+      })
+    });
   }
 }
