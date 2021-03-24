@@ -10,7 +10,7 @@ class AuthCall{
   static const  String tipoAplicacion = 'TelyGES';
 
   static Future<Token> fetchToken(String usuario) async {
-    String url = 'http://' + dominioTelyApiServer + '/TelyApiServer/?l=' + licencia + '&id=' + id + '&p=' + perfil + '&ta=' + tipoAplicacion + '&usuario=' + usuario ;
+    String url = 'http://' + dominioTelyApiServer + '/TelyApiServer/?l=' + licencia + '&id=' + id + '&p=' + perfil + '&ta=' + tipoAplicacion + '&usuario=' + 'Juju' ;
 
     final response = await http.get(Uri.parse(url));
 
