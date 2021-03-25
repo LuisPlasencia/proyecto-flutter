@@ -77,7 +77,8 @@ class _MisIncidenciasState extends State<MisIncidencias> {
   MapController _mapController;
   StatefulMapController statefulMapController;
   StreamSubscription<StatefulMapControllerStateChange> sub;
-  List<String> names = [];
+  List<Marker> markers = [];
+  List<String> statefulMarkerNames = [];
 
   Future<bool> _onBackPressed() {
     return showDialog(
@@ -157,22 +158,24 @@ class _MisIncidenciasState extends State<MisIncidencias> {
                     }
                   }
                   if(snapshot.connectionState != ConnectionState.done){
-                    if(names.isNotEmpty){
-                      statefulMapController.onReady.then((value) {
-                        WidgetsBinding.instance.addPostFrameCallback((_) {
-                          setState(() {
-                            statefulMapController.removeMarkers(names: names);
-                            statefulMapController.markers.clear();
-                            statefulMapController.statefulMarkers.clear();
-                            names.clear();
-                          });
-                        });
-
-                      });
-                    }
                     return _buildLoadingPortrait();
                   }
+
+                  // En este condicional se entra si hemos pulsado el botón de refrescar
+                  // Si el numero de incidencias es menor en esta llamada, recarga la pantalla para que se actualice la vista y se eliminen correctamente los marcadores.
+                  // Aparte de eso, reseteo la lista de nombre de marcadores para que se vuelvan a crear con los posibles cambios que haya habido.
                   if(_isRefreshButtonDisabled){
+                    if(snapshot.hasData){
+                      if(snapshot.data.length < statefulMarkerNames.length){
+                        WidgetsBinding.instance.addPostFrameCallback((_) {
+                          Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (BuildContext context) => super.widget));
+                        });
+                      }
+                      statefulMarkerNames.clear();
+                    }
                     WidgetsBinding.instance.addPostFrameCallback((_) {
                       // Add Your Code here.
                       setState(() {
@@ -183,7 +186,9 @@ class _MisIncidenciasState extends State<MisIncidencias> {
                   }
                   // print("FutureBuilder");
                   if (snapshot.hasData) {
-                  if(names.length < snapshot.data.length){
+
+                  // Creo tantos marcadores como incidencias registradas.
+                  if(statefulMarkerNames.length < snapshot.data.length){
                       print("nani?");
                       for(int i = 0; i<snapshot.data.length; i++){
                           addMarker(snapshot.data[i], i);
@@ -435,6 +440,10 @@ class _MisIncidenciasState extends State<MisIncidencias> {
             ],
           ),
         ),
+      //   Positioned(
+      //       top: 15.0,
+      //       right: 15.0,
+      //       child: TileLayersBar(controller: statefulMapController))
       ],
     );
   }
@@ -452,14 +461,35 @@ class _MisIncidenciasState extends State<MisIncidencias> {
                    if(snapshot.connectionState != ConnectionState.done){
                      return _buildLoadingLandscape();
                    }
-                   WidgetsBinding.instance.addPostFrameCallback((_) {
-                     // Add Your Code here.
-                     setState(() {
-                       _isRefreshButtonDisabled = false;
+
+                   // En este condicional se entra si hemos pulsado el botón de refrescar
+                   // Si el numero de incidencias es menor en esta llamada, recarga la pantalla para que se actualice la vista y se eliminen correctamente los marcadores.
+                   // Aparte de eso, reseteo la lista de nombre de marcadores para que se vuelvan a crear con los posibles cambios que haya habido.
+                   if(_isRefreshButtonDisabled){
+                     if(snapshot.hasData){
+                       if(snapshot.data.length < statefulMarkerNames.length){
+                         WidgetsBinding.instance.addPostFrameCallback((_) {
+                           Navigator.pushReplacement(
+                               context,
+                               MaterialPageRoute(
+                                   builder: (BuildContext context) => super.widget));
+                         });
+                       }
+                       statefulMarkerNames.clear();
+                     }
+                     WidgetsBinding.instance.addPostFrameCallback((_) {
+                       // Add Your Code here.
+                       setState(() {
+                         // statefulMapController.removeMarkers(names: names);
+                         _isRefreshButtonDisabled = false;
+                       });
                      });
-                   });
+                   }
+                   // print("FutureBuilder");
                    if (snapshot.hasData) {
-                     if(statefulMapController.markers.length < snapshot.data.length){
+                     // Creo tantos marcadores como incidencias registradas.
+                     if(statefulMarkerNames.length < snapshot.data.length){
+                       print("nani?");
                        for(int i = 0; i<snapshot.data.length; i++){
                          addMarker(snapshot.data[i], i);
                        }
@@ -723,7 +753,7 @@ class _MisIncidenciasState extends State<MisIncidencias> {
   /// adds a new marker with unique identifier
   void addMarker(Suceso data, int index) {
     print("addMarker");
-    names.add("some marker" + index.toString());
+    statefulMarkerNames.add("some marker" + index.toString());
     statefulMapController.onReady.then((_) {
       // print("marcador" + index.toString());
       statefulMapController.addStatefulMarker(
@@ -764,6 +794,45 @@ class _MisIncidenciasState extends State<MisIncidencias> {
     });
   }
 
+  void updateMarker(Suceso data, int index){
+    // TODO: update en vez de create en el refresh
+    statefulMapController.statefulMarkers.update("some marker" + index.toString(), (value) {
+      return StatefulMarker(
+          height: _markerSize,
+          width: _markerSize,
+          state: <String, dynamic>{"showText": false},
+          point: LatLng(data.latitude, data.longitude),
+          builder: (BuildContext context, Map<String, dynamic> state) {
+
+            Widget w;
+            final markerIcon = IconButton(
+                icon: Image(
+                  image: AssetImage('images/sirena.png'),
+                ),
+                onPressed: () => statefulMapController.mutateMarker(
+                    name: "some marker" + index.toString(),
+                    property: "showText",
+                    value: !(state["showText"] as bool)));
+            if (state["showText"] == true) {
+              w = Column(children: <Widget>[
+                markerIcon,
+                Container(
+                    color: Colors.white,
+                    child: Padding(
+                        padding: const EdgeInsets.all(5.0),
+                        child: Text(data.refSuceso, textScaleFactor: 0.9))),
+              ]);
+            } else {
+              w = markerIcon;
+            }
+            return w;
+          }
+
+      );
+    });
+  }
+
+  /// Muestra carga del Future en modo portrait
   Widget _buildLoadingPortrait() {
     return ExpansionTile(
         childrenPadding: EdgeInsets.only(bottom: 5),
@@ -779,39 +848,46 @@ class _MisIncidenciasState extends State<MisIncidencias> {
         ]);
   }
 
+  /// Muestra carga del Future en modo landscape
   Widget _buildLoadingLandscape() {
     return Container(
               padding: EdgeInsets.only(bottom: 15),
               child: SpinKitHourGlass(color: Colors.grey[600]));
   }
 
+  /// Llamada al servicio de incidencias
   void fetchData() {
-    futureSuceso = SucesoCall.fetchSuceso(tk,'123456789');
+    futureSuceso = SucesoCall.fetchSuceso(tk,'987654321');
   }
 
-  void refreshData() {
-    statefulMapController.onReady.then((_) {
-
-      for (int i = 0; i < statefulMapController.markers.length; i++) {
-        print("Posicion " +
-            i.toString() +
-            " : Latitud: " +
-            statefulMapController.markers[i].point.latitude.toString() +
-            " Longitud: " +
-            statefulMapController.markers[i].point.longitude.toString());
-      }
-
-      setState(() {
-        _isRefreshButtonDisabled = true;
-        statefulMapController.statefulMarkers.clear();
-        fetchData();
-        names.clear();
-        posicionActual = _determinePosition();
-        reloadMapWithGPSPosition();
-      });
+  /// Vuelve a llamar al servicio mientras bloquea el botón de refresh. Borra los marcadores activos ya que se volverán a crear con los cambios que haya habido.
+  void refreshData(){
+  statefulMapController.onReady.then((value) {
+    setState(() {
+      statefulMapController.statefulMarkers.clear();
+      _isRefreshButtonDisabled = true;
+      fetchData();
+      posicionActual = _determinePosition();
+      reloadMapWithGPSPosition();
+      print("UWU " + statefulMapController.statefulMarkers.length.toString());
     });
+  });
+
+    // statefulMapController.onReady.then((_) {
+    //
+    //   for (int i = 0; i < statefulMapController.markers.length; i++) {
+    //     print("Posicion " +
+    //         i.toString() +
+    //         " : Latitud: " +
+    //         statefulMapController.markers[i].point.latitude.toString() +
+    //         " Longitud: " +
+    //         statefulMapController.markers[i].point.longitude.toString());
+    //   }
+    //
+    // });
   }
 
+  ///Espera a los valores del GPS, centra el mapa y actualiza el marcador de GPS
   void reloadMapWithGPSPosition() {
     // esto es un callback, determina nuestra posición
     posicionActual.then((value) => {
