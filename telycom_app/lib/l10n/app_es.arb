@@ -28,5 +28,10 @@
     "submitButtonMessageTab": "Entrar",
     "dialogExitAppContent": "Será desconectado del servicio",
     "sBnoImeiFail": "No se pudo obtener el IMEI del dispositivo",
-    "refreshButtonMessage": "Refrescar"
+    "refreshButtonMessage": "Refrescar",
+    "noEventAssigned": "No hay eventos asignados",
+    "messageType": "Tipo Msg",
+    "eventId": "IdSuceso",
+    "eventReference": "Referencia",
+    "eventDescription": "Descripción"
 }

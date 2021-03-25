@@ -147,5 +147,30 @@
   "refreshButtonMessage": "Refresh",
   "@refreshButtonMessage": {
     "description": "Refresh button hint message while hovering over"
+  },
+
+  "noEventAssigned": "No events asigned",
+  "@noEventAssigned": {
+    "description": "No available events"
+  },
+
+  "messageType": "Msg type",
+  "@messageType": {
+    "description": "Indicates the type of message"
+  },
+
+  "eventId": "EventId",
+  "@eventId": {
+    "description": "Indicates the event id"
+  },
+
+  "eventReference": "Reference",
+  "@eventReference": {
+    "description": "Indicates the event reference"
+  },
+
+  "eventDescription": "Description",
+  "@eventDescription": {
+    "description": "Indicates the event description"
   }
 }

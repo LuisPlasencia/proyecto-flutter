@@ -76,7 +76,6 @@ class _MisIncidenciasState extends State<MisIncidencias> {
   MapController _mapController;
   StatefulMapController statefulMapController;
   StreamSubscription<StatefulMapControllerStateChange> sub;
-  List<Marker> markers = [];
   List<String> names = [];
 
   Future<bool> _onBackPressed() {
@@ -150,11 +149,14 @@ class _MisIncidenciasState extends State<MisIncidencias> {
                   if(snapshot.connectionState != ConnectionState.done){
                     if(names.isNotEmpty){
                       statefulMapController.onReady.then((value) {
-
-                        statefulMapController.removeMarkers(names: names).then((value) {
-                          print("UWU " + statefulMapController.markers.length.toString());
-                          names.clear();
+                        WidgetsBinding.instance.addPostFrameCallback((_) {
+                          setState(() {
+                            statefulMapController.removeMarkers(names: names);
+                            statefulMapController.markers.clear();
+                            statefulMapController.statefulMarkers.clear();
+                            names.clear();
                           });
+                        });
 
                       });
                     }
@@ -215,135 +217,178 @@ class _MisIncidenciasState extends State<MisIncidencias> {
                                     Text("Descripción",
                                         style: TextStyle(
                                             color: Colors.white,
-                                            fontWeight: FontWeight.bold)),
-                                  ],
-                                )),
-                          ),
+                                            fontWeight: FontWeight.bold),
+                                  maxLines: 10,),
+
+                              ],
+                            )),
+                      ),
                       Container(
                         height: MediaQuery.of(context).size.height * 0.25,
                         child: ListView.builder(
                           itemCount: snapshot.data.length,
                           itemBuilder: (context, index) {
-                            // print("elemento" + index.toString());
-
-                            // if (itemsList[index].state == "Atendido") {
-                            //   colorTarjeta = Colors.green[400];
-                            // } else {
                             colorTarjeta = Colors.red[400];
-                            // }
-                            return Card(
-                              child: Container(
-                                color: colorTarjeta,
-                                child: ListTile(
-                                  onTap: () {
-                                    Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) =>
-                                              DetalleIncidencias(
-                                            creation: snapshot
-                                                .data[index].description,
-                                            reference:
-                                                snapshot.data[index].refSuceso,
-                                            state: "Atendido",
-                                            direction: snapshot
-                                                .data[index].description,
-                                            description: snapshot
-                                                .data[index].description,
-                                            latitud:
-                                                snapshot.data[index].latitude,
-                                            longitud:
-                                                snapshot.data[index].longitude,
-                                          ),
-                                        ));
-                                  },
-                                  title: Container(
-                                      child: Row(
-                                    children: [
-                                      Text(snapshot.data[index].tipo,
-                                          style: TextStyle(
-                                              color: Colors.white,
-                                              fontWeight: FontWeight.bold)),
-                                      Container(
-                                          height: 30,
-                                          child: VerticalDivider(
-                                            color: Colors.black,
-                                            thickness: 1.5,
-                                          )),
-                                      Text(snapshot.data[index].idSuceso,
-                                          style: TextStyle(
-                                              color: Colors.white,
-                                              fontWeight: FontWeight.bold)),
-                                      Container(
-                                          height: 30,
-                                          child: VerticalDivider(
-                                            color: Colors.black,
-                                            thickness: 1.5,
-                                          )),
-                                      Text(snapshot.data[index].refSuceso,
-                                          style: TextStyle(
-                                              color: Colors.white,
-                                              fontWeight: FontWeight.bold)),
-                                      Container(
-                                          height: 30,
-                                          child: VerticalDivider(
-                                            color: Colors.black,
-                                            thickness: 1.5,
-                                          )),
-                                      Text(
-                                          snapshot.data[index].description
-                                                  .isNotEmpty
-                                              ? snapshot.data[index].description
-                                              : "Vacío",
-                                          maxLines: 10,
-                                          style: TextStyle(
-                                              color: Colors.white,
-                                              fontWeight: FontWeight.bold)),
-                                    ],
-                                  )),
-                                  leading: GestureDetector(
-                                    key: Key("centerInMap" + index.toString()),
+                            if(snapshot.data.length == 0){
+                              return Text(AppLocalizations.of(context).noEventAssigned);
+                            } else {
+                              return Card(
+                                child: Container(
+                                  color: colorTarjeta,
+                                  child: ListTile(
                                     onTap: () {
-                                      setState(() {
-                                        var latlng = LatLng(
-                                            snapshot.data[index].latitude,
-                                            snapshot.data[index].longitude);
-                                        final snackBar = SnackBar(
-                                            content: Text("Lat: " +
-                                                latlng.latitude.toString() +
-                                                " | Lon: " +
-                                                latlng.longitude.toString()));
-
-                                        ScaffoldMessenger.of(context)
-                                            .showSnackBar(snackBar);
-                                        double zoom = 12.0; //the zoom you want
-                                        statefulMapController.mapController
-                                            .move(latlng, zoom);
-                                      });
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+                                                DetalleIncidencias(
+                                                  creation: snapshot
+                                                      .data[index].description,
+                                                  reference:
+                                                  snapshot.data[index].refSuceso,
+                                                  state: "Atendido",
+                                                  direction: snapshot
+                                                      .data[index].description,
+                                                  description: snapshot
+                                                      .data[index].description,
+                                                  latitud:
+                                                  snapshot.data[index].latitude,
+                                                  longitud:
+                                                  snapshot.data[index].longitude,
+                                                ),
+                                          ));
                                     },
-                                    child: ClipRRect(
-                                      borderRadius: BorderRadius.circular(60.0),
-                                      child: Container(
-                                        height: 50,
-                                        width: 50,
-                                        color: Colors.blue,
-                                        child: Icon(
-                                          Icons.place,
-                                          color: Colors.black,
-                                          size: 30.0,
+                                    title: Container(
+                                        child: Row(
+                                          children: [
+                                            Text(snapshot.data[index].tipo,
+                                                style: TextStyle(
+                                                    color: Colors.white,
+                                                    fontWeight: FontWeight.bold)),
+                                            Container(
+                                                height: 30,
+                                                child: VerticalDivider(
+                                                  color: Colors.black,
+                                                  thickness: 1.5,
+                                                )),
+                                            Text(snapshot.data[index].idSuceso,
+                                                style: TextStyle(
+                                                    color: Colors.white,
+                                                    fontWeight: FontWeight.bold)),
+                                            Container(
+                                                height: 30,
+                                                child: VerticalDivider(
+                                                  color: Colors.black,
+                                                  thickness: 1.5,
+                                                )),
+                                            Text(snapshot.data[index].refSuceso,
+                                                style: TextStyle(
+                                                    color: Colors.white,
+                                                    fontWeight: FontWeight.bold)),
+                                            Container(
+                                                height: 30,
+                                                child: VerticalDivider(
+                                                  color: Colors.black,
+                                                  thickness: 1.5,
+                                                )),
+                                            Flexible(
+                                              child: Text(
+                                                  snapshot.data[index].description
+                                                      .isNotEmpty
+                                                      ? snapshot.data[index].description
+                                                      : "Vacío",
+                                                  style: TextStyle(
+                                                      color: Colors.white,
+                                                      fontWeight: FontWeight.bold,),
+                                              ),
+                                            ),
+                                          ],
+                                        )),
+                                    leading: GestureDetector(
+                                      key: Key("centerInMap" + index.toString()),
+                                      onTap: () {
+                                        setState(() {
+                                          var latlng = LatLng(
+                                              snapshot.data[index].latitude,
+                                              snapshot.data[index].longitude);
+                                          final snackBar = SnackBar(
+                                              content: Text("Lat: " +
+                                                  latlng.latitude.toString() +
+                                                  " | Lon: " +
+                                                  latlng.longitude.toString()));
+
+                                          ScaffoldMessenger.of(context)
+                                              .showSnackBar(snackBar);
+                                          double zoom = 12.0; //the zoom you want
+                                          statefulMapController.mapController
+                                              .move(latlng, zoom);
+                                        });
+                                      },
+                                      child: ClipRRect(
+                                        borderRadius: BorderRadius.circular(60.0),
+                                        child: Container(
+                                          height: 50,
+                                          width: 50,
+                                          color: Colors.blue,
+                                          child: Icon(
+                                            Icons.place,
+                                            color: Colors.black,
+                                            size: 30.0,
+                                          ),
                                         ),
                                       ),
                                     ),
                                   ),
                                 ),
-                              ),
-                            );
+                              );
+                            }
                           },
                         ),
                       )
                     ]);
               } else if (snapshot.hasError) {
-                return Text("${snapshot.error}");
+                return ExpansionTile(
+                    childrenPadding: EdgeInsets.only(bottom: 5),
+                    title: Text(AppLocalizations.of(context).incidentsLabel),
+                    backgroundColor: Colors.amberAccent[100],
+                    children: [
+                      Card(
+                        child: Container(
+                            color: Colors.blue,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(AppLocalizations.of(context).messageType,
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold)),
+                                Container(
+                                    height: 20,
+                                    child: VerticalDivider(color: Colors.red)),
+                                Text(AppLocalizations.of(context).eventId,
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold)),
+                                Container(
+                                    height: 20,
+                                    child: VerticalDivider(color: Colors.red)),
+                                Text(AppLocalizations.of(context).eventReference,
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold)),
+                                Container(
+                                    height: 20,
+                                    child: VerticalDivider(color: Colors.red)),
+                                Text(AppLocalizations.of(context).eventDescription,
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold)),
+                              ],
+                            )),
+                      ),
+                      Text(AppLocalizations.of(context).noEventAssigned,
+                      style: TextStyle(fontSize: 16, color: Colors.red, fontWeight: FontWeight.bold),)
+                    ]);
               }
               // By default, show a loading spinner.
               return _buildLoadingPortrait();
@@ -381,10 +426,6 @@ class _MisIncidenciasState extends State<MisIncidencias> {
             ],
           ),
         ),
-      //   Positioned(
-      //       top: 15.0,
-      //       right: 15.0,
-      //       child: TileLayersBar(controller: statefulMapController))
       ],
     );
   }
@@ -421,29 +462,35 @@ class _MisIncidenciasState extends State<MisIncidencias> {
                            child: Container(
                                color: Colors.blue,
                                child: Row(
-                                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                 mainAxisAlignment: MainAxisAlignment.center,
                                  children: [
-                                   Text("Tipo Msg",
+                                   Text(AppLocalizations.of(context).messageType,
                                        style: TextStyle(
                                            color: Colors.white,
-                                           fontWeight: FontWeight.bold)
-                                   ),
-
-                                   Container(height: 20, child: VerticalDivider(color: Colors.red)),
-                                   Text("Id suceso",
+                                           fontWeight: FontWeight.bold)),
+                                   Container(
+                                       height: 20,
+                                       child: VerticalDivider(color: Colors.red)),
+                                   Text(AppLocalizations.of(context).eventId,
                                        style: TextStyle(
                                            color: Colors.white,
-                                           fontWeight: FontWeight.bold)
-                                   ),
-                                   Container(height: 20, child: VerticalDivider(color: Colors.red)),
-                                   Text("Referencia",
+                                           fontWeight: FontWeight.bold)),
+                                   Container(
+                                       height: 20,
+                                       child: VerticalDivider(color: Colors.red)),
+                                   Text(AppLocalizations.of(context).eventReference,
                                        style: TextStyle(
                                            color: Colors.white,
-                                           fontWeight: FontWeight.bold)
-                                   ),
+                                           fontWeight: FontWeight.bold)),
+                                   Container(
+                                       height: 20,
+                                       child: VerticalDivider(color: Colors.red)),
+                                   Text(AppLocalizations.of(context).eventDescription,
+                                       style: TextStyle(
+                                           color: Colors.white,
+                                           fontWeight: FontWeight.bold)),
                                  ],
-                               )
-                           ),
+                               )),
                          ),
                          Expanded(
                            child: Container(
@@ -556,7 +603,7 @@ class _MisIncidenciasState extends State<MisIncidencias> {
 
                 // Text(snapshot.data.title);
               } else if (snapshot.hasError) {
-                return Text("${snapshot.error}");
+                return Center(child: Text("No esta asignado a ninguna incidencia",style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold),));
               }
               // By default, show a loading spinner.
               return _buildLoadingLandscape();
