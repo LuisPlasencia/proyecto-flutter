@@ -52,6 +52,7 @@ class _MisIncidenciasState extends State<MisIncidencias> {
   String imei;
   _MisIncidenciasState(this.tk, this.imei);
   bool _isRefreshButtonDisabled;
+  double valueSize;
 
   Future<List<Album>> futureAlbum;
 
@@ -143,9 +144,18 @@ class _MisIncidenciasState extends State<MisIncidencias> {
   Widget _portraitMode() {
     return Column(
       children: [
-              FutureBuilder<List<Suceso>>(
+        FutureBuilder<List<Suceso>>(
                 future: futureSuceso,
                 builder: (context, snapshot) {
+                  if(snapshot.hasData){
+                    if(snapshot.data.length == 1){
+                      valueSize = 0.10;
+                    } else if(snapshot.data.length == 2){
+                      valueSize = 0.16;
+                    } else {
+                      valueSize = 0.25;
+                    }
+                  }
                   if(snapshot.connectionState != ConnectionState.done){
                     if(names.isNotEmpty){
                       statefulMapController.onReady.then((value) {
@@ -193,28 +203,28 @@ class _MisIncidenciasState extends State<MisIncidencias> {
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    Text("Tipo Msg",
+                                    Text(AppLocalizations.of(context).messageType,
                                         style: TextStyle(
                                             color: Colors.white,
                                             fontWeight: FontWeight.bold)),
                                     Container(
                                         height: 20,
                                         child: VerticalDivider(color: Colors.red)),
-                                    Text("Id Suceso",
+                                    Text(AppLocalizations.of(context).eventId,
                                         style: TextStyle(
                                             color: Colors.white,
                                             fontWeight: FontWeight.bold)),
                                     Container(
                                         height: 20,
                                         child: VerticalDivider(color: Colors.red)),
-                                    Text("Referencia",
+                                    Text(AppLocalizations.of(context).eventReference,
                                         style: TextStyle(
                                             color: Colors.white,
                                             fontWeight: FontWeight.bold)),
                                     Container(
                                         height: 20,
                                         child: VerticalDivider(color: Colors.red)),
-                                    Text("Descripción",
+                                    Text(AppLocalizations.of(context).description,
                                         style: TextStyle(
                                             color: Colors.white,
                                             fontWeight: FontWeight.bold),
@@ -224,7 +234,7 @@ class _MisIncidenciasState extends State<MisIncidencias> {
                             )),
                       ),
                       Container(
-                        height: MediaQuery.of(context).size.height * 0.25,
+                        height: MediaQuery.of(context).size.height * valueSize,
                         child: ListView.builder(
                           itemCount: snapshot.data.length,
                           itemBuilder: (context, index) {
@@ -412,7 +422,6 @@ class _MisIncidenciasState extends State<MisIncidencias> {
               // ),
 
               // statefulMapController.tileLayer,
-
               new TileLayerOptions(
                 // {s} means one of the available subdomains (used sequentially to help with browser parallel requests per domain limitation; subdomain values are specified in options;
                 // a, b or c by default, can be omitted), {z} — zoom level, {x} and {y} — tile coordinates.
@@ -777,7 +786,7 @@ class _MisIncidenciasState extends State<MisIncidencias> {
   }
 
   void fetchData() {
-    futureSuceso = SucesoCall.fetchSuceso(tk,'987654321');
+    futureSuceso = SucesoCall.fetchSuceso(tk,'123456789');
   }
 
   void refreshData() {
@@ -791,9 +800,12 @@ class _MisIncidenciasState extends State<MisIncidencias> {
             " Longitud: " +
             statefulMapController.markers[i].point.longitude.toString());
       }
+
       setState(() {
         _isRefreshButtonDisabled = true;
+        statefulMapController.statefulMarkers.clear();
         fetchData();
+        names.clear();
         posicionActual = _determinePosition();
         reloadMapWithGPSPosition();
       });
