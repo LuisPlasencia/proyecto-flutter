@@ -46,6 +46,8 @@ dependencies:
 
   flutter_spinkit: ^4.1.2
 
+  bouncing_widget: ^2.0.0
+
 
 dev_dependencies:
   integration_test: ^1.0.1

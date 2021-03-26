@@ -2,12 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter/services.dart';
 import 'dart:async';
-import 'package:flutter/material.dart';
 
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:telycom_app/httpService/Suceso.dart';
-import 'package:telycom_app/httpService/SucesoCall.dart';
+
 import 'package:telycom_app/l10n/l10n.dart';
 import 'package:telycom_app/httpService/AuthCall.dart';
 import 'package:telycom_app/httpService/Token.dart';
@@ -195,8 +194,6 @@ class _FirstRouteState extends State<FirstRoute> {
                               )
                           ),
                       ),
-
-
 
                           Container(
                             margin: EdgeInsets.only(bottom: 10),
