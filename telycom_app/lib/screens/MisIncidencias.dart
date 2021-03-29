@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong/latlong.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:telycom_app/app/AppMediator.dart';
+import 'package:telycom_app/app/MisIncidenciasState.dart';
 import 'package:telycom_app/httpService/Album.dart';
 import 'package:telycom_app/httpService/Logout.dart';
 import 'package:telycom_app/httpService/LogoutCall.dart';
@@ -89,6 +91,11 @@ class _MisIncidenciasState extends State<MisIncidencias>{
   StatefulMapController statefulMapController;
   StreamSubscription<StatefulMapControllerStateChange> sub;
   List<String> statefulMarkerNames = [];
+  bool errorTimeout;
+  bool timeoutSolved = true;
+  AppMediator mediator;
+  MisIncidenciasState  state;
+
 
 
   Future<bool> _onBackPressed() {
@@ -164,6 +171,12 @@ class _MisIncidenciasState extends State<MisIncidencias>{
             future: futureSuceso,
             builder: (context, snapshot) {
               if (snapshot.hasData) {
+                if(!timeoutSolved){
+                  timeoutSolved = true;
+                  state.timeoutSolved = timeoutSolved;
+                  mediator.setMisIncidenciasState(state);
+                }
+
                 if (snapshot.data.length == 1) {
                   valueSize = 0.10;
                 } else if (snapshot.data.length == 2) {
@@ -201,6 +214,7 @@ class _MisIncidenciasState extends State<MisIncidencias>{
               }
               // print("FutureBuilder");
               if (snapshot.hasData) {
+                errorTimeout = false;
                 // Creo tantos marcadores como incidencias registradas.
                 if (statefulMarkerNames.length < snapshot.data.length) {
                   print("nani?");
@@ -212,7 +226,7 @@ class _MisIncidenciasState extends State<MisIncidencias>{
                 return ExpansionTile(
                     childrenPadding: EdgeInsets.only(bottom: 5),
                     title: Text(AppLocalizations.of(context).incidentsLabel),
-                    backgroundColor: Colors.amberAccent[100],
+                    backgroundColor: Colors.grey[300],
                     children: [
                       Card(
                         child: Container(
@@ -391,10 +405,40 @@ class _MisIncidenciasState extends State<MisIncidencias>{
                       )
                     ]);
               } else if (snapshot.hasError) {
+                if(!errorTimeout  || !timeoutSolved){
+                  if(statefulMarkerNames.isNotEmpty){
+                    timeoutSolved = false;
+                    errorTimeout = true;
+                    state.timeoutError = errorTimeout;
+                    state.timeoutSolved = timeoutSolved;
+                    mediator.setMisIncidenciasState(state);
+                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                      Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                              builder: (BuildContext context) => super.widget));
+                    });
+                    final snackbar = SnackBar(
+                        backgroundColor: Colors.yellow,
+                        content: Text(
+                          AppLocalizations.of(context).sBTimeoutText,
+                          style: TextStyle(
+                              color: Colors.red,
+                              fontWeight: FontWeight.bold),
+                        ));
+                    WidgetsBinding.instance
+                        .addPostFrameCallback((_) {
+                      // Add Your Code here.
+                      ScaffoldMessenger.of(context)
+                          .showSnackBar(snackbar);
+                    });
+                  }
+                }
+
                 return ExpansionTile(
                     childrenPadding: EdgeInsets.only(bottom: 5),
                     title: Text(AppLocalizations.of(context).incidentsLabel),
-                    backgroundColor: Colors.amberAccent[100],
+                    backgroundColor: Colors.amber[100],
                     children: [
                       Card(
                         child: Container(
@@ -498,12 +542,16 @@ class _MisIncidenciasState extends State<MisIncidencias>{
               if (snapshot.connectionState != ConnectionState.done) {
                 return _buildLoadingLandscape();
               }
-
               // En este condicional se entra si hemos pulsado el botón de refrescar
               // Si el numero de incidencias es menor en esta llamada, recarga la pantalla para que se actualice la vista y se eliminen correctamente los marcadores.
               // Aparte de eso, reseteo la lista de nombre de marcadores para que se vuelvan a crear con los posibles cambios que haya habido.
               if (_isRefreshButtonDisabled) {
                 if (snapshot.hasData) {
+                  if(!timeoutSolved){
+                    timeoutSolved = true;
+                    state.timeoutSolved = timeoutSolved;
+                    mediator.setMisIncidenciasState(state);
+                  }
                   if (snapshot.data.length < statefulMarkerNames.length) {
                     WidgetsBinding.instance.addPostFrameCallback((_) {
                       Navigator.pushReplacement(
@@ -692,12 +740,39 @@ class _MisIncidenciasState extends State<MisIncidencias>{
 
                 // Text(snapshot.data.title);
               } else if (snapshot.hasError) {
-                return Center(
-                    child: Text(
-                  "No esta asignado a ninguna incidencia",
-                  style:
-                      TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
-                ));
+                if(!errorTimeout || !timeoutSolved){
+                  if(statefulMarkerNames.isNotEmpty){
+                    // Actualizamos los states
+                    timeoutSolved = false;
+                    errorTimeout = true;
+                    state.timeoutError = errorTimeout;
+                    state.timeoutSolved = timeoutSolved;
+                    mediator.setMisIncidenciasState(state);
+
+                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                      Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                              builder: (BuildContext context) => super.widget));
+                    });
+                    final snackbar = SnackBar(
+                        backgroundColor: Colors.yellow,
+                        content: Text(
+                          AppLocalizations.of(context).sBTimeoutText,
+                          style: TextStyle(
+                              color: Colors.red,
+                              fontWeight: FontWeight.bold),
+                        ));
+                    WidgetsBinding.instance
+                        .addPostFrameCallback((_) {
+                      // Add Your Code here.
+                      ScaffoldMessenger.of(context)
+                          .showSnackBar(snackbar);
+                    });
+                  }
+
+                }
+
               }
               // By default, show a loading spinner.
               return _buildLoadingLandscape();
@@ -749,6 +824,11 @@ class _MisIncidenciasState extends State<MisIncidencias>{
   void initState() {
     developer.log('MisIncidencias', name: 'my.app.category');
 
+    mediator = AppMediator.getInstance();
+    state = mediator.getMisIncidenciasState();
+    errorTimeout = state.timeoutError;
+    timeoutSolved = state.timeoutSolved;
+
     // intialize the controllers
     _mapController = MapController();
 
@@ -763,7 +843,9 @@ class _MisIncidenciasState extends State<MisIncidencias>{
     /// that mutates the map assets is called
     sub = statefulMapController.changeFeed.listen((change) => setState(() {}));
 
-    fetchData();
+    if(!errorTimeout){
+        fetchData();
+    }
 
     posicionActual = _determinePosition();
 
@@ -881,27 +963,150 @@ class _MisIncidenciasState extends State<MisIncidencias>{
 
   /// Muestra carga del Future en modo portrait
   Widget _buildLoadingPortrait() {
-    return ExpansionTile(
-        childrenPadding: EdgeInsets.only(bottom: 5),
-        title: Text(AppLocalizations.of(context).incidentsLabel),
-        backgroundColor: Colors.amberAccent[100],
-        children: [
-          Container(
-              padding: EdgeInsets.only(bottom: 15),
-              child: SpinKitHourGlass(color: Colors.white))
-        ]);
+    //Si no hay timeout error muestra spinner de carga
+    if(!errorTimeout && timeoutSolved){
+      print("friohSPINER");
+      return ExpansionTile(
+          childrenPadding: EdgeInsets.only(bottom: 5),
+          title: Text(AppLocalizations.of(context).incidentsLabel),
+          backgroundColor: Colors.grey[300],
+          collapsedBackgroundColor: Colors.amberAccent[100],
+
+          children: [
+            Container(
+                padding: EdgeInsets.only(bottom: 15),
+                child: SpinKitHourGlass(color: Colors.white))
+          ]);
+    } else {
+      print("friohTIMEOUT");
+      errorTimeout = false;
+      state.timeoutError = errorTimeout;
+      mediator.setMisIncidenciasState(state);
+      _isRefreshButtonDisabled = false;
+      return ExpansionTile(
+          childrenPadding: EdgeInsets.only(bottom: 5),
+          title: Text(AppLocalizations.of(context).incidentsLabel),
+          backgroundColor: Colors.grey[300],
+          collapsedBackgroundColor: Colors.amberAccent[100],
+          children: [
+            Card(
+              child: Container(
+                  color: Colors.blue,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(AppLocalizations.of(context).messageType,
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold)),
+                      Container(
+                          height: 20,
+                          child: VerticalDivider(color: Colors.red)),
+                      Text(AppLocalizations.of(context).eventId,
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold)),
+                      Container(
+                          height: 20,
+                          child: VerticalDivider(color: Colors.red)),
+                      Text(
+                          AppLocalizations.of(context).eventReference,
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold)),
+                      Container(
+                          height: 20,
+                          child: VerticalDivider(color: Colors.red)),
+                      Text(
+                          AppLocalizations.of(context)
+                              .eventDescription,
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold)),
+                    ],
+                  )),
+            ),
+            Text(
+              "timeout",
+              style: TextStyle(
+                  fontSize: 16,
+                  color: Colors.red,
+                  fontWeight: FontWeight.bold),
+            )
+          ]);
+    }
+
   }
 
   /// Muestra carga del Future en modo landscape
   Widget _buildLoadingLandscape() {
-    return Container(
-        padding: EdgeInsets.only(bottom: 15),
-        child: SpinKitHourGlass(color: Colors.grey[600]));
+    //Si no hay timeout error muestra spinner de carga
+    if(!errorTimeout && timeoutSolved){
+      print("friohSPINER");
+      return Container(
+          padding: EdgeInsets.only(bottom: 15),
+          child: SpinKitHourGlass(color: Colors.grey[600]));
+    } else {
+      print("friohTIMEOUT");
+      errorTimeout = false;
+      state.timeoutError = errorTimeout;
+      mediator.setMisIncidenciasState(state);
+      _isRefreshButtonDisabled = false;
+      return  Column(
+            children: [
+              Card(
+                child: Container(
+                    color: Colors.blue,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(AppLocalizations.of(context).messageType,
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold)),
+                        Container(
+                            height: 20,
+                            child: VerticalDivider(color: Colors.red)),
+                        Text(AppLocalizations.of(context).eventId,
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold)),
+                        Container(
+                            height: 20,
+                            child: VerticalDivider(color: Colors.red)),
+                        Text(
+                            AppLocalizations.of(context).eventReference,
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold)),
+                        Container(
+                            height: 20,
+                            child: VerticalDivider(color: Colors.red)),
+                        Text(
+                            AppLocalizations.of(context)
+                                .eventDescription,
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold)),
+                      ],
+                    )),
+              ),
+              Text(
+                "Timeout ERROR!!",
+                style: TextStyle(
+                    fontSize: 16,
+                    color: Colors.red,
+                    fontWeight: FontWeight.bold),
+              )
+            ]);
+
+    }
+
   }
 
   /// Llamada al servicio de incidencias
   void fetchData() {
-    futureSuceso = SucesoCall.fetchSuceso(tk, '123456789');
+    futureSuceso = SucesoCall.fetchSuceso(tk, '123456789').timeout(Duration(seconds: 15));
   }
 
   /// Vuelve a llamar al servicio mientras bloquea el botón de refresh. Borra los marcadores activos ya que se volverán a crear con los cambios que haya habido.
