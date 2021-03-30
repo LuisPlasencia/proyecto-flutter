@@ -117,7 +117,13 @@ class _MisIncidenciasState extends State<MisIncidencias>{
             onTap: () {
               latLongBloc.dispose();
               sub.cancel();
-              futureLogout = LogoutCall.fetchLogout(tk);
+
+              state.statefulMarkers = null;
+              state.running = false;
+              state.errorTimeout = false;
+              mediator.setMisIncidenciasState(state);
+
+              // futureLogout = LogoutCall.fetchLogout(tk);
               Navigator.of(context).pop(true);
             },
             child: Text(AppLocalizations.of(context).dialogExitAppYes),
@@ -222,8 +228,10 @@ class _MisIncidenciasState extends State<MisIncidencias>{
                 // Creo tantos marcadores como incidencias registradas.
                 if (statefulMarkerNames.length < snapshot.data.length) {
                   print("nani?");
+                  state.numberOfMarkers  = 0;
                   for (int i = 0; i < snapshot.data.length; i++) {
                     addMarker(snapshot.data[i], i);
+                    state.numberOfMarkers ++;
                   }
                   state.statefulMarkers = statefulMapController.statefulMarkers;
                   mediator.setMisIncidenciasState(state);
@@ -411,6 +419,17 @@ class _MisIncidenciasState extends State<MisIncidencias>{
                       )
                     ]);
               } else if (snapshot.hasError) {
+                if(state.numberOfMarkers != 0){
+                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                      Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                              builder: (BuildContext context) => super.widget));
+                    });
+                    state.numberOfMarkers = 0;
+                    mediator.setMisIncidenciasState(state);
+                }
+
                 print("Error:  " + snapshot.error.toString());
 
                 //No incidencias registradas
@@ -469,6 +488,7 @@ class _MisIncidenciasState extends State<MisIncidencias>{
                   if(!errorTimeout){
                     errorTimeout = true;
                     state.errorTimeout = errorTimeout;
+                    state.statefulMarkers = statefulMapController.statefulMarkers;
                     mediator.setMisIncidenciasState(state);
                   }
 
@@ -801,7 +821,10 @@ class _MisIncidenciasState extends State<MisIncidencias>{
                   if(!errorTimeout){
                     errorTimeout = true;
                     state.errorTimeout = errorTimeout;
+                    state.statefulMarkers = statefulMapController.statefulMarkers;
                     mediator.setMisIncidenciasState(state);
+
+
                   }
                   return Center(
                       child: Text(
