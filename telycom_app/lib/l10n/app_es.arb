@@ -33,5 +33,7 @@
     "messageType": "Tipo Msg",
     "eventId": "IdSuceso",
     "eventReference": "Referencia",
-    "eventDescription": "Descripción"
+    "eventDescription": "Descripción",
+    "landscapeTimeoutText": "Service unreacheable (Timeout)",
+    "portraitTimeoutText": "Service unreacheable (Timeout)"
 }

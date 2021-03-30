@@ -136,7 +136,7 @@
 
   "sBTimeoutText": "Service unreacheable (Timeout)",
   "@sBTimeoutText": {
-    "description": "Timeout warning text"
+    "description": "Timeout warning text at Login snackbar"
   },
 
   "sBnoImeiFail": "Failed to get platform version.",
@@ -172,5 +172,15 @@
   "eventDescription": "Description",
   "@eventDescription": {
     "description": "Indicates the event description"
+  },
+
+  "portraitTimeoutText": "Service unreacheable (Timeout)",
+  "@portraitText": {
+    "description": "Timeout warning text at portrait mode in MisIncidencias"
+  },
+
+  "landscapeTimeoutText": "Service unreacheable (Timeout)",
+  "@landscapeTimeoutText": {
+    "description": "Timeout warning text at landscape mode in MisIncidencias"
   }
 }

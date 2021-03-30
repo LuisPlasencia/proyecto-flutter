@@ -33,6 +33,8 @@
     "messageType": "讯息类型",
     "eventId": "事件编号",
     "eventReference": "参考",
-    "eventDescription": "描述"
+    "eventDescription": "描述",
+    "landscapeTimeoutText": "服务无法到达（超时）",
+    "portraitTimeoutText": "服务无法到达（超时）"
 
 }
