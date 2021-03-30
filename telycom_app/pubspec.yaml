@@ -48,6 +48,7 @@ dependencies:
 
   bouncing_widget: ^2.0.0
 
+  path_provider: ^2.0.1
 
 dev_dependencies:
   integration_test: ^1.0.1
