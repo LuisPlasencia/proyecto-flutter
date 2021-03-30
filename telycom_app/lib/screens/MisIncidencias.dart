@@ -100,6 +100,7 @@ class _MisIncidenciasState extends State<MisIncidencias>{
   /// Trigger para llamar a la funcion de recuperación de GPS data
   Timer timer;
   String GPSdata;
+  double distanceInMeters;
 
 
   Future<bool> _onBackPressed() {
@@ -907,6 +908,30 @@ class _MisIncidenciasState extends State<MisIncidencias>{
 
   }
 
+  void getGPSbyDistance() {
+
+    double tmpLatitudCenter;
+    double tmpLongitudCenter;
+    for (double i = 0; i<1000; i = i + 0.001) {
+      tmpLatitudCenter = latitudCenter - i;
+      tmpLongitudCenter = longitudCenter - i;
+
+
+      posicionActual.then((value) =>
+      {
+        developer.log(value.toString(), name: 'my.app.category'),
+        latitudCenter = value.latitude,
+        longitudCenter = value.longitude,
+      });
+
+      distanceInMeters =
+      Geolocator.distanceBetween(latitudCenter, longitudCenter,
+          tmpLatitudCenter, tmpLongitudCenter);
+
+      print("La distancia es: $distanceInMeters");
+    }
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -1161,7 +1186,6 @@ class _MisIncidenciasState extends State<MisIncidencias>{
     if(GPSdata == null){
       GPSdata = "123456789\r\n" + DateTime.now().millisecondsSinceEpoch.toString() + ";" + latitudCenter.toString() +
           ";" + longitudCenter.toString() + "\r\n";
-
     }
 
     GPSdata = GPSdata + DateTime.now().millisecondsSinceEpoch.toString() + ";" + latitudCenter.toString() +
@@ -1170,8 +1194,19 @@ class _MisIncidenciasState extends State<MisIncidencias>{
 
   /// Llama a la lectura, escritura cada "x" tiempo
   void GPStrigger() {
-    timer = Timer.periodic(Duration(seconds: 5), (Timer t) => readGPSdata());
-    timer = Timer.periodic(Duration(seconds: 5), (Timer t) => writeGPSdata());
-    timer = Timer.periodic(Duration(seconds: 5), (Timer t) => getGPSdata());
+
+    timer = Timer.periodic(Duration(seconds: 5), (Timer t) => getGPSbyDistance());
+
+    // si la distancia es mayor de 200 escribo
+    if(distanceInMeters > 200){
+      readGPSdata();
+      writeGPSdata();
+      getGPSdata();
+
+    } else {
+      timer = Timer.periodic(Duration(seconds: 5), (Timer t) => readGPSdata());
+      timer = Timer.periodic(Duration(seconds: 5), (Timer t) => writeGPSdata());
+      timer = Timer.periodic(Duration(seconds: 5), (Timer t) => getGPSdata());
+    }
   }
 }
