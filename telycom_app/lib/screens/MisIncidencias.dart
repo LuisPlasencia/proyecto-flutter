@@ -1,10 +1,10 @@
 import 'dart:async';
-import 'package:flutter/material.dart';
-import 'dart:async';
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong/latlong.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:telycom_app/app/AppMediator.dart';
 import 'package:telycom_app/app/MisIncidenciasState.dart';
 import 'package:telycom_app/httpService/Album.dart';
@@ -96,6 +96,11 @@ class _MisIncidenciasState extends State<MisIncidencias>{
   AppMediator mediator;
   MisIncidenciasState  state;
   bool errorTimeout;
+
+  /// Trigger para llamar a la funcion de recuperación de GPS data
+  Timer timer;
+  String GPSdata;
+  double distanceInMeters;
 
 
   Future<bool> _onBackPressed() {
@@ -300,70 +305,70 @@ class _MisIncidenciasState extends State<MisIncidencias>{
                                           MaterialPageRoute(
                                             builder: (context) =>
                                                 DetalleIncidencias(
-                                                  creation: snapshot
-                                                      .data[index].description,
-                                                  reference: snapshot
-                                                      .data[index].refSuceso,
-                                                  state: "Atendido",
-                                                  direction: snapshot
-                                                      .data[index].description,
-                                                  description: snapshot
-                                                      .data[index].description,
-                                                  latitud:
+                                              creation: snapshot
+                                                  .data[index].description,
+                                              reference: snapshot
+                                                  .data[index].refSuceso,
+                                              state: "Atendido",
+                                              direction: snapshot
+                                                  .data[index].description,
+                                              description: snapshot
+                                                  .data[index].description,
+                                              latitud:
                                                   snapshot.data[index].latitude,
-                                                  longitud: snapshot
-                                                      .data[index].longitude,
-                                                ),
+                                              longitud: snapshot
+                                                  .data[index].longitude,
+                                            ),
                                           ));
                                     },
                                     title: Container(
                                         child: Row(
-                                          children: [
-                                            Text(snapshot.data[index].tipo,
-                                                style: TextStyle(
-                                                    color: Colors.white,
-                                                    fontWeight: FontWeight.bold)),
-                                            Container(
-                                                height: 30,
-                                                child: VerticalDivider(
-                                                  color: Colors.black,
-                                                  thickness: 1.5,
-                                                )),
-                                            Text(snapshot.data[index].idSuceso,
-                                                style: TextStyle(
-                                                    color: Colors.white,
-                                                    fontWeight: FontWeight.bold)),
-                                            Container(
-                                                height: 30,
-                                                child: VerticalDivider(
-                                                  color: Colors.black,
-                                                  thickness: 1.5,
-                                                )),
-                                            Text(snapshot.data[index].refSuceso,
-                                                style: TextStyle(
-                                                    color: Colors.white,
-                                                    fontWeight: FontWeight.bold)),
-                                            Container(
-                                                height: 30,
-                                                child: VerticalDivider(
-                                                  color: Colors.black,
-                                                  thickness: 1.5,
-                                                )),
-                                            Flexible(
-                                              child: Text(
-                                                snapshot.data[index].description
+                                      children: [
+                                        Text(snapshot.data[index].tipo,
+                                            style: TextStyle(
+                                                color: Colors.white,
+                                                fontWeight: FontWeight.bold)),
+                                        Container(
+                                            height: 30,
+                                            child: VerticalDivider(
+                                              color: Colors.black,
+                                              thickness: 1.5,
+                                            )),
+                                        Text(snapshot.data[index].idSuceso,
+                                            style: TextStyle(
+                                                color: Colors.white,
+                                                fontWeight: FontWeight.bold)),
+                                        Container(
+                                            height: 30,
+                                            child: VerticalDivider(
+                                              color: Colors.black,
+                                              thickness: 1.5,
+                                            )),
+                                        Text(snapshot.data[index].refSuceso,
+                                            style: TextStyle(
+                                                color: Colors.white,
+                                                fontWeight: FontWeight.bold)),
+                                        Container(
+                                            height: 30,
+                                            child: VerticalDivider(
+                                              color: Colors.black,
+                                              thickness: 1.5,
+                                            )),
+                                        Flexible(
+                                          child: Text(
+                                            snapshot.data[index].description
                                                     .isNotEmpty
                                                     ? snapshot
                                                     .data[index].description
-                                                    : "Vacío",
-                                                style: TextStyle(
-                                                  color: Colors.white,
-                                                  fontWeight: FontWeight.bold,
-                                                ),
-                                              ),
+                                                : "Vacío",
+                                            style: TextStyle(
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.bold,
                                             ),
-                                          ],
-                                        )),
+                                          ),
+                                        ),
+                                      ],
+                                    )),
                                     leading: GestureDetector(
                                       key: Key("centerInMap" + index.toString()),
                                       child: Container(
@@ -382,22 +387,22 @@ class _MisIncidenciasState extends State<MisIncidencias>{
                                               scaleFactor: 5,
                                               onPressed: () {
                                                 setState(() {
-                                                  var latlng = LatLng(
-                                                      snapshot.data[index].latitude,
-                                                      snapshot.data[index].longitude);
-                                                  final snackBar = SnackBar(
-                                                      duration: const Duration(milliseconds: 500),
-                                                      content: Text("Lat: " +
-                                                          latlng.latitude.toString() +
-                                                          " | Lon: " +
-                                                          latlng.longitude.toString()));
+                                                var latlng = LatLng(
+                                                    snapshot.data[index].latitude,
+                                                    snapshot.data[index].longitude);
+                                                final snackBar = SnackBar(
+                                                  duration: const Duration(milliseconds: 500),
+                                                    content: Text("Lat: " +
+                                                        latlng.latitude.toString() +
+                                                        " | Lon: " +
+                                                        latlng.longitude.toString()));
 
-                                                  ScaffoldMessenger.of(context)
-                                                      .showSnackBar(snackBar);
-                                                  double zoom = 12.0; //the zoom you want
-                                                  statefulMapController.mapController
-                                                      .move(latlng, zoom);
-                                                });
+                                                ScaffoldMessenger.of(context)
+                                                    .showSnackBar(snackBar);
+                                                double zoom = 12.0; //the zoom you want
+                                                statefulMapController.mapController
+                                                    .move(latlng, zoom);
+                                                  });
                                               },
 
                                               child: Icon(
@@ -568,10 +573,10 @@ class _MisIncidenciasState extends State<MisIncidencias>{
 
               // statefulMapController.tileLayer,
               new TileLayerOptions(
-                // {s} means one of the available subdomains (used sequentially to help with browser parallel requests per domain limitation; subdomain values are specified in options;
-                // a, b or c by default, can be omitted), {z} — zoom level, {x} and {y} — tile coordinates.
+                  // {s} means one of the available subdomains (used sequentially to help with browser parallel requests per domain limitation; subdomain values are specified in options;
+                  // a, b or c by default, can be omitted), {z} — zoom level, {x} and {y} — tile coordinates.
                   urlTemplate:
-                  "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+                      "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
                   subdomains: ['a', 'b', 'c']),
 
               new MarkerLayerOptions(
@@ -601,7 +606,6 @@ class _MisIncidenciasState extends State<MisIncidencias>{
               if (snapshot.connectionState != ConnectionState.done) {
                 return _buildLoadingLandscape();
               }
-
               // En este condicional se entra si hemos pulsado el botón de refrescar
               // Si el numero de incidencias es menor en esta llamada, recarga la pantalla para que se actualice la vista y se eliminen correctamente los marcadores.
               // Aparte de eso, reseteo la lista de nombre de marcadores para que se vuelvan a crear con los posibles cambios que haya habido.
@@ -704,51 +708,51 @@ class _MisIncidenciasState extends State<MisIncidencias>{
                                         MaterialPageRoute(
                                           builder: (context) =>
                                               DetalleIncidencias(
-                                                creation: snapshot
-                                                    .data[index].description,
-                                                reference:
+                                            creation: snapshot
+                                                .data[index].description,
+                                            reference:
                                                 snapshot.data[index].refSuceso,
-                                                state: "Atendido",
-                                                direction: snapshot
-                                                    .data[index].description,
-                                                description: snapshot
-                                                    .data[index].description,
-                                                latitud:
+                                            state: "Atendido",
+                                            direction: snapshot
+                                                .data[index].description,
+                                            description: snapshot
+                                                .data[index].description,
+                                            latitud:
                                                 snapshot.data[index].latitude,
-                                                longitud:
+                                            longitud:
                                                 snapshot.data[index].longitude,
-                                              ),
+                                          ),
                                         ));
                                   },
                                   title: Container(
                                       child: Row(
-                                        children: [
-                                          Text(snapshot.data[index].tipo,
-                                              style: TextStyle(
-                                                  color: Colors.white,
-                                                  fontWeight: FontWeight.bold)),
-                                          Container(
-                                              height: 30,
-                                              child: VerticalDivider(
-                                                color: Colors.black,
-                                                thickness: 1.5,
-                                              )),
-                                          Text(snapshot.data[index].idSuceso,
-                                              style: TextStyle(
-                                                  color: Colors.white,
-                                                  fontWeight: FontWeight.bold)),
-                                          Container(
-                                              height: 30,
-                                              child: VerticalDivider(
-                                                color: Colors.black,
-                                                thickness: 1.5,
-                                              )),
-                                          Text(snapshot.data[index].refSuceso,
-                                              style: TextStyle(
-                                                  color: Colors.white,
-                                                  fontWeight: FontWeight.bold)),
-                                        ],
-                                      )),
+                                    children: [
+                                      Text(snapshot.data[index].tipo,
+                                          style: TextStyle(
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.bold)),
+                                      Container(
+                                          height: 30,
+                                          child: VerticalDivider(
+                                            color: Colors.black,
+                                            thickness: 1.5,
+                                          )),
+                                      Text(snapshot.data[index].idSuceso,
+                                          style: TextStyle(
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.bold)),
+                                      Container(
+                                          height: 30,
+                                          child: VerticalDivider(
+                                            color: Colors.black,
+                                            thickness: 1.5,
+                                          )),
+                                      Text(snapshot.data[index].refSuceso,
+                                          style: TextStyle(
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.bold)),
+                                    ],
+                                  )),
                                   leading: GestureDetector(
                                     key: Key("centerInMap" + index.toString()),
                                     child: Container(
@@ -859,10 +863,10 @@ class _MisIncidenciasState extends State<MisIncidencias>{
               // ),
 
               new TileLayerOptions(
-                // {s} means one of the available subdomains (used sequentially to help with browser parallel requests per domain limitation; subdomain values are specified in options;
-                // a, b or c by default, can be omitted), {z} — zoom level, {x} and {y} — tile coordinates.
+                  // {s} means one of the available subdomains (used sequentially to help with browser parallel requests per domain limitation; subdomain values are specified in options;
+                  // a, b or c by default, can be omitted), {z} — zoom level, {x} and {y} — tile coordinates.
                   urlTemplate:
-                  "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+                      "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
                   subdomains: ['a', 'b', 'c']),
 
               new MarkerLayerOptions(
@@ -878,6 +882,7 @@ class _MisIncidenciasState extends State<MisIncidencias>{
   @override
   void dispose() {
     sub.cancel();
+    timer?.cancel();
     super.dispose();
   }
 
@@ -918,8 +923,38 @@ class _MisIncidenciasState extends State<MisIncidencias>{
 
     _isRefreshButtonDisabled = true;
 
+    checkInternetConnection();
+
+    GPStrigger();
+
     super.initState();
+
   }
+
+  void getGPSbyDistance() {
+
+    double tmpLatitudCenter;
+    double tmpLongitudCenter;
+    for (double i = 0; i<1000; i = i + 0.001) {
+      tmpLatitudCenter = latitudCenter - i;
+      tmpLongitudCenter = longitudCenter - i;
+
+
+      posicionActual.then((value) =>
+      {
+        developer.log(value.toString(), name: 'my.app.category'),
+        latitudCenter = value.latitude,
+        longitudCenter = value.longitude,
+      });
+
+      distanceInMeters =
+      Geolocator.distanceBetween(latitudCenter, longitudCenter,
+          tmpLatitudCenter, tmpLongitudCenter);
+
+      print("La distancia es: $distanceInMeters");
+    }
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -1048,11 +1083,14 @@ class _MisIncidenciasState extends State<MisIncidencias>{
 
   /// Llamada al servicio de incidencias
   void fetchData() {
-    futureSuceso = SucesoCall.fetchSuceso(tk, '987654321').timeout(Duration(seconds: 20));
+    futureSuceso = SucesoCall.fetchSuceso(tk, '123456789').timeout(Duration(seconds: 5));
   }
 
   /// Vuelve a llamar al servicio mientras bloquea el botón de refresh. Borra los marcadores activos ya que se volverán a crear con los cambios que haya habido.
   void refreshData() {
+
+    checkInternetConnection();
+
     statefulMapController.onReady.then((value) {
       state.statefulMarkers =  statefulMapController.statefulMarkers;
       mediator.setMisIncidenciasState(state);
@@ -1065,19 +1103,6 @@ class _MisIncidenciasState extends State<MisIncidencias>{
         print("UWU " + statefulMapController.statefulMarkers.length.toString());
       });
     });
-
-    // statefulMapController.onReady.then((_) {
-    //
-    //   for (int i = 0; i < statefulMapController.markers.length; i++) {
-    //     print("Posicion " +
-    //         i.toString() +
-    //         " : Latitud: " +
-    //         statefulMapController.markers[i].point.latitude.toString() +
-    //         " Longitud: " +
-    //         statefulMapController.markers[i].point.longitude.toString());
-    //   }
-    //
-    // });
   }
 
   ///Espera a los valores del GPS, centra el mapa y actualiza el marcador de GPS
@@ -1128,5 +1153,83 @@ class _MisIncidenciasState extends State<MisIncidencias>{
                 }));
       })
     });
+  }
+
+  /// Compruebo si existe conexión hacia el exterior.
+  Future<void> checkInternetConnection() async {
+    try {
+      final result = await InternetAddress.lookup('google.com');
+      if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
+        print('connected');
+      }
+    } on SocketException catch (_) {
+      print('not connected');
+    }
+  }
+
+  ///This example stores information in the documents directory.
+  ///You can find the path to the documents directory as follows:
+  Future<String> get _localPath async {
+    final directory = await getApplicationDocumentsDirectory();
+    print("El directory es:" + directory.path.toString());
+    return directory.path;
+  }
+
+  ///Once you know where to store the file, create a reference to the file’s full location
+  Future<File> get _localFile async {
+    final path = await _localPath;
+    return File('$path/GPSdata.txt');
+
+  }
+
+  ///Now that you have a File to work with, use it to read and write data.
+  Future<File> writeGPSdata() async {
+    print("Se esta escribiendo en un TXT");
+    final file = await _localFile;
+
+    return file.writeAsString(GPSdata);
+  }
+
+  ///Reading data from a file :+)
+  Future<String> readGPSdata() async {
+    try {
+      final file = await _localFile;
+
+      // Read the file
+      String contents = await file.readAsString();
+
+      return contents;
+    } catch (e) {
+      return "";
+    }
+  }
+
+  /// Nos devuelve el imei, el tiempo en milis y la posicion.
+  void getGPSdata() {
+    if(GPSdata == null){
+      GPSdata = "123456789\r\n" + DateTime.now().millisecondsSinceEpoch.toString() + ";" + latitudCenter.toString() +
+          ";" + longitudCenter.toString() + "\r\n";
+    }
+
+    GPSdata = GPSdata + DateTime.now().millisecondsSinceEpoch.toString() + ";" + latitudCenter.toString() +
+        ";" + longitudCenter.toString() + "\r\n";
+  }
+
+  /// Llama a la lectura, escritura cada "x" tiempo
+  void GPStrigger() {
+
+    timer = Timer.periodic(Duration(seconds: 5), (Timer t) => getGPSbyDistance());
+
+    // si la distancia es mayor de 200 escribo
+    if(distanceInMeters > 200){
+      readGPSdata();
+      writeGPSdata();
+      getGPSdata();
+
+    } else {
+      timer = Timer.periodic(Duration(seconds: 5), (Timer t) => readGPSdata());
+      timer = Timer.periodic(Duration(seconds: 5), (Timer t) => writeGPSdata());
+      timer = Timer.periodic(Duration(seconds: 5), (Timer t) => getGPSdata());
+    }
   }
 }
