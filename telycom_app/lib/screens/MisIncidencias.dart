@@ -24,15 +24,13 @@ import 'package:map_controller/map_controller.dart';
 import 'DetalleIncidencias.dart';
 import 'package:bouncing_widget/bouncing_widget.dart';
 
-void main() => runApp(MisIncidencias());
-
 class MyAppMisIncidencias extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'MisIncidencias',
-      home: MisIncidencias(),
+      home: MisIncidencias(imei: '', tk: '',),
     );
   }
 }
@@ -50,6 +48,7 @@ class MisIncidencias extends StatefulWidget  {
 }
 
 class _MisIncidenciasState extends State<MisIncidencias>{
+
   Future<List<Suceso>> futureSuceso;
 
   Future<Logout> futureLogout;
@@ -96,6 +95,7 @@ class _MisIncidenciasState extends State<MisIncidencias>{
   AppMediator mediator;
   MisIncidenciasState  state;
   bool errorTimeout;
+  bool errorSolved;
 
   /// Trigger para llamar a la funcion de recuperación de GPS data
   Timer timer;
@@ -106,26 +106,28 @@ class _MisIncidenciasState extends State<MisIncidencias>{
   Future<bool> _onBackPressed() {
     return showDialog(
       context: context,
-      builder: (context) => new AlertDialog(
-        title: new Text(AppLocalizations.of(context).dialogExitAppTitle),
+      builder: (context) =>  AlertDialog(
+        title:  Text(AppLocalizations.of(context).dialogExitAppTitle),
         content:
-        new Text(AppLocalizations.of(context).dialogExitAppContent),
+         Text(AppLocalizations.of(context).dialogExitAppContent),
         actions: <Widget>[
-          new GestureDetector(
+           GestureDetector(
             key: Key('NO'),
             onTap: () => Navigator.of(context).pop(false),
             child: Text(AppLocalizations.of(context).dialogExitAppNo),
           ),
           SizedBox(height: 16),
-          new GestureDetector(
+           GestureDetector(
             key: Key('YES'),
             onTap: () {
               latLongBloc.dispose();
               sub.cancel();
+              timer?.cancel();
 
               state.statefulMarkers = null;
               state.running = false;
               state.errorTimeout = false;
+              state.errorSolved = true;
               mediator.setMisIncidenciasState(state);
 
               // futureLogout = LogoutCall.fetchLogout(tk);
@@ -176,6 +178,7 @@ class _MisIncidenciasState extends State<MisIncidencias>{
   // List<LatLng> _points = <LatLng>[];
 
   Widget _portraitMode() {
+    developer.log('MisIncidencias', name: 'my.app.category');
     return Column(
       children: [
         FutureBuilder<List<Suceso>>(
@@ -202,15 +205,14 @@ class _MisIncidenciasState extends State<MisIncidencias>{
                   if(errorTimeout){
                     WidgetsBinding.instance.addPostFrameCallback((_) {
                       errorTimeout = false;
+                      errorSolved = true;
                       state.errorTimeout = errorTimeout;
                       mediator.setMisIncidenciasState(state);
-                      Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                              builder: (BuildContext context) => super.widget));
+                      print("push1");
                     });
                   } else if (snapshot.data.length < statefulMarkerNames.length) {
                     WidgetsBinding.instance.addPostFrameCallback((_) {
+                      print("push2");
                       Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(
@@ -426,6 +428,7 @@ class _MisIncidenciasState extends State<MisIncidencias>{
               } else if (snapshot.hasError) {
                 if(state.numberOfMarkers != 0){
                     WidgetsBinding.instance.addPostFrameCallback((_) {
+                      print("push3");
                       Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(
@@ -439,6 +442,7 @@ class _MisIncidenciasState extends State<MisIncidencias>{
 
                 //No incidencias registradas
                 if(snapshot.error.toString().substring(0, 15) == "FormatException"){
+                  print("Error de no hay incidencias");
                   return ExpansionTile(
                       childrenPadding: EdgeInsets.only(bottom: 5),
                       title: Text(AppLocalizations.of(context).incidentsLabel),
@@ -490,9 +494,12 @@ class _MisIncidenciasState extends State<MisIncidencias>{
                         )
                       ]);
                 }else{
+                  print("Error de timeout");
                   if(!errorTimeout){
                     errorTimeout = true;
+                    errorSolved = false;
                     state.errorTimeout = errorTimeout;
+                    state.errorSolved = errorSolved;
                     state.statefulMarkers = statefulMapController.statefulMarkers;
                     mediator.setMisIncidenciasState(state);
                   }
@@ -572,14 +579,14 @@ class _MisIncidenciasState extends State<MisIncidencias>{
               // ),
 
               // statefulMapController.tileLayer,
-              new TileLayerOptions(
+               TileLayerOptions(
                   // {s} means one of the available subdomains (used sequentially to help with browser parallel requests per domain limitation; subdomain values are specified in options;
                   // a, b or c by default, can be omitted), {z} — zoom level, {x} and {y} — tile coordinates.
                   urlTemplate:
                       "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
                   subdomains: ['a', 'b', 'c']),
 
-              new MarkerLayerOptions(
+              MarkerLayerOptions(
                 markers: statefulMapController.markers,
               ),
             ],
@@ -593,291 +600,295 @@ class _MisIncidenciasState extends State<MisIncidencias>{
     );
   }
 
-  Widget _landscapeMode() {
-    return Row(
-      children: [
-        // sin expanded se rompe??
-        Container(
-          // ajustar este valor para ver mas grande el mapa
-          width: 300,
-          child: new FutureBuilder<List<Suceso>>(
-            future: futureSuceso,
-            builder: (context, snapshot) {
-              if (snapshot.connectionState != ConnectionState.done) {
-                return _buildLoadingLandscape();
-              }
-              // En este condicional se entra si hemos pulsado el botón de refrescar
-              // Si el numero de incidencias es menor en esta llamada, recarga la pantalla para que se actualice la vista y se eliminen correctamente los marcadores.
-              // Aparte de eso, reseteo la lista de nombre de marcadores para que se vuelvan a crear con los posibles cambios que haya habido.
-              if (_isRefreshButtonDisabled) {
-                if (snapshot.hasData) {
-                  if(errorTimeout){
-                    WidgetsBinding.instance.addPostFrameCallback((_) {
-                      errorTimeout = false;
-                      state.errorTimeout = errorTimeout;
-                      mediator.setMisIncidenciasState(state);
-                      Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                              builder: (BuildContext context) => super.widget));
-                    });
-                  } else if(snapshot.data.length < statefulMarkerNames.length) {
-                    WidgetsBinding.instance.addPostFrameCallback((_) {
-                      Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                              builder: (BuildContext context) => super.widget));
-                    });
-                  }
-                  statefulMarkerNames.clear();
-                }
-                WidgetsBinding.instance.addPostFrameCallback((_) {
-                  // Add Your Code here.
-                  setState(() {
-                    // statefulMapController.removeMarkers(names: names);
-                    _isRefreshButtonDisabled = false;
-                  });
-                });
-              }
-              // print("FutureBuilder");
-              if (snapshot.hasData) {
-                // Creo tantos marcadores como incidencias registradas.
-                if (statefulMarkerNames.length < snapshot.data.length) {
-                  print("nani?");
-                  for (int i = 0; i < snapshot.data.length; i++) {
-                    addMarker(snapshot.data[i], i);
-                  }
-                  state.statefulMarkers = statefulMapController.statefulMarkers;
-                  mediator.setMisIncidenciasState(state);
-                }
-
-                return Column(
-                  children: [
-                    Card(
-                      child: Container(
-                          color: Colors.blue,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text(AppLocalizations.of(context).messageType,
-                                  style: TextStyle(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.bold)),
-                              Container(
-                                  height: 20,
-                                  child: VerticalDivider(color: Colors.red)),
-                              Text(AppLocalizations.of(context).eventId,
-                                  style: TextStyle(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.bold)),
-                              Container(
-                                  height: 20,
-                                  child: VerticalDivider(color: Colors.red)),
-                              Text(AppLocalizations.of(context).eventReference,
-                                  style: TextStyle(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.bold)),
-                              Container(
-                                  height: 20,
-                                  child: VerticalDivider(color: Colors.red)),
-                              Text(
-                                  AppLocalizations.of(context).eventDescription,
-                                  style: TextStyle(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.bold)),
-                            ],
-                          )),
-                    ),
-                    Expanded(
-                      child: Container(
-                        child: ListView.builder(
-                          itemCount: snapshot.data.length,
-                          itemBuilder: (context, index) {
-                            // if (itemsList[index].state == "Atendido") {
-                            //   colorTarjeta = Colors.green[400];
-                            // } else {
-                            colorTarjeta = Colors.red[400];
-                            // }
-                            return Card(
-                              child: Container(
-                                color: colorTarjeta,
-                                child: ListTile(
-                                  onTap: () {
-                                    Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) =>
-                                              DetalleIncidencias(
-                                            creation: snapshot
-                                                .data[index].description,
-                                            reference:
-                                                snapshot.data[index].refSuceso,
-                                            state: "Atendido",
-                                            direction: snapshot
-                                                .data[index].description,
-                                            description: snapshot
-                                                .data[index].description,
-                                            latitud:
-                                                snapshot.data[index].latitude,
-                                            longitud:
-                                                snapshot.data[index].longitude,
-                                          ),
-                                        ));
-                                  },
-                                  title: Container(
-                                      child: Row(
-                                    children: [
-                                      Text(snapshot.data[index].tipo,
-                                          style: TextStyle(
-                                              color: Colors.white,
-                                              fontWeight: FontWeight.bold)),
-                                      Container(
-                                          height: 30,
-                                          child: VerticalDivider(
-                                            color: Colors.black,
-                                            thickness: 1.5,
-                                          )),
-                                      Text(snapshot.data[index].idSuceso,
-                                          style: TextStyle(
-                                              color: Colors.white,
-                                              fontWeight: FontWeight.bold)),
-                                      Container(
-                                          height: 30,
-                                          child: VerticalDivider(
-                                            color: Colors.black,
-                                            thickness: 1.5,
-                                          )),
-                                      Text(snapshot.data[index].refSuceso,
-                                          style: TextStyle(
-                                              color: Colors.white,
-                                              fontWeight: FontWeight.bold)),
-                                    ],
-                                  )),
-                                  leading: GestureDetector(
-                                    key: Key("centerInMap" + index.toString()),
-                                    child: Container(
-                                      decoration: BoxDecoration(
-                                        border: Border.all(color: Colors.blue[900], width: 3),
-                                        borderRadius: BorderRadius.circular(60.0),
-                                      ),
-                                      child: ClipRRect(
-                                        borderRadius: BorderRadius.circular(60.0),
-                                        child: Container(
-                                          height: 50,
-                                          width: 50,
-                                          color: Colors.blue,
-                                          child: BouncingWidget(
-                                            duration: Duration(milliseconds: 300),
-                                            scaleFactor: 5,
-                                            onPressed: () {
-                                              setState(() {
-                                                var latlng = LatLng(
-                                                    snapshot.data[index].latitude,
-                                                    snapshot.data[index].longitude);
-                                                final snackBar = SnackBar(
-                                                    duration: const Duration(milliseconds: 500),
-                                                    content: Text("Lat: " +
-                                                        latlng.latitude.toString() +
-                                                        " | Lon: " +
-                                                        latlng.longitude.toString()));
-
-                                                ScaffoldMessenger.of(context)
-                                                    .showSnackBar(snackBar);
-                                                double zoom = 12.0; //the zoom you want
-                                                statefulMapController.mapController
-                                                    .move(latlng, zoom);
-                                              });
-                                            },
-
-                                            child: Icon(
-                                              Icons.location_pin,
-                                              color: Colors.black,
-                                              size: 30.0,
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            );
-                          },
-                        ),
-                      ),
-                    ),
-                  ],
-                );
-
-                // Text(snapshot.data.title);
-              } else if (snapshot.hasError) {
-                print("Error:  " + snapshot.error.toString());
-
-                //No incidencias registradas
-                if(snapshot.error.toString().substring(0, 15) == "FormatException"){
-                  return Center(
-                      child: Text(
-                        AppLocalizations.of(context).noEventAssigned,
-                        style:
-                        TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
-                      ));
-                }else{
-                  if(!errorTimeout){
-                    errorTimeout = true;
-                    state.errorTimeout = errorTimeout;
-                    state.statefulMarkers = statefulMapController.statefulMarkers;
-                    mediator.setMisIncidenciasState(state);
-
-
-                  }
-                  return Center(
-                      child: Text(
-                          AppLocalizations.of(context).sBTimeoutText,
-                        style:
-                        TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
-                      ));
-                }
-
-              }
-              // By default, show a loading spinner.
-              return _buildLoadingLandscape();
-            },
-          ),
-        ),
-        Flexible(
-          child: FlutterMap(
-            mapController: statefulMapController.mapController,
-            options: MapOptions(
-              maxZoom: 19,
-              minZoom: 10,
-              // center: LatLng(latLog.latitude, latLog.longitude),
-              center: LatLng(latitudCenter, longitudCenter),
-              zoom: 12.0,
-            ),
-            layers: [
-              // TileLayerOptions(
-              //   urlTemplate:
-              //   'http://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}',
-              //   subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
-              //   tileProvider: CachedNetworkTileProvider(),
-              // ),
-
-              new TileLayerOptions(
-                  // {s} means one of the available subdomains (used sequentially to help with browser parallel requests per domain limitation; subdomain values are specified in options;
-                  // a, b or c by default, can be omitted), {z} — zoom level, {x} and {y} — tile coordinates.
-                  urlTemplate:
-                      "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-                  subdomains: ['a', 'b', 'c']),
-
-              new MarkerLayerOptions(
-                markers: statefulMapController.markers,
-              ),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
+  // Widget _landscapeMode() {
+  //   developer.log('MisIncidencias', name: 'my.app.category');
+  //   return Row(
+  //     children: [
+  //       // sin expanded se rompe??
+  //       Container(
+  //         // ajustar este valor para ver mas grande el mapa
+  //         width: 300,
+  //         child:
+  //          FutureBuilder<List<Suceso>>(
+  //           future: futureSuceso,
+  //           builder: (context, snapshot) {
+  //             if (snapshot.connectionState != ConnectionState.done) {
+  //               return _buildLoadingLandscape();
+  //             }
+  //             // En este condicional se entra si hemos pulsado el botón de refrescar
+  //             // Si el numero de incidencias es menor en esta llamada, recarga la pantalla para que se actualice la vista y se eliminen correctamente los marcadores.
+  //             // Aparte de eso, reseteo la lista de nombre de marcadores para que se vuelvan a crear con los posibles cambios que haya habido.
+  //             if (_isRefreshButtonDisabled) {
+  //               if (snapshot.hasData) {
+  //                 if(errorTimeout){
+  //                   WidgetsBinding.instance.addPostFrameCallback((_) {
+  //                     errorTimeout = false;
+  //                     state.errorTimeout = errorTimeout;
+  //                     mediator.setMisIncidenciasState(state);
+  //                     print("push4");
+  //                     Navigator.pushReplacement(
+  //                         context,
+  //                         MaterialPageRoute(
+  //                             builder: (BuildContext context) => super.widget));
+  //                   });
+  //                 } else if(snapshot.data.length < statefulMarkerNames.length) {
+  //                   WidgetsBinding.instance.addPostFrameCallback((_) {
+  //                     print("push5");
+  //                     Navigator.pushReplacement(
+  //                         context,
+  //                         MaterialPageRoute(
+  //                             builder: (BuildContext context) => super.widget));
+  //                   });
+  //                 }
+  //                 statefulMarkerNames.clear();
+  //               }
+  //               WidgetsBinding.instance.addPostFrameCallback((_) {
+  //                 // Add Your Code here.
+  //                 setState(() {
+  //                   // statefulMapController.removeMarkers(names: names);
+  //                   _isRefreshButtonDisabled = false;
+  //                 });
+  //               });
+  //             }
+  //             // print("FutureBuilder");
+  //             if (snapshot.hasData) {
+  //               // Creo tantos marcadores como incidencias registradas.
+  //               if (statefulMarkerNames.length < snapshot.data.length) {
+  //                 print("nani?");
+  //                 for (int i = 0; i < snapshot.data.length; i++) {
+  //                   addMarker(snapshot.data[i], i);
+  //                 }
+  //                 state.statefulMarkers = statefulMapController.statefulMarkers;
+  //                 mediator.setMisIncidenciasState(state);
+  //               }
+  //
+  //               return Column(
+  //                 children: [
+  //                   Card(
+  //                     child: Container(
+  //                         color: Colors.blue,
+  //                         child: Row(
+  //                           mainAxisAlignment: MainAxisAlignment.center,
+  //                           children: [
+  //                             Text(AppLocalizations.of(context).messageType,
+  //                                 style: TextStyle(
+  //                                     color: Colors.white,
+  //                                     fontWeight: FontWeight.bold)),
+  //                             Container(
+  //                                 height: 20,
+  //                                 child: VerticalDivider(color: Colors.red)),
+  //                             Text(AppLocalizations.of(context).eventId,
+  //                                 style: TextStyle(
+  //                                     color: Colors.white,
+  //                                     fontWeight: FontWeight.bold)),
+  //                             Container(
+  //                                 height: 20,
+  //                                 child: VerticalDivider(color: Colors.red)),
+  //                             Text(AppLocalizations.of(context).eventReference,
+  //                                 style: TextStyle(
+  //                                     color: Colors.white,
+  //                                     fontWeight: FontWeight.bold)),
+  //                             Container(
+  //                                 height: 20,
+  //                                 child: VerticalDivider(color: Colors.red)),
+  //                             Text(
+  //                                 AppLocalizations.of(context).eventDescription,
+  //                                 style: TextStyle(
+  //                                     color: Colors.white,
+  //                                     fontWeight: FontWeight.bold)),
+  //                           ],
+  //                         )),
+  //                   ),
+  //                   Expanded(
+  //                     child: Container(
+  //                       child: ListView.builder(
+  //                         itemCount: snapshot.data.length,
+  //                         itemBuilder: (context, index) {
+  //                           // if (itemsList[index].state == "Atendido") {
+  //                           //   colorTarjeta = Colors.green[400];
+  //                           // } else {
+  //                           colorTarjeta = Colors.red[400];
+  //                           // }
+  //                           return Card(
+  //                             child: Container(
+  //                               color: colorTarjeta,
+  //                               child: ListTile(
+  //                                 onTap: () {
+  //                                   Navigator.push(
+  //                                       context,
+  //                                       MaterialPageRoute(
+  //                                         builder: (context) =>
+  //                                             DetalleIncidencias(
+  //                                           creation: snapshot
+  //                                               .data[index].description,
+  //                                           reference:
+  //                                               snapshot.data[index].refSuceso,
+  //                                           state: "Atendido",
+  //                                           direction: snapshot
+  //                                               .data[index].description,
+  //                                           description: snapshot
+  //                                               .data[index].description,
+  //                                           latitud:
+  //                                               snapshot.data[index].latitude,
+  //                                           longitud:
+  //                                               snapshot.data[index].longitude,
+  //                                         ),
+  //                                       ));
+  //                                 },
+  //                                 title: Container(
+  //                                     child: Row(
+  //                                   children: [
+  //                                     Text(snapshot.data[index].tipo,
+  //                                         style: TextStyle(
+  //                                             color: Colors.white,
+  //                                             fontWeight: FontWeight.bold)),
+  //                                     Container(
+  //                                         height: 30,
+  //                                         child: VerticalDivider(
+  //                                           color: Colors.black,
+  //                                           thickness: 1.5,
+  //                                         )),
+  //                                     Text(snapshot.data[index].idSuceso,
+  //                                         style: TextStyle(
+  //                                             color: Colors.white,
+  //                                             fontWeight: FontWeight.bold)),
+  //                                     Container(
+  //                                         height: 30,
+  //                                         child: VerticalDivider(
+  //                                           color: Colors.black,
+  //                                           thickness: 1.5,
+  //                                         )),
+  //                                     Text(snapshot.data[index].refSuceso,
+  //                                         style: TextStyle(
+  //                                             color: Colors.white,
+  //                                             fontWeight: FontWeight.bold)),
+  //                                   ],
+  //                                 )),
+  //                                 leading: GestureDetector(
+  //                                   key: Key("centerInMap" + index.toString()),
+  //                                   child: Container(
+  //                                     decoration: BoxDecoration(
+  //                                       border: Border.all(color: Colors.blue[900], width: 3),
+  //                                       borderRadius: BorderRadius.circular(60.0),
+  //                                     ),
+  //                                     child: ClipRRect(
+  //                                       borderRadius: BorderRadius.circular(60.0),
+  //                                       child: Container(
+  //                                         height: 50,
+  //                                         width: 50,
+  //                                         color: Colors.blue,
+  //                                         child: BouncingWidget(
+  //                                           duration: Duration(milliseconds: 300),
+  //                                           scaleFactor: 5,
+  //                                           onPressed: () {
+  //                                             setState(() {
+  //                                               var latlng = LatLng(
+  //                                                   snapshot.data[index].latitude,
+  //                                                   snapshot.data[index].longitude);
+  //                                               final snackBar = SnackBar(
+  //                                                   duration: const Duration(milliseconds: 500),
+  //                                                   content: Text("Lat: " +
+  //                                                       latlng.latitude.toString() +
+  //                                                       " | Lon: " +
+  //                                                       latlng.longitude.toString()));
+  //
+  //                                               ScaffoldMessenger.of(context)
+  //                                                   .showSnackBar(snackBar);
+  //                                               double zoom = 12.0; //the zoom you want
+  //                                               statefulMapController.mapController
+  //                                                   .move(latlng, zoom);
+  //                                             });
+  //                                           },
+  //
+  //                                           child: Icon(
+  //                                             Icons.location_pin,
+  //                                             color: Colors.black,
+  //                                             size: 30.0,
+  //                                           ),
+  //                                         ),
+  //                                       ),
+  //                                     ),
+  //                                   ),
+  //                                 ),
+  //                               ),
+  //                             ),
+  //                           );
+  //                         },
+  //                       ),
+  //                     ),
+  //                   ),
+  //                 ],
+  //               );
+  //
+  //               // Text(snapshot.data.title);
+  //             } else if (snapshot.hasError) {
+  //               print("Error:  " + snapshot.error.toString());
+  //
+  //               //No incidencias registradas
+  //               if(snapshot.error.toString().substring(0, 15) == "FormatException"){
+  //                 return Center(
+  //                     child: Text(
+  //                       AppLocalizations.of(context).noEventAssigned,
+  //                       style:
+  //                       TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
+  //                     ));
+  //               }else{
+  //                 if(!errorTimeout){
+  //                   errorTimeout = true;
+  //                   state.errorTimeout = errorTimeout;
+  //                   state.statefulMarkers = statefulMapController.statefulMarkers;
+  //                   mediator.setMisIncidenciasState(state);
+  //
+  //
+  //                 }
+  //                 return Center(
+  //                     child: Text(
+  //                         AppLocalizations.of(context).sBTimeoutText,
+  //                       style:
+  //                       TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
+  //                     ));
+  //               }
+  //
+  //             }
+  //             // By default, show a loading spinner.
+  //             return _buildLoadingLandscape();
+  //           },
+  //         ),
+  //       ),
+  //       Flexible(
+  //         child: FlutterMap(
+  //           mapController: statefulMapController.mapController,
+  //           options: MapOptions(
+  //             maxZoom: 19,
+  //             minZoom: 10,
+  //             // center: LatLng(latLog.latitude, latLog.longitude),
+  //             center: LatLng(latitudCenter, longitudCenter),
+  //             zoom: 12.0,
+  //           ),
+  //           layers: [
+  //             // TileLayerOptions(
+  //             //   urlTemplate:
+  //             //   'http://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}',
+  //             //   subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
+  //             //   tileProvider: CachedNetworkTileProvider(),
+  //             // ),
+  //
+  //              TileLayerOptions(
+  //                 // {s} means one of the available subdomains (used sequentially to help with browser parallel requests per domain limitation; subdomain values are specified in options;
+  //                 // a, b or c by default, can be omitted), {z} — zoom level, {x} and {y} — tile coordinates.
+  //                 urlTemplate:
+  //                     "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+  //                 subdomains: ['a', 'b', 'c']),
+  //
+  //              MarkerLayerOptions(
+  //               markers: statefulMapController.markers,
+  //             ),
+  //           ],
+  //         ),
+  //       ),
+  //     ],
+  //   );
+  // }
 
   @override
   void dispose() {
@@ -888,34 +899,47 @@ class _MisIncidenciasState extends State<MisIncidencias>{
 
   @override
   void initState() {
+    super.initState();
+
     developer.log('MisIncidencias', name: 'my.app.category');
+    print("INITSTATE");
     mediator = AppMediator.getInstance();
     state = mediator.getMisIncidenciasState();
+
+
+    _mapController = state.mapController;
+    // statefulMapController = state.statefulMapController;
+
     errorTimeout = state.errorTimeout;
+    errorSolved = state.errorSolved;
 
     // intialize the controllers
     _mapController = MapController();
+    // _mapController = state.mapController;
+
 
     // wait for the controller to be ready before using it
-    statefulMapController =
-        StatefulMapController(mapController: _mapController);
+    statefulMapController = StatefulMapController(mapController: MapController()) ;;
+
 
     statefulMapController.onReady
         .then((_) {
           print("The map controller is ready");
-          if(state.statefulMarkers != null){
-            statefulMapController.statefulMarkers.addAll(state.statefulMarkers);
-          }
     });
+
+    if(state.statefulMarkers != null){
+      statefulMapController.statefulMarkers.addAll(state.statefulMarkers);
+    }
+    state.statefulMapController = statefulMapController;
+    mediator.setMisIncidenciasState(state);
 
     /// [Important] listen to the changefeed to rebuild the map on changes:
     /// this will rebuild the map when for example addMarker or any method
     /// that mutates the map assets is called
     sub = statefulMapController.changeFeed.listen((change) => setState(() {}));
 
-    if(statefulMapController.statefulMarkers.isEmpty){
-      fetchData();
-    }
+
+    fetchData();
 
     posicionActual = _determinePosition();
 
@@ -925,9 +949,7 @@ class _MisIncidenciasState extends State<MisIncidencias>{
 
     checkInternetConnection();
 
-    GPStrigger();
-
-    super.initState();
+    // GPStrigger();
 
   }
 
@@ -972,15 +994,10 @@ class _MisIncidenciasState extends State<MisIncidencias>{
             ),
           ],
         ),
-        body: OrientationBuilder(
-          builder: (context, orientation) {
-            if (orientation == Orientation.portrait) {
-              return _portraitMode();
-            } else {
-              return _landscapeMode();
-            }
-          },
-        ),
+        body:  _portraitMode()
+
+
+
       ),
     );
   }
@@ -1063,6 +1080,7 @@ class _MisIncidenciasState extends State<MisIncidencias>{
 
   /// Muestra carga del Future en modo portrait
   Widget _buildLoadingPortrait() {
+    print("Loading");
     return ExpansionTile(
         childrenPadding: EdgeInsets.only(bottom: 5),
         title: Text(AppLocalizations.of(context).incidentsLabel),
@@ -1083,7 +1101,8 @@ class _MisIncidenciasState extends State<MisIncidencias>{
 
   /// Llamada al servicio de incidencias
   void fetchData() {
-    futureSuceso = SucesoCall.fetchSuceso(tk, '123456789').timeout(Duration(seconds: 5));
+    print("fetchdata");
+    futureSuceso = SucesoCall.fetchSuceso(tk, '987654321').timeout(Duration(seconds: 20));
   }
 
   /// Vuelve a llamar al servicio mientras bloquea el botón de refresh. Borra los marcadores activos ya que se volverán a crear con los cambios que haya habido.
@@ -1101,6 +1120,10 @@ class _MisIncidenciasState extends State<MisIncidencias>{
         posicionActual = _determinePosition();
         reloadMapWithGPSPosition();
         print("UWU " + statefulMapController.statefulMarkers.length.toString());
+
+        state.statefulMapController = statefulMapController;
+        state.mapController = _mapController;
+        mediator.setMisIncidenciasState(state);
       });
     });
   }
@@ -1216,20 +1239,20 @@ class _MisIncidenciasState extends State<MisIncidencias>{
   }
 
   /// Llama a la lectura, escritura cada "x" tiempo
-  void GPStrigger() {
-
-    timer = Timer.periodic(Duration(seconds: 5), (Timer t) => getGPSbyDistance());
-
-    // si la distancia es mayor de 200 escribo
-    if(distanceInMeters > 200){
-      readGPSdata();
-      writeGPSdata();
-      getGPSdata();
-
-    } else {
-      timer = Timer.periodic(Duration(seconds: 5), (Timer t) => readGPSdata());
-      timer = Timer.periodic(Duration(seconds: 5), (Timer t) => writeGPSdata());
-      timer = Timer.periodic(Duration(seconds: 5), (Timer t) => getGPSdata());
-    }
-  }
+  // void GPStrigger() {
+  //
+  //   timer = Timer.periodic(Duration(seconds: 5), (Timer t) => getGPSbyDistance());
+  //
+  //   // si la distancia es mayor de 200 escribo
+  //   if(distanceInMeters > 200){
+  //     readGPSdata();
+  //     writeGPSdata();
+  //     getGPSdata();
+  //
+  //   } else {
+  //     timer = Timer.periodic(Duration(seconds: 5), (Timer t) => readGPSdata());
+  //     timer = Timer.periodic(Duration(seconds: 5), (Timer t) => writeGPSdata());
+  //     timer = Timer.periodic(Duration(seconds: 5), (Timer t) => getGPSdata());
+  //   }
+  // }
 }

@@ -224,19 +224,23 @@ class _FirstRouteState extends State<FirstRoute> {
                         if (snapshot.data.statusTelyAPI == '200' ||
                             snapshot.data.statusTelyAPI == '202' ||
                             snapshot.data.statusTelyAPI == '203') {
+
+
+
                           WidgetsBinding.instance
                               .addPostFrameCallback((_) {
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => MisIncidencias(tk: snapshot.data.tk, imei: _platformImei,))).then((value) {
-                              setState(() {
-                                cargando = false;
-                                _isButtonDisabled = false;
-                                _isTextFieldEnable = true;
-                              });
-                            });
-                          });
+                                    builder: (context) => MisIncidencias(tk: snapshot.data.tk, imei: _platformImei,)));
+
+                                setState(() {
+                                  cargando = false;
+                                  _isButtonDisabled = false;
+                                  _isTextFieldEnable = true;
+                                });
+                            }
+                          );
                           return new Container(
                             height: 75,
                             padding: EdgeInsets.only(bottom: 15),
