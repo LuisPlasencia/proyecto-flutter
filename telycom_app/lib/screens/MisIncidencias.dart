@@ -185,6 +185,7 @@ class _MisIncidenciasState extends State<MisIncidencias>{
             future: futureSuceso,
             builder: (context, snapshot) {
               if (snapshot.hasData) {
+
                 if (snapshot.data.length == 1) {
                   valueSize = 0.10;
                 } else if (snapshot.data.length == 2) {
@@ -220,6 +221,10 @@ class _MisIncidenciasState extends State<MisIncidencias>{
                     });
                   }
 
+                  /// borro los marcadores de eventos previos
+                  for(int i = 1; i<state.numberOfMarkers+1; i++){
+                    statefulMapController.statefulMarkers.remove("event marker" + i.toString());
+                  }
                   statefulMarkerNames.clear();
                 }
                 WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -241,6 +246,7 @@ class _MisIncidenciasState extends State<MisIncidencias>{
                     state.numberOfMarkers ++;
                   }
                   state.statefulMarkers = statefulMapController.statefulMarkers;
+                  state.sucesos = snapshot.data;
                   mediator.setMisIncidenciasState(state);
                 }
 
@@ -401,7 +407,7 @@ class _MisIncidenciasState extends State<MisIncidencias>{
 
                                                 ScaffoldMessenger.of(context)
                                                     .showSnackBar(snackBar);
-                                                double zoom = 12.0; //the zoom you want
+                                                double zoom = 15.0; //the zoom you want
                                                 statefulMapController.mapController
                                                     .move(latlng, zoom);
                                                   });
@@ -426,7 +432,12 @@ class _MisIncidenciasState extends State<MisIncidencias>{
                       )
                     ]);
               } else if (snapshot.hasError) {
-                if(state.numberOfMarkers != 0){
+
+                print("Error:  " + snapshot.error.toString());
+
+                //No incidencias registradas
+                if(snapshot.error.toString().substring(0, 15) == "FormatException"){
+                  if(state.numberOfMarkers != 0){
                     WidgetsBinding.instance.addPostFrameCallback((_) {
                       print("push3");
                       Navigator.pushReplacement(
@@ -436,12 +447,7 @@ class _MisIncidenciasState extends State<MisIncidencias>{
                     });
                     state.numberOfMarkers = 0;
                     mediator.setMisIncidenciasState(state);
-                }
-
-                print("Error:  " + snapshot.error.toString());
-
-                //No incidencias registradas
-                if(snapshot.error.toString().substring(0, 15) == "FormatException"){
+                  }
                   print("Error de no hay incidencias");
                   return ExpansionTile(
                       childrenPadding: EdgeInsets.only(bottom: 5),
@@ -502,58 +508,255 @@ class _MisIncidenciasState extends State<MisIncidencias>{
                     state.errorSolved = errorSolved;
                     state.statefulMarkers = statefulMapController.statefulMarkers;
                     mediator.setMisIncidenciasState(state);
+
+                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                      final snackbar = SnackBar(
+                          backgroundColor: Colors.yellow,
+                          content: Text(
+                            AppLocalizations.of(context).sBTimeoutText,
+                            style: TextStyle(
+                                color: Colors.red,
+                                fontWeight: FontWeight.bold),
+                          ));
+
+                      WidgetsBinding.instance
+                          .addPostFrameCallback((_) {
+                        // Add Your Code here.
+                        ScaffoldMessenger.of(context)
+                            .showSnackBar(snackbar);
+                      });
+                    });
                   }
 
-                  return ExpansionTile(
-                      childrenPadding: EdgeInsets.only(bottom: 5),
-                      title: Text(AppLocalizations.of(context).incidentsLabel),
-                      backgroundColor: Colors.amberAccent[100],
-                      children: [
-                        Card(
-                          child: Container(
-                              color: Colors.blue,
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Text(AppLocalizations.of(context).messageType,
+                  if(state.numberOfMarkers == 0){
+                    return ExpansionTile(
+                        childrenPadding: EdgeInsets.only(bottom: 5),
+                        title: Text(AppLocalizations.of(context).incidentsLabel),
+                        backgroundColor: Colors.amberAccent[100],
+                        children: [
+                          Card(
+                            child: Container(
+                                color: Colors.blue,
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Text(AppLocalizations.of(context).messageType,
+                                        style: TextStyle(
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.bold)),
+                                    Container(
+                                        height: 20,
+                                        child: VerticalDivider(color: Colors.red)),
+                                    Text(AppLocalizations.of(context).eventId,
+                                        style: TextStyle(
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.bold)),
+                                    Container(
+                                        height: 20,
+                                        child: VerticalDivider(color: Colors.red)),
+                                    Text(
+                                        AppLocalizations.of(context).eventReference,
+                                        style: TextStyle(
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.bold)),
+                                    Container(
+                                        height: 20,
+                                        child: VerticalDivider(color: Colors.red)),
+                                    Text(
+                                        AppLocalizations.of(context)
+                                            .eventDescription,
+                                        style: TextStyle(
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.bold)),
+                                  ],
+                                )),
+                          ),
+                          Text(
+                            AppLocalizations.of(context).sBTimeoutText,
+                            style: TextStyle(
+                                fontSize: 16,
+                                color: Colors.red,
+                                fontWeight: FontWeight.bold),
+                          )
+                        ]);
+                  } else{
+                    return ExpansionTile(
+                        childrenPadding: EdgeInsets.only(bottom: 5),
+                        title: Text(AppLocalizations.of(context).incidentsLabel),
+                        backgroundColor: Colors.amberAccent[100],
+                        children: [
+                          Card(
+                            child: Container(
+                                color: Colors.blue,
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Text(AppLocalizations.of(context).messageType,
+                                        style: TextStyle(
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.bold)),
+                                    Container(
+                                        height: 20,
+                                        child: VerticalDivider(color: Colors.red)),
+                                    Text(AppLocalizations.of(context).eventId,
+                                        style: TextStyle(
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.bold)),
+                                    Container(
+                                        height: 20,
+                                        child: VerticalDivider(color: Colors.red)),
+                                    Text(
+                                        AppLocalizations.of(context).eventReference,
+                                        style: TextStyle(
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.bold)),
+                                    Container(
+                                        height: 20,
+                                        child: VerticalDivider(color: Colors.red)),
+                                    Text(
+                                      AppLocalizations.of(context).description,
                                       style: TextStyle(
                                           color: Colors.white,
-                                          fontWeight: FontWeight.bold)),
-                                  Container(
-                                      height: 20,
-                                      child: VerticalDivider(color: Colors.red)),
-                                  Text(AppLocalizations.of(context).eventId,
-                                      style: TextStyle(
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.bold)),
-                                  Container(
-                                      height: 20,
-                                      child: VerticalDivider(color: Colors.red)),
-                                  Text(
-                                      AppLocalizations.of(context).eventReference,
-                                      style: TextStyle(
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.bold)),
-                                  Container(
-                                      height: 20,
-                                      child: VerticalDivider(color: Colors.red)),
-                                  Text(
-                                      AppLocalizations.of(context)
-                                          .eventDescription,
-                                      style: TextStyle(
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.bold)),
-                                ],
-                              )),
-                        ),
-                        Text(
-                          AppLocalizations.of(context).sBTimeoutText,
-                          style: TextStyle(
-                              fontSize: 16,
-                              color: Colors.red,
-                              fontWeight: FontWeight.bold),
-                        )
-                      ]);
+                                          fontWeight: FontWeight.bold),
+                                      maxLines: 10,
+                                    ),
+                                  ],
+                                )),
+                          ),
+                          Container(
+                            height: MediaQuery.of(context).size.height * valueSize,
+                            child: ListView.builder(
+                              itemCount: state.sucesos.length ,
+                              itemBuilder: (context, index) {
+                                colorTarjeta = Colors.red[400];
+                                  return Card(
+                                    child: Container(
+                                      color: colorTarjeta,
+                                      child: ListTile(
+                                        onTap: () {
+                                          Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (context) =>
+                                                    DetalleIncidencias(
+                                                      creation: state.sucesos[index].description,
+                                                      reference: state.sucesos[index].refSuceso,
+                                                      state: "Atendido",
+                                                      direction: state.sucesos[index].description,
+                                                      description: state.sucesos[index].description,
+                                                      latitud: state.sucesos[index].latitude,
+                                                      longitud: state.sucesos[index].longitude,
+                                                    ),
+                                              ));
+                                        },
+                                        title: Container(
+                                            child: Row(
+                                              children: [
+                                                Text(state.sucesos[index].tipo,
+                                                    style: TextStyle(
+                                                        color: Colors.white,
+                                                        fontWeight: FontWeight.bold)),
+                                                Container(
+                                                    height: 30,
+                                                    child: VerticalDivider(
+                                                      color: Colors.black,
+                                                      thickness: 1.5,
+                                                    )),
+                                                Text(state.sucesos[index].idSuceso,
+                                                    style: TextStyle(
+                                                        color: Colors.white,
+                                                        fontWeight: FontWeight.bold)),
+                                                Container(
+                                                    height: 30,
+                                                    child: VerticalDivider(
+                                                      color: Colors.black,
+                                                      thickness: 1.5,
+                                                    )),
+                                                Text(state.sucesos[index].refSuceso,
+                                                    style: TextStyle(
+                                                        color: Colors.white,
+                                                        fontWeight: FontWeight.bold)),
+                                                Container(
+                                                    height: 30,
+                                                    child: VerticalDivider(
+                                                      color: Colors.black,
+                                                      thickness: 1.5,
+                                                    )),
+                                                Flexible(
+                                                  child: Text(
+                                                    state.sucesos[index].description
+                                                        .isNotEmpty
+                                                        ? state.sucesos[index].description
+                                                        : "Vacío",
+                                                    style: TextStyle(
+                                                      color: Colors.white,
+                                                      fontWeight: FontWeight.bold,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ],
+                                            )),
+                                        leading: GestureDetector(
+                                          key: Key("centerInMap" + index.toString()),
+                                          child: Container(
+                                            decoration: BoxDecoration(
+                                              border: Border.all(color: Colors.blue[900], width: 3),
+                                              borderRadius: BorderRadius.circular(60.0),
+                                            ),
+                                            child: ClipRRect(
+                                              borderRadius: BorderRadius.circular(60.0),
+                                              child: Container(
+                                                height: 50,
+                                                width: 50,
+                                                color: Colors.blue,
+                                                child: BouncingWidget(
+                                                  duration: Duration(milliseconds: 300),
+                                                  scaleFactor: 5,
+                                                  onPressed: () {
+                                                    setState(() {
+                                                      var latlng = LatLng(
+                                                          state.sucesos[index].latitude,
+                                                          state.sucesos[index].longitude);
+                                                      final snackBar = SnackBar(
+                                                          duration: const Duration(milliseconds: 500),
+                                                          content: Text("Lat: " +
+                                                              latlng.latitude.toString() +
+                                                              " | Lon: " +
+                                                              latlng.longitude.toString()));
+
+                                                      ScaffoldMessenger.of(context)
+                                                          .showSnackBar(snackBar);
+                                                      double zoom = 15.0; //the zoom you want
+                                                      statefulMapController.mapController
+                                                          .move(latlng, zoom);
+                                                    });
+                                                  },
+
+                                                  child: Icon(
+                                                    Icons.location_pin,
+                                                    color: Colors.black,
+                                                    size: 30.0,
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  );
+                              },
+                            ),
+                          ),
+                          Text(
+                            AppLocalizations.of(context).sBTimeoutText,
+                            style: TextStyle(
+                                fontSize: 16,
+                                color: Colors.red,
+                                fontWeight: FontWeight.bold),
+                          )
+                        ]);
+                  }
                 }
 
               }
@@ -943,11 +1146,11 @@ class _MisIncidenciasState extends State<MisIncidencias>{
 
     posicionActual = _determinePosition();
 
-    reloadMapWithGPSPosition();
+    reloadMapWithGPSPositionAndCenter();
 
     _isRefreshButtonDisabled = true;
 
-    checkInternetConnection();
+    // checkInternetConnection();
 
     // GPStrigger();
 
@@ -1005,11 +1208,11 @@ class _MisIncidenciasState extends State<MisIncidencias>{
   /// adds a new marker with unique identifier
   void addMarker(Suceso data, int index) {
     print("addMarker");
-    statefulMarkerNames.add("some marker" + index.toString());
+    statefulMarkerNames.add("event marker" + index.toString());
     statefulMapController.onReady.then((_) {
       // print("marcador" + index.toString());
       statefulMapController.addStatefulMarker(
-          name: "some marker" + index.toString(),
+          name: "event marker" + index.toString(),
           statefulMarker: StatefulMarker(
               height: _markerSize,
               width: _markerSize,
@@ -1022,7 +1225,7 @@ class _MisIncidenciasState extends State<MisIncidencias>{
                       image: AssetImage('images/sirena.png'),
                     ),
                     onPressed: () => statefulMapController.mutateMarker(
-                        name: "some marker" + index.toString(),
+                        name: "event marker" + index.toString(),
                         property: "showText",
                         value: !(state["showText"] as bool)));
                 if (state["showText"] == true) {
@@ -1045,7 +1248,7 @@ class _MisIncidenciasState extends State<MisIncidencias>{
   void updateMarker(Suceso data, int index) {
     // TODO: update en vez de create en el refresh
     statefulMapController.statefulMarkers
-        .update("some marker" + index.toString(), (value) {
+        .update("event marker" + index.toString(), (value) {
       return StatefulMarker(
           height: _markerSize,
           width: _markerSize,
@@ -1058,7 +1261,7 @@ class _MisIncidenciasState extends State<MisIncidencias>{
                   image: AssetImage('images/sirena.png'),
                 ),
                 onPressed: () => statefulMapController.mutateMarker(
-                    name: "some marker" + index.toString(),
+                    name: "event marker" + index.toString(),
                     property: "showText",
                     value: !(state["showText"] as bool)));
             if (state["showText"] == true) {
@@ -1108,13 +1311,14 @@ class _MisIncidenciasState extends State<MisIncidencias>{
   /// Vuelve a llamar al servicio mientras bloquea el botón de refresh. Borra los marcadores activos ya que se volverán a crear con los cambios que haya habido.
   void refreshData() {
 
-    checkInternetConnection();
+    // checkInternetConnection();
 
     statefulMapController.onReady.then((value) {
       state.statefulMarkers =  statefulMapController.statefulMarkers;
       mediator.setMisIncidenciasState(state);
       setState(() {
-        statefulMapController.statefulMarkers.clear();
+        // statefulMapController.statefulMarkers.clear();
+        statefulMapController.statefulMarkers.remove("markerGPS");
         _isRefreshButtonDisabled = true;
         fetchData();
         posicionActual = _determinePosition();
@@ -1129,7 +1333,7 @@ class _MisIncidenciasState extends State<MisIncidencias>{
   }
 
   ///Espera a los valores del GPS, centra el mapa y actualiza el marcador de GPS
-  void reloadMapWithGPSPosition() {
+  void reloadMapWithGPSPositionAndCenter() {
     // esto es un callback, determina nuestra posición
     posicionActual.then((value) => {
       developer.log(value.toString(), name: 'my.app.category'),
@@ -1178,65 +1382,112 @@ class _MisIncidenciasState extends State<MisIncidencias>{
     });
   }
 
-  /// Compruebo si existe conexión hacia el exterior.
-  Future<void> checkInternetConnection() async {
-    try {
-      final result = await InternetAddress.lookup('google.com');
-      if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
-        print('connected');
-      }
-    } on SocketException catch (_) {
-      print('not connected');
-    }
+  ///Espera a los valores del GPS, centra el mapa y actualiza el marcador de GPS
+  void reloadMapWithGPSPosition() {
+    // esto es un callback, determina nuestra posición
+    posicionActual.then((value) => {
+      developer.log(value.toString(), name: 'my.app.category'),
+      latitudCenter = value.latitude,
+      longitudCenter = value.longitude,
+      statefulMapController.onReady.then((_) {
+
+        //Create marker with GPS position
+        statefulMapController.addStatefulMarker(
+            name: "markerGPS",
+            statefulMarker: StatefulMarker(
+                height: _markerSize,
+                width: _markerSize,
+                state: <String, dynamic>{"showText": false},
+                point: LatLng(latitudCenter, longitudCenter),
+                builder:
+                    (BuildContext context, Map<String, dynamic> state) {
+                  Widget w;
+                  final markerIcon = IconButton(
+                      icon: Icon(
+                        Icons.location_on,
+                        color: Colors.blue[900],
+                      ),
+                      onPressed: () => statefulMapController.mutateMarker(
+                          name: "markerGPS",
+                          property: "showText",
+                          value: !(state["showText"] as bool)));
+                  if (state["showText"] == true) {
+                    w = Column(children: <Widget>[
+                      markerIcon,
+                      Container(
+                          color: Colors.white,
+                          child: Padding(
+                              padding: const EdgeInsets.all(5.0),
+                              child: Text('GPS', textScaleFactor: 0.9))),
+                    ]);
+                  } else {
+                    w = markerIcon;
+                  }
+                  return w;
+                }));
+      })
+    });
   }
 
-  ///This example stores information in the documents directory.
-  ///You can find the path to the documents directory as follows:
-  Future<String> get _localPath async {
-    final directory = await getApplicationDocumentsDirectory();
-    print("El directory es:" + directory.path.toString());
-    return directory.path;
-  }
+  // /// Compruebo si existe conexión hacia el exterior.
+  // Future<void> checkInternetConnection() async {
+  //   try {
+  //     final result = await InternetAddress.lookup('google.com');
+  //     if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
+  //       print('connected');
+  //     }
+  //   } on SocketException catch (_) {
+  //     print('not connected');
+  //   }
 
-  ///Once you know where to store the file, create a reference to the file’s full location
-  Future<File> get _localFile async {
-    final path = await _localPath;
-    return File('$path/GPSdata.txt');
 
-  }
-
-  ///Now that you have a File to work with, use it to read and write data.
-  Future<File> writeGPSdata() async {
-    print("Se esta escribiendo en un TXT");
-    final file = await _localFile;
-
-    return file.writeAsString(GPSdata);
-  }
-
-  ///Reading data from a file :+)
-  Future<String> readGPSdata() async {
-    try {
-      final file = await _localFile;
-
-      // Read the file
-      String contents = await file.readAsString();
-
-      return contents;
-    } catch (e) {
-      return "";
-    }
-  }
-
-  /// Nos devuelve el imei, el tiempo en milis y la posicion.
-  void getGPSdata() {
-    if(GPSdata == null){
-      GPSdata = "123456789\r\n" + DateTime.now().millisecondsSinceEpoch.toString() + ";" + latitudCenter.toString() +
-          ";" + longitudCenter.toString() + "\r\n";
-    }
-
-    GPSdata = GPSdata + DateTime.now().millisecondsSinceEpoch.toString() + ";" + latitudCenter.toString() +
-        ";" + longitudCenter.toString() + "\r\n";
-  }
+  // ///This example stores information in the documents directory.
+  // ///You can find the path to the documents directory as follows:
+  // Future<String> get _localPath async {
+  //   final directory = await getApplicationDocumentsDirectory();
+  //   print("El directory es:" + directory.path.toString());
+  //   return directory.path;
+  // }
+  //
+  // ///Once you know where to store the file, create a reference to the file’s full location
+  // Future<File> get _localFile async {
+  //   final path = await _localPath;
+  //   return File('$path/GPSdata.txt');
+  //
+  // }
+  //
+  // ///Now that you have a File to work with, use it to read and write data.
+  // Future<File> writeGPSdata() async {
+  //   print("Se esta escribiendo en un TXT");
+  //   final file = await _localFile;
+  //
+  //   return file.writeAsString(GPSdata);
+  // }
+  //
+  // ///Reading data from a file :+)
+  // Future<String> readGPSdata() async {
+  //   try {
+  //     final file = await _localFile;
+  //
+  //     // Read the file
+  //     String contents = await file.readAsString();
+  //
+  //     return contents;
+  //   } catch (e) {
+  //     return "";
+  //   }
+  // }
+  //
+  // /// Nos devuelve el imei, el tiempo en milis y la posicion.
+  // void getGPSdata() {
+  //   if(GPSdata == null){
+  //     GPSdata = "123456789\r\n" + DateTime.now().millisecondsSinceEpoch.toString() + ";" + latitudCenter.toString() +
+  //         ";" + longitudCenter.toString() + "\r\n";
+  //   }
+  //
+  //   GPSdata = GPSdata + DateTime.now().millisecondsSinceEpoch.toString() + ";" + latitudCenter.toString() +
+  //       ";" + longitudCenter.toString() + "\r\n";
+  // }
 
   /// Llama a la lectura, escritura cada "x" tiempo
   // void GPStrigger() {

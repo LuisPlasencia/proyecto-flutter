@@ -1,5 +1,6 @@
 import 'package:flutter_map/flutter_map.dart';
 import 'package:map_controller/map_controller.dart';
+import 'package:telycom_app/httpService/Suceso.dart';
 
 
 class MisIncidenciasState{
@@ -12,6 +13,7 @@ class MisIncidenciasState{
 
   StatefulMapController statefulMapController = StatefulMapController(mapController: MapController()) ;
   MapController mapController = MapController();
+  List<Suceso> sucesos;
 
 
 
