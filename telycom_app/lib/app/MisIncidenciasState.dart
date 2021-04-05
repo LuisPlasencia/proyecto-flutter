@@ -17,4 +17,8 @@ class MisIncidenciasState{
 
 
 
+  double tmpLatitudeCenter = 0;
+  double tmpLongitudeCenter = 0;
+  double tmpDistanceMeters = 0;
+
 }

@@ -30,7 +30,7 @@ class MyAppMisIncidencias extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'MisIncidencias',
-      home: MisIncidencias(imei: '', tk: '',),
+      home: MisIncidencias(),
     );
   }
 }
@@ -97,10 +97,23 @@ class _MisIncidenciasState extends State<MisIncidencias>{
   bool errorTimeout;
   bool errorSolved;
 
+  /// Llave global para colapsar el Widget Expasion Tile
+  final GlobalKey<_MisIncidenciasState> expansionTile = new GlobalKey();
+
+  bool _isExpanded = false;
+
+  /// Para el timer -------------------------->
+  double incrementoI = 0.00;
+  bool mayorDeDosCientos;
+  int timerCountDown;
+
   /// Trigger para llamar a la funcion de recuperación de GPS data
-  Timer timer;
+  Timer timerWrite;
+  Timer timerGetData;
+  Timer timerDistance;
   String GPSdata;
   double distanceInMeters;
+  bool isDataWriting;
 
 
   Future<bool> _onBackPressed() {
@@ -122,7 +135,9 @@ class _MisIncidenciasState extends State<MisIncidencias>{
             onTap: () {
               latLongBloc.dispose();
               sub.cancel();
-              timer?.cancel();
+              timerWrite?.cancel();
+              timerGetData?.cancel();
+              timerDistance?.cancel();
 
               state.statefulMarkers = null;
               state.running = false;
@@ -250,173 +265,176 @@ class _MisIncidenciasState extends State<MisIncidencias>{
                   mediator.setMisIncidenciasState(state);
                 }
 
-                return ExpansionTile(
-                    childrenPadding: EdgeInsets.only(bottom: 5),
-                    title: Text(AppLocalizations.of(context).incidentsLabel),
-                    backgroundColor: Colors.amberAccent[100],
-                    children: [
-                      Card(
-                        child: Container(
-                            color: Colors.blue,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Text(AppLocalizations.of(context).messageType,
+                /// Para saber si estamos en modo landscape o portrait
+                if(MediaQuery.of(context).orientation == Orientation.portrait){
+                  return ExpansionTile(
+                      childrenPadding: EdgeInsets.only(bottom: 5),
+                      title: Text(AppLocalizations.of(context).incidentsLabel),
+                      backgroundColor: Colors.amberAccent[100],
+                      children: [
+                        Card(
+                          child: Container(
+                              color: Colors.blue,
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(AppLocalizations.of(context).messageType,
+                                      style: TextStyle(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold)),
+                                  Container(
+                                      height: 20,
+                                      child: VerticalDivider(color: Colors.red)),
+                                  Text(AppLocalizations.of(context).eventId,
+                                      style: TextStyle(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold)),
+                                  Container(
+                                      height: 20,
+                                      child: VerticalDivider(color: Colors.red)),
+                                  Text(
+                                      AppLocalizations.of(context).eventReference,
+                                      style: TextStyle(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold)),
+                                  Container(
+                                      height: 20,
+                                      child: VerticalDivider(color: Colors.red)),
+                                  Text(
+                                    AppLocalizations.of(context).description,
                                     style: TextStyle(
                                         color: Colors.white,
-                                        fontWeight: FontWeight.bold)),
-                                Container(
-                                    height: 20,
-                                    child: VerticalDivider(color: Colors.red)),
-                                Text(AppLocalizations.of(context).eventId,
-                                    style: TextStyle(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold)),
-                                Container(
-                                    height: 20,
-                                    child: VerticalDivider(color: Colors.red)),
-                                Text(
-                                    AppLocalizations.of(context).eventReference,
-                                    style: TextStyle(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold)),
-                                Container(
-                                    height: 20,
-                                    child: VerticalDivider(color: Colors.red)),
-                                Text(
-                                  AppLocalizations.of(context).description,
-                                  style: TextStyle(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.bold),
-                                  maxLines: 10,
-                                ),
-                              ],
-                            )),
-                      ),
-                      Container(
-                        height: MediaQuery.of(context).size.height * valueSize,
-                        child: ListView.builder(
-                          itemCount: snapshot.data.length,
-                          itemBuilder: (context, index) {
-                            colorTarjeta = Colors.red[400];
-                            if (snapshot.data.length == 0) {
-                              return Text(
-                                  AppLocalizations.of(context).noEventAssigned);
-                            } else {
-                              return Card(
-                                child: Container(
-                                  color: colorTarjeta,
-                                  child: ListTile(
-                                    onTap: () {
-                                      Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (context) =>
-                                                DetalleIncidencias(
-                                              creation: snapshot
-                                                  .data[index].description,
-                                              reference: snapshot
-                                                  .data[index].refSuceso,
-                                              state: "Atendido",
-                                              direction: snapshot
-                                                  .data[index].description,
-                                              description: snapshot
-                                                  .data[index].description,
-                                              latitud:
-                                                  snapshot.data[index].latitude,
-                                              longitud: snapshot
-                                                  .data[index].longitude,
-                                            ),
-                                          ));
-                                    },
-                                    title: Container(
-                                        child: Row(
-                                      children: [
-                                        Text(snapshot.data[index].tipo,
-                                            style: TextStyle(
-                                                color: Colors.white,
-                                                fontWeight: FontWeight.bold)),
-                                        Container(
-                                            height: 30,
-                                            child: VerticalDivider(
-                                              color: Colors.black,
-                                              thickness: 1.5,
-                                            )),
-                                        Text(snapshot.data[index].idSuceso,
-                                            style: TextStyle(
-                                                color: Colors.white,
-                                                fontWeight: FontWeight.bold)),
-                                        Container(
-                                            height: 30,
-                                            child: VerticalDivider(
-                                              color: Colors.black,
-                                              thickness: 1.5,
-                                            )),
-                                        Text(snapshot.data[index].refSuceso,
-                                            style: TextStyle(
-                                                color: Colors.white,
-                                                fontWeight: FontWeight.bold)),
-                                        Container(
-                                            height: 30,
-                                            child: VerticalDivider(
-                                              color: Colors.black,
-                                              thickness: 1.5,
-                                            )),
-                                        Flexible(
-                                          child: Text(
-                                            snapshot.data[index].description
-                                                    .isNotEmpty
-                                                    ? snapshot
-                                                    .data[index].description
-                                                : "Vacío",
-                                            style: TextStyle(
-                                              color: Colors.white,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    )),
-                                    leading: GestureDetector(
-                                      key: Key("centerInMap" + index.toString()),
-                                      child: Container(
-                                        decoration: BoxDecoration(
-                                          border: Border.all(color: Colors.blue[900], width: 3),
-                                          borderRadius: BorderRadius.circular(60.0),
-                                        ),
-                                        child: ClipRRect(
-                                          borderRadius: BorderRadius.circular(60.0),
-                                          child: Container(
-                                            height: 50,
-                                            width: 50,
-                                            color: Colors.blue,
-                                            child: BouncingWidget(
-                                              duration: Duration(milliseconds: 300),
-                                              scaleFactor: 5,
-                                              onPressed: () {
-                                                setState(() {
-                                                var latlng = LatLng(
+                                        fontWeight: FontWeight.bold),
+                                    maxLines: 10,
+                                  ),
+                                ],
+                              )),
+                        ),
+                        Container(
+                          height: MediaQuery.of(context).size.height * valueSize,
+                          child: ListView.builder(
+                            itemCount: snapshot.data.length,
+                            itemBuilder: (context, index) {
+                              colorTarjeta = Colors.red[400];
+                              if (snapshot.data.length == 0) {
+                                return Text(
+                                    AppLocalizations.of(context).noEventAssigned);
+                              } else {
+                                return Card(
+                                  child: Container(
+                                    color: colorTarjeta,
+                                    child: ListTile(
+                                      onTap: () {
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) =>
+                                                  DetalleIncidencias(
+                                                    creation: snapshot
+                                                        .data[index].description,
+                                                    reference: snapshot
+                                                        .data[index].refSuceso,
+                                                    state: "Atendido",
+                                                    direction: snapshot
+                                                        .data[index].description,
+                                                    description: snapshot
+                                                        .data[index].description,
+                                                    latitud:
                                                     snapshot.data[index].latitude,
-                                                    snapshot.data[index].longitude);
-                                                final snackBar = SnackBar(
-                                                  duration: const Duration(milliseconds: 500),
-                                                    content: Text("Lat: " +
-                                                        latlng.latitude.toString() +
-                                                        " | Lon: " +
-                                                        latlng.longitude.toString()));
+                                                    longitud: snapshot
+                                                        .data[index].longitude,
+                                                  ),
+                                            ));
+                                      },
+                                      title: Container(
+                                          child: Row(
+                                            children: [
+                                              Text(snapshot.data[index].tipo,
+                                                  style: TextStyle(
+                                                      color: Colors.white,
+                                                      fontWeight: FontWeight.bold)),
+                                              Container(
+                                                  height: 30,
+                                                  child: VerticalDivider(
+                                                    color: Colors.black,
+                                                    thickness: 1.5,
+                                                  )),
+                                              Text(snapshot.data[index].idSuceso,
+                                                  style: TextStyle(
+                                                      color: Colors.white,
+                                                      fontWeight: FontWeight.bold)),
+                                              Container(
+                                                  height: 30,
+                                                  child: VerticalDivider(
+                                                    color: Colors.black,
+                                                    thickness: 1.5,
+                                                  )),
+                                              Text(snapshot.data[index].refSuceso,
+                                                  style: TextStyle(
+                                                      color: Colors.white,
+                                                      fontWeight: FontWeight.bold)),
+                                              Container(
+                                                  height: 30,
+                                                  child: VerticalDivider(
+                                                    color: Colors.black,
+                                                    thickness: 1.5,
+                                                  )),
+                                              Flexible(
+                                                child: Text(
+                                                  snapshot.data[index].description
+                                                      .isNotEmpty
+                                                      ? snapshot
+                                                      .data[index].description
+                                                      : "Vacío",
+                                                  style: TextStyle(
+                                                    color: Colors.white,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          )),
+                                      leading: GestureDetector(
+                                        key: Key("centerInMap" + index.toString()),
+                                        child: Container(
+                                          decoration: BoxDecoration(
+                                            border: Border.all(color: Colors.blue[900], width: 3),
+                                            borderRadius: BorderRadius.circular(60.0),
+                                          ),
+                                          child: ClipRRect(
+                                            borderRadius: BorderRadius.circular(60.0),
+                                            child: Container(
+                                              height: 50,
+                                              width: 50,
+                                              color: Colors.blue,
+                                              child: BouncingWidget(
+                                                duration: Duration(milliseconds: 300),
+                                                scaleFactor: 5,
+                                                onPressed: () {
+                                                  setState(() {
+                                                    var latlng = LatLng(
+                                                        snapshot.data[index].latitude,
+                                                        snapshot.data[index].longitude);
+                                                    final snackBar = SnackBar(
+                                                        duration: const Duration(milliseconds: 500),
+                                                        content: Text("Lat: " +
+                                                            latlng.latitude.toString() +
+                                                            " | Lon: " +
+                                                            latlng.longitude.toString()));
 
-                                                ScaffoldMessenger.of(context)
-                                                    .showSnackBar(snackBar);
-                                                double zoom = 15.0; //the zoom you want
-                                                statefulMapController.mapController
-                                                    .move(latlng, zoom);
+                                                    ScaffoldMessenger.of(context)
+                                                        .showSnackBar(snackBar);
+                                                    double zoom = 15.0; //the zoom you want
+                                                    statefulMapController.mapController
+                                                        .move(latlng, zoom);
                                                   });
-                                              },
+                                                },
 
-                                              child: Icon(
-                                                Icons.location_pin,
-                                                color: Colors.black,
-                                                size: 30.0,
+                                                child: Icon(
+                                                  Icons.location_pin,
+                                                  color: Colors.black,
+                                                  size: 30.0,
+                                                ),
                                               ),
                                             ),
                                           ),
@@ -424,18 +442,203 @@ class _MisIncidenciasState extends State<MisIncidencias>{
                                       ),
                                     ),
                                   ),
-                                ),
-                              );
-                            }
-                          },
+                                );
+                              }
+                            },
+                          ),
+                        )
+                      ]);
+                } else {
+                  return ExpansionTile(
+                      // key: expansionTile,
+                      childrenPadding: EdgeInsets.only(bottom: 5),
+                      title: Text(AppLocalizations.of(context).incidentsLabel),
+                      backgroundColor: Colors.amberAccent[100],
+                      children: [
+                        Card(
+                          child: Container(
+                              color: Colors.blue,
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                children: [
+                                  Text(AppLocalizations.of(context).messageType,
+                                      style: TextStyle(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold)),
+                                  Container(
+                                      height: 20,
+                                      child: VerticalDivider(color: Colors.red)),
+                                  Text(AppLocalizations.of(context).eventId,
+                                      style: TextStyle(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold)),
+                                  Container(
+                                      height: 20,
+                                      child: VerticalDivider(color: Colors.red)),
+                                  Text(
+                                      AppLocalizations.of(context).eventReference,
+                                      style: TextStyle(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold)),
+                                  Container(
+                                      height: 20,
+                                      child: VerticalDivider(color: Colors.red)),
+                                  Text(
+                                    AppLocalizations.of(context).description,
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold),
+                                    maxLines: 10,
+                                  ),
+                                ],
+                              )),
                         ),
-                      )
-                    ]);
+                        Container(
+                          height: MediaQuery.of(context).size.height * valueSize * 2,
+                          child: ListView.builder(
+                            itemCount: snapshot.data.length,
+                            itemBuilder: (context, index) {
+                              colorTarjeta = Colors.red[400];
+                              if (snapshot.data.length == 0) {
+                                return Text(
+                                    AppLocalizations.of(context).noEventAssigned);
+                              } else {
+                                return Card(
+                                  child: Container(
+                                    color: colorTarjeta,
+                                    child: ListTile(
+                                      onTap: () {
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) =>
+                                                  DetalleIncidencias(
+                                                    creation: snapshot
+                                                        .data[index].description,
+                                                    reference: snapshot
+                                                        .data[index].refSuceso,
+                                                    state: "Atendido",
+                                                    direction: snapshot
+                                                        .data[index].description,
+                                                    description: snapshot
+                                                        .data[index].description,
+                                                    latitud:
+                                                    snapshot.data[index].latitude,
+                                                    longitud: snapshot
+                                                        .data[index].longitude,
+                                                  ),
+                                            ));
+                                      },
+                                      title: Container(
+                                          child: Row(
+                                            mainAxisAlignment: MainAxisAlignment.start,
+                                            children: [
+                                              Text(snapshot.data[index].tipo,
+                                                  style: TextStyle(
+                                                      color: Colors.white,
+                                                      fontWeight: FontWeight.bold)),
+                                              Container(
+                                                  height: 30,
+                                                  child: VerticalDivider(
+                                                    color: Colors.black,
+                                                    thickness: 1.5,
+                                                  )),
+                                              Text(snapshot.data[index].idSuceso,
+                                                  style: TextStyle(
+                                                      color: Colors.white,
+                                                      fontWeight: FontWeight.bold)),
+                                              Container(
+                                                  height: 30,
+                                                  child: VerticalDivider(
+                                                    color: Colors.black,
+                                                    thickness: 1.5,
+                                                  )),
+                                              Text(snapshot.data[index].refSuceso,
+                                                  style: TextStyle(
+                                                      color: Colors.white,
+                                                      fontWeight: FontWeight.bold)),
+                                              Container(
+                                                  height: 30,
+                                                  child: VerticalDivider(
+                                                    color: Colors.black,
+                                                    thickness: 1.5,
+                                                  )),
+                                              Flexible(
+                                                child: Text(
+                                                  snapshot.data[index].description
+                                                      .isNotEmpty
+                                                      ? snapshot
+                                                      .data[index].description
+                                                      : "Vacío",
+                                                  style: TextStyle(
+                                                    color: Colors.white,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          )),
+                                      leading: GestureDetector(
+                                        key: Key("centerInMap" + index.toString()),
+                                        child: Container(
+                                          decoration: BoxDecoration(
+                                            border: Border.all(color: Colors.blue[900], width: 3),
+                                            borderRadius: BorderRadius.circular(60.0),
+                                          ),
+                                          child: ClipRRect(
+                                            borderRadius: BorderRadius.circular(60.0),
+                                            child: Container(
+                                              height: 50,
+                                              width: 50,
+                                              color: Colors.blue,
+                                              child: BouncingWidget(
+                                                duration: Duration(milliseconds: 300),
+                                                scaleFactor: 5,
+                                                onPressed: () {
+                                                  setState(() {
+                                                    var latlng = LatLng(
+                                                        snapshot.data[index].latitude,
+                                                        snapshot.data[index].longitude);
+                                                    final snackBar = SnackBar(
+                                                        duration: const Duration(milliseconds: 500),
+                                                        content: Text("Lat: " +
+                                                            latlng.latitude.toString() +
+                                                            " | Lon: " +
+                                                            latlng.longitude.toString()));
+
+                                                ScaffoldMessenger.of(context)
+                                                    .showSnackBar(snackBar);
+                                                double zoom = 15.0; //the zoom you want
+                                                statefulMapController.mapController
+                                                    .move(latlng, zoom);
+                                                  });
+                                                },
+
+                                                child: Icon(
+                                                  Icons.location_pin,
+                                                  color: Colors.black,
+                                                  size: 30.0,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                );
+                              }
+                            },
+                          ),
+                        )
+                      ]);
+                }
+
               } else if (snapshot.hasError) {
 
                 print("Error:  " + snapshot.error.toString());
 
-                //No incidencias registradas
+                /// No incidencias registradas
                 if(snapshot.error.toString().substring(0, 15) == "FormatException"){
                   if(state.numberOfMarkers != 0){
                     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -580,55 +783,57 @@ class _MisIncidenciasState extends State<MisIncidencias>{
                           )
                         ]);
                   } else{
-                    return ExpansionTile(
-                        childrenPadding: EdgeInsets.only(bottom: 5),
-                        title: Text(AppLocalizations.of(context).incidentsLabel),
-                        backgroundColor: Colors.amberAccent[100],
-                        children: [
-                          Card(
-                            child: Container(
-                                color: Colors.blue,
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Text(AppLocalizations.of(context).messageType,
+
+                    if(MediaQuery.of(context).orientation == Orientation.portrait){
+                      return ExpansionTile(
+                          childrenPadding: EdgeInsets.only(bottom: 5),
+                          title: Text(AppLocalizations.of(context).incidentsLabel),
+                          backgroundColor: Colors.amberAccent[100],
+                          children: [
+                            Card(
+                              child: Container(
+                                  color: Colors.blue,
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text(AppLocalizations.of(context).messageType,
+                                          style: TextStyle(
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.bold)),
+                                      Container(
+                                          height: 20,
+                                          child: VerticalDivider(color: Colors.red)),
+                                      Text(AppLocalizations.of(context).eventId,
+                                          style: TextStyle(
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.bold)),
+                                      Container(
+                                          height: 20,
+                                          child: VerticalDivider(color: Colors.red)),
+                                      Text(
+                                          AppLocalizations.of(context).eventReference,
+                                          style: TextStyle(
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.bold)),
+                                      Container(
+                                          height: 20,
+                                          child: VerticalDivider(color: Colors.red)),
+                                      Text(
+                                        AppLocalizations.of(context).description,
                                         style: TextStyle(
                                             color: Colors.white,
-                                            fontWeight: FontWeight.bold)),
-                                    Container(
-                                        height: 20,
-                                        child: VerticalDivider(color: Colors.red)),
-                                    Text(AppLocalizations.of(context).eventId,
-                                        style: TextStyle(
-                                            color: Colors.white,
-                                            fontWeight: FontWeight.bold)),
-                                    Container(
-                                        height: 20,
-                                        child: VerticalDivider(color: Colors.red)),
-                                    Text(
-                                        AppLocalizations.of(context).eventReference,
-                                        style: TextStyle(
-                                            color: Colors.white,
-                                            fontWeight: FontWeight.bold)),
-                                    Container(
-                                        height: 20,
-                                        child: VerticalDivider(color: Colors.red)),
-                                    Text(
-                                      AppLocalizations.of(context).description,
-                                      style: TextStyle(
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.bold),
-                                      maxLines: 10,
-                                    ),
-                                  ],
-                                )),
-                          ),
-                          Container(
-                            height: MediaQuery.of(context).size.height * valueSize,
-                            child: ListView.builder(
-                              itemCount: state.sucesos.length ,
-                              itemBuilder: (context, index) {
-                                colorTarjeta = Colors.red[400];
+                                            fontWeight: FontWeight.bold),
+                                        maxLines: 10,
+                                      ),
+                                    ],
+                                  )),
+                            ),
+                            Container(
+                              height: MediaQuery.of(context).size.height * valueSize,
+                              child: ListView.builder(
+                                itemCount: state.sucesos.length ,
+                                itemBuilder: (context, index) {
+                                  colorTarjeta = Colors.red[400];
                                   return Card(
                                     child: Container(
                                       color: colorTarjeta,
@@ -745,17 +950,197 @@ class _MisIncidenciasState extends State<MisIncidencias>{
                                       ),
                                     ),
                                   );
-                              },
+                                },
+                              ),
                             ),
-                          ),
-                          Text(
-                            AppLocalizations.of(context).sBTimeoutText,
-                            style: TextStyle(
-                                fontSize: 16,
-                                color: Colors.red,
-                                fontWeight: FontWeight.bold),
-                          )
-                        ]);
+                            Text(
+                              AppLocalizations.of(context).sBTimeoutText,
+                              style: TextStyle(
+                                  fontSize: 16,
+                                  color: Colors.red,
+                                  fontWeight: FontWeight.bold),
+                            )
+                          ]);
+                    } else {
+                      return ExpansionTile(
+                          childrenPadding: EdgeInsets.only(bottom: 5),
+                          title: Text(AppLocalizations.of(context).incidentsLabel),
+                          backgroundColor: Colors.amberAccent[100],
+                          children: [
+                            Card(
+                              child: Container(
+                                  color: Colors.blue,
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text(AppLocalizations.of(context).messageType,
+                                          style: TextStyle(
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.bold)),
+                                      Container(
+                                          height: 20,
+                                          child: VerticalDivider(color: Colors.red)),
+                                      Text(AppLocalizations.of(context).eventId,
+                                          style: TextStyle(
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.bold)),
+                                      Container(
+                                          height: 20,
+                                          child: VerticalDivider(color: Colors.red)),
+                                      Text(
+                                          AppLocalizations.of(context).eventReference,
+                                          style: TextStyle(
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.bold)),
+                                      Container(
+                                          height: 20,
+                                          child: VerticalDivider(color: Colors.red)),
+                                      Text(
+                                        AppLocalizations.of(context).description,
+                                        style: TextStyle(
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.bold),
+                                        maxLines: 10,
+                                      ),
+                                    ],
+                                  )),
+                            ),
+                            Container(
+                              height: MediaQuery.of(context).size.height * valueSize * 2,
+                              child: ListView.builder(
+                                itemCount: state.sucesos.length ,
+                                itemBuilder: (context, index) {
+                                  colorTarjeta = Colors.red[400];
+                                  return Card(
+                                    child: Container(
+                                      color: colorTarjeta,
+                                      child: ListTile(
+                                        onTap: () {
+                                          Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (context) =>
+                                                    DetalleIncidencias(
+                                                      creation: state.sucesos[index].description,
+                                                      reference: state.sucesos[index].refSuceso,
+                                                      state: "Atendido",
+                                                      direction: state.sucesos[index].description,
+                                                      description: state.sucesos[index].description,
+                                                      latitud: state.sucesos[index].latitude,
+                                                      longitud: state.sucesos[index].longitude,
+                                                    ),
+                                              ));
+                                        },
+                                        title: Container(
+                                            child: Row(
+                                              mainAxisAlignment: MainAxisAlignment.center,
+                                              children: [
+                                                Text(state.sucesos[index].tipo,
+                                                    style: TextStyle(
+                                                        color: Colors.white,
+                                                        fontWeight: FontWeight.bold)),
+                                                Container(
+                                                    height: 30,
+                                                    child: VerticalDivider(
+                                                      color: Colors.black,
+                                                      thickness: 1.5,
+                                                    )),
+                                                Text(state.sucesos[index].idSuceso,
+                                                    style: TextStyle(
+                                                        color: Colors.white,
+                                                        fontWeight: FontWeight.bold)),
+                                                Container(
+                                                    height: 30,
+                                                    child: VerticalDivider(
+                                                      color: Colors.black,
+                                                      thickness: 1.5,
+                                                    )),
+                                                Text(state.sucesos[index].refSuceso,
+                                                    style: TextStyle(
+                                                        color: Colors.white,
+                                                        fontWeight: FontWeight.bold)),
+                                                Container(
+                                                    height: 30,
+                                                    child: VerticalDivider(
+                                                      color: Colors.black,
+                                                      thickness: 1.5,
+                                                    )),
+                                                Flexible(
+                                                  child: Text(
+                                                    state.sucesos[index].description
+                                                        .isNotEmpty
+                                                        ? state.sucesos[index].description
+                                                        : "Vacío",
+                                                    style: TextStyle(
+                                                      color: Colors.white,
+                                                      fontWeight: FontWeight.bold,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ],
+                                            )),
+                                        leading: GestureDetector(
+                                          key: Key("centerInMap" + index.toString()),
+                                          child: Container(
+                                            decoration: BoxDecoration(
+                                              border: Border.all(color: Colors.blue[900], width: 3),
+                                              borderRadius: BorderRadius.circular(60.0),
+                                            ),
+                                            child: ClipRRect(
+                                              borderRadius: BorderRadius.circular(60.0),
+                                              child: Container(
+                                                height: 50,
+                                                width: 50,
+                                                color: Colors.blue,
+                                                child: BouncingWidget(
+                                                  duration: Duration(milliseconds: 300),
+                                                  scaleFactor: 5,
+                                                  onPressed: () {
+                                                    setState(() {
+                                                      var latlng = LatLng(
+                                                          state.sucesos[index].latitude,
+                                                          state.sucesos[index].longitude);
+                                                      final snackBar = SnackBar(
+                                                          duration: const Duration(milliseconds: 500),
+                                                          content: Text("Lat: " +
+                                                              latlng.latitude.toString() +
+                                                              " | Lon: " +
+                                                              latlng.longitude.toString()));
+
+                                                      ScaffoldMessenger.of(context)
+                                                          .showSnackBar(snackBar);
+                                                      double zoom = 15.0; //the zoom you want
+                                                      statefulMapController.mapController
+                                                          .move(latlng, zoom);
+                                                    });
+                                                  },
+
+                                                  child: Icon(
+                                                    Icons.location_pin,
+                                                    color: Colors.black,
+                                                    size: 30.0,
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  );
+                                },
+                              ),
+                            ),
+                            Text(
+                              AppLocalizations.of(context).sBTimeoutText,
+                              style: TextStyle(
+                                  fontSize: 16,
+                                  color: Colors.red,
+                                  fontWeight: FontWeight.bold),
+                            )
+                          ]);
+                    }
+
                   }
                 }
 
@@ -1096,7 +1481,9 @@ class _MisIncidenciasState extends State<MisIncidencias>{
   @override
   void dispose() {
     sub.cancel();
-    timer?.cancel();
+    timerGetData?.cancel();
+    timerWrite?.cancel();
+    timerDistance?.cancel();
     super.dispose();
   }
 
@@ -1144,6 +1531,10 @@ class _MisIncidenciasState extends State<MisIncidencias>{
 
     fetchData();
 
+    mayorDeDosCientos = false;
+
+    isDataWriting = false;
+
     posicionActual = _determinePosition();
 
     reloadMapWithGPSPositionAndCenter();
@@ -1158,28 +1549,57 @@ class _MisIncidenciasState extends State<MisIncidencias>{
 
   void getGPSbyDistance() {
 
-    double tmpLatitudCenter;
-    double tmpLongitudCenter;
-    for (double i = 0; i<1000; i = i + 0.001) {
-      tmpLatitudCenter = latitudCenter - i;
-      tmpLongitudCenter = longitudCenter - i;
+    mayorDeDosCientos = false;
 
+    // final double tmpLatitudCenter = latitudCenter;
+    // final double tmpLongitudCenter = longitudCenter;
+    // double tmpDistanceMeters = 0;
 
-      posicionActual.then((value) =>
-      {
-        developer.log(value.toString(), name: 'my.app.category'),
-        latitudCenter = value.latitude,
-        longitudCenter = value.longitude,
-      });
+    incrementoI = incrementoI + 0.0001;
+    // tmpLatitudCenter = latitudCenter;
+    // tmpLongitudCenter = longitudCenter;
 
-      distanceInMeters =
-      Geolocator.distanceBetween(latitudCenter, longitudCenter,
-          tmpLatitudCenter, tmpLongitudCenter);
+    if(isDataWriting){
+      print("EStoy aqui <------------------------------------");
+      timerDistance.cancel();
+      isDataWriting = false;
 
-      print("La distancia es: $distanceInMeters");
     }
-  }
 
+    posicionActual = _determinePosition();
+    posicionActual.then((value) =>
+    {
+      latitudCenter = value.latitude + incrementoI,
+      longitudCenter = value.longitude  + incrementoI,
+
+      distanceInMeters = mediator.getMisIncidenciasState().tmpDistanceMeters +
+      Geolocator.distanceBetween(mediator.getMisIncidenciasState().tmpLatitudeCenter,mediator.getMisIncidenciasState().tmpLongitudeCenter,
+      latitudCenter, longitudCenter),
+
+      if(distanceInMeters >= 200){
+        mayorDeDosCientos = true,
+        getGPSdata(),
+        writeGPSdata(),
+        timerGetData.cancel(),
+        timerWrite.cancel(),
+
+        // Reinicio la distancia y le sumo el resto
+        // mediator.getMisIncidenciasState().tmpDistanceMeters = distanceInMeters - 200,
+
+        state.tmpLatitudeCenter = latitudCenter,
+        state.tmpLongitudeCenter = longitudCenter,
+        state.tmpDistanceMeters = distanceInMeters - 200,
+        mediator.setMisIncidenciasState(state),
+        distanceInMeters = mediator.getMisIncidenciasState().tmpDistanceMeters,
+
+        print("Es mayor de 200------------------------>"),
+      },
+
+      print("La distancia es: $distanceInMeters"),
+      print("¿Es mayor que 200 metros?: $mayorDeDosCientos"),
+    });
+
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -1197,10 +1617,7 @@ class _MisIncidenciasState extends State<MisIncidencias>{
             ),
           ],
         ),
-        body:  _portraitMode()
-
-
-
+        body: _portraitMode()
       ),
     );
   }
@@ -1340,6 +1757,12 @@ class _MisIncidenciasState extends State<MisIncidencias>{
       latitudCenter = value.latitude,
       longitudCenter = value.longitude,
       statefulMapController.onReady.then((_) {
+        // GPS distance
+        state.tmpLatitudeCenter = latitudCenter;
+        state.tmpLongitudeCenter = longitudCenter;
+        state.tmpDistanceMeters = 0;
+        mediator.setMisIncidenciasState(state);
+
         //Center the map on the GPS position
         statefulMapController.mapController
             .move(LatLng(latitudCenter, longitudCenter), 12.0);
@@ -1381,7 +1804,6 @@ class _MisIncidenciasState extends State<MisIncidencias>{
       })
     });
   }
-
   ///Espera a los valores del GPS, centra el mapa y actualiza el marcador de GPS
   void reloadMapWithGPSPosition() {
     // esto es un callback, determina nuestra posición
@@ -1390,6 +1812,11 @@ class _MisIncidenciasState extends State<MisIncidencias>{
       latitudCenter = value.latitude,
       longitudCenter = value.longitude,
       statefulMapController.onReady.then((_) {
+        // GPS distance
+        state.tmpLatitudeCenter = latitudCenter;
+        state.tmpLongitudeCenter = longitudCenter;
+        state.tmpDistanceMeters = 0;
+        mediator.setMisIncidenciasState(state);
 
         //Create marker with GPS position
         statefulMapController.addStatefulMarker(
@@ -1429,81 +1856,73 @@ class _MisIncidenciasState extends State<MisIncidencias>{
     });
   }
 
-  // /// Compruebo si existe conexión hacia el exterior.
-  // Future<void> checkInternetConnection() async {
-  //   try {
-  //     final result = await InternetAddress.lookup('google.com');
-  //     if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
-  //       print('connected');
-  //     }
-  //   } on SocketException catch (_) {
-  //     print('not connected');
-  //   }
+  /// Compruebo si existe conexión hacia el exterior.
+  Future<void> checkInternetConnection() async {
+    try {
+      final result = await InternetAddress.lookup('google.com');
+      if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
+        print('connected');
+      }
+    } on SocketException catch (_) {
+      print('not connected');
+    }
+  }
 
+  ///This example stores information in the documents directory.
+  ///You can find the path to the documents directory as follows:
+  Future<String> get _localPath async {
+    final directory = await getApplicationDocumentsDirectory();
+    // print("El directory es:" + directory.path.toString());
+    return directory.path;
+  }
 
-  // ///This example stores information in the documents directory.
-  // ///You can find the path to the documents directory as follows:
-  // Future<String> get _localPath async {
-  //   final directory = await getApplicationDocumentsDirectory();
-  //   print("El directory es:" + directory.path.toString());
-  //   return directory.path;
-  // }
-  //
-  // ///Once you know where to store the file, create a reference to the file’s full location
-  // Future<File> get _localFile async {
-  //   final path = await _localPath;
-  //   return File('$path/GPSdata.txt');
-  //
-  // }
-  //
-  // ///Now that you have a File to work with, use it to read and write data.
-  // Future<File> writeGPSdata() async {
-  //   print("Se esta escribiendo en un TXT");
-  //   final file = await _localFile;
-  //
-  //   return file.writeAsString(GPSdata);
-  // }
-  //
-  // ///Reading data from a file :+)
-  // Future<String> readGPSdata() async {
-  //   try {
-  //     final file = await _localFile;
-  //
-  //     // Read the file
-  //     String contents = await file.readAsString();
-  //
-  //     return contents;
-  //   } catch (e) {
-  //     return "";
-  //   }
-  // }
-  //
-  // /// Nos devuelve el imei, el tiempo en milis y la posicion.
-  // void getGPSdata() {
-  //   if(GPSdata == null){
-  //     GPSdata = "123456789\r\n" + DateTime.now().millisecondsSinceEpoch.toString() + ";" + latitudCenter.toString() +
-  //         ";" + longitudCenter.toString() + "\r\n";
-  //   }
-  //
-  //   GPSdata = GPSdata + DateTime.now().millisecondsSinceEpoch.toString() + ";" + latitudCenter.toString() +
-  //       ";" + longitudCenter.toString() + "\r\n";
-  // }
+  ///Once you know where to store the file, create a reference to the file’s full location
+  Future<File> get _localFile async {
+    final path = await _localPath;
+    return File('$path/GPSdata.txt');
+
+  }
+
+  ///Now that you have a File to work with, use it to read and write data.
+  Future<File> writeGPSdata() async {
+    print("Se esta escribiendo en un TXT");
+    final file = await _localFile;
+    isDataWriting = true;
+    return file.writeAsString(GPSdata);
+  }
+
+  ///Reading data from a file :+)
+  Future<String> readGPSdata() async {
+    try {
+      final file = await _localFile;
+
+      // Read the file
+      String contents = await file.readAsString();
+
+      return contents;
+    } catch (e) {
+      return "";
+    }
+  }
+
+  /// Nos devuelve el imei, el tiempo en milis y la posicion.
+  void getGPSdata() {
+    if(GPSdata == null){
+      GPSdata = "123456789\r\n" + DateTime.now().millisecondsSinceEpoch.toString() + ";" + latitudCenter.toString() +
+          ";" + longitudCenter.toString() + "\r\n";
+    }
+
+    GPSdata = GPSdata + DateTime.now().millisecondsSinceEpoch.toString() + ";" + latitudCenter.toString() +
+        ";" + longitudCenter.toString() + "\r\n";
+  }
 
   /// Llama a la lectura, escritura cada "x" tiempo
-  // void GPStrigger() {
-  //
-  //   timer = Timer.periodic(Duration(seconds: 5), (Timer t) => getGPSbyDistance());
-  //
-  //   // si la distancia es mayor de 200 escribo
-  //   if(distanceInMeters > 200){
-  //     readGPSdata();
-  //     writeGPSdata();
-  //     getGPSdata();
-  //
-  //   } else {
-  //     timer = Timer.periodic(Duration(seconds: 5), (Timer t) => readGPSdata());
-  //     timer = Timer.periodic(Duration(seconds: 5), (Timer t) => writeGPSdata());
-  //     timer = Timer.periodic(Duration(seconds: 5), (Timer t) => getGPSdata());
-  //   }
-  // }
+  void GPStrigger() {
+
+    // timer = Timer.periodic(Duration(seconds: 5), (Timer t) => readGPSdata());
+    timerWrite = Timer.periodic(Duration(seconds: 30), (Timer t) => writeGPSdata());
+    timerGetData = Timer.periodic(Duration(seconds: 30), (Timer t) => getGPSdata());
+    timerDistance = Timer.periodic(Duration(seconds: 5), (Timer t) => getGPSbyDistance());
+
+  }
 }

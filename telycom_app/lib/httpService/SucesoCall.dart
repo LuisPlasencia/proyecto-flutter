@@ -11,7 +11,7 @@ class SucesoCall{
   // static const String imei = '987654321';
 
   static Future<List<Suceso>> fetchSuceso(String token, String imei) async {
-    String url = "http://$dominioTelyApiServer/TelyGIS/AndroidServlet?tk=44e372e53e754aca903f179cdbe015c1&q=getsucesos&imei=$imei";
+    String url = "http://$dominioTelyApiServer/TelyGIS/AndroidServlet?tk=$token&q=getsucesos&imei=$imei";
 
     // Lista de tamaño expandible
     List<Suceso> listsucesos = [];
@@ -36,7 +36,8 @@ class SucesoCall{
 
 
     for(int i = 0; i<idSucesoArray.length-1; i++){
-      Suceso suceso = new Suceso(tipo, idSucesoArray[i+1], refSucesoArray[i+1], descriptionArray[i+1], double.parse(latitudeArray[i+1]), double.parse(longitudeArray[i+1]));
+      Suceso suceso = new Suceso(tipo, idSucesoArray[i+1], refSucesoArray[i+1], descriptionArray[i+1],
+          double.parse(latitudeArray[i+1]), double.parse(longitudeArray[i+1]));
       listsucesos.add(suceso);
     }
 
@@ -74,7 +75,5 @@ class SucesoCall{
       default:
         throw Exception('Failed to load token');
     }
-
-
   }
 }
