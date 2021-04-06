@@ -1529,7 +1529,7 @@ class _MisIncidenciasState extends State<MisIncidencias>{
 
     // checkInternetConnection();
 
-    // GPStrigger();
+    GPStrigger();
 
   }
 
@@ -1896,18 +1896,23 @@ class _MisIncidenciasState extends State<MisIncidencias>{
     if(GPSdata == null){
       GPSdata = "123456789\r\n" + DateTime.now().millisecondsSinceEpoch.toString() + ";" + latitudCenter.toString() +
           ";" + longitudCenter.toString() + "\r\n";
+
+    } else {
+
+      GPSdata = GPSdata + DateTime.now().millisecondsSinceEpoch.toString() + ";" + latitudCenter.toString() +
+          ";" + longitudCenter.toString() + "\r\n";
     }
 
-    GPSdata = GPSdata + DateTime.now().millisecondsSinceEpoch.toString() + ";" + latitudCenter.toString() +
-        ";" + longitudCenter.toString() + "\r\n";
+    writeGPSdata();
+
   }
 
   /// Llama a la lectura, escritura cada "x" tiempo
   void GPStrigger() {
 
     // timer = Timer.periodic(Duration(seconds: 5), (Timer t) => readGPSdata());
-    timerWrite = Timer.periodic(Duration(seconds: 30), (Timer t) => writeGPSdata());
-    timerGetData = Timer.periodic(Duration(seconds: 30), (Timer t) => getGPSdata());
+    // timerWrite = Timer.periodic(Duration(seconds: 30), (Timer t) => writeGPSdata());
+    timerGetData = Timer.periodic(Duration(seconds: 5), (Timer t) => getGPSdata());
     timerDistance = Timer.periodic(Duration(seconds: 5), (Timer t) => getGPSbyDistance());
 
   }
