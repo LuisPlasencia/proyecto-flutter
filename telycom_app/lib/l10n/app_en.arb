@@ -182,5 +182,10 @@
   "landscapeTimeoutText": "Service unreacheable (Timeout)",
   "@landscapeTimeoutText": {
     "description": "Timeout warning text at landscape mode in MisIncidencias"
+  },
+
+  "incidentsLabelNoConnection": "Incidents (No connection)",
+  "@incidentsLabelNoConnection": {
+    "description": "Incidents text label when there is no connection to the server or internet"
   }
 }

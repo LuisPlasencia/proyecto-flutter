@@ -35,6 +35,6 @@
     "eventReference": "参考",
     "eventDescription": "描述",
     "landscapeTimeoutText": "服务无法到达（超时）",
-    "portraitTimeoutText": "服务无法到达（超时）"
-
+    "portraitTimeoutText": "服务无法到达（超时）",
+    "incidentsLabelNoConnection": "突发事件 (没联系)"
 }

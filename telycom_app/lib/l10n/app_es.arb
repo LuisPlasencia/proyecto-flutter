@@ -34,6 +34,7 @@
     "eventId": "IdSuceso",
     "eventReference": "Referencia",
     "eventDescription": "Descripción",
-    "landscapeTimeoutText": "Service unreacheable (Timeout)",
-    "portraitTimeoutText": "Service unreacheable (Timeout)"
+    "landscapeTimeoutText": "No se ha podido acceder al servicio (Timeout)",
+    "portraitTimeoutText": "No se ha podido acceder al servicio (Timeout)",
+    "incidentsLabelNoConnection": "Incidentes (Sin conexión)"
 }

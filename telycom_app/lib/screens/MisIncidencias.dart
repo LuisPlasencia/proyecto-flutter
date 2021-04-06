@@ -494,7 +494,7 @@ class _MisIncidenciasState extends State<MisIncidencias>{
                               )),
                         ),
                         Container(
-                          height: MediaQuery.of(context).size.height * valueSize * 2,
+                          height: MediaQuery.of(context).size.height * valueSize * 1.8,
                           child: ListView.builder(
                             itemCount: snapshot.data.length,
                             itemBuilder: (context, index) {
@@ -787,7 +787,7 @@ class _MisIncidenciasState extends State<MisIncidencias>{
                     if(MediaQuery.of(context).orientation == Orientation.portrait){
                       return ExpansionTile(
                           childrenPadding: EdgeInsets.only(bottom: 5),
-                          title: Text(AppLocalizations.of(context).incidentsLabel),
+                          title: Text(AppLocalizations.of(context).incidentsLabelNoConnection , style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold),) ,
                           backgroundColor: Colors.amberAccent[100],
                           children: [
                             Card(
@@ -952,19 +952,12 @@ class _MisIncidenciasState extends State<MisIncidencias>{
                                   );
                                 },
                               ),
-                            ),
-                            Text(
-                              AppLocalizations.of(context).sBTimeoutText,
-                              style: TextStyle(
-                                  fontSize: 16,
-                                  color: Colors.red,
-                                  fontWeight: FontWeight.bold),
                             )
                           ]);
                     } else {
                       return ExpansionTile(
                           childrenPadding: EdgeInsets.only(bottom: 5),
-                          title: Text(AppLocalizations.of(context).incidentsLabel),
+                          title: Text(AppLocalizations.of(context).incidentsLabelNoConnection , style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold),) ,
                           backgroundColor: Colors.amberAccent[100],
                           children: [
                             Card(
@@ -1006,7 +999,7 @@ class _MisIncidenciasState extends State<MisIncidencias>{
                                   )),
                             ),
                             Container(
-                              height: MediaQuery.of(context).size.height * valueSize * 2,
+                              height: MediaQuery.of(context).size.height * valueSize * 1.8,
                               child: ListView.builder(
                                 itemCount: state.sucesos.length ,
                                 itemBuilder: (context, index) {
@@ -1130,13 +1123,6 @@ class _MisIncidenciasState extends State<MisIncidencias>{
                                   );
                                 },
                               ),
-                            ),
-                            Text(
-                              AppLocalizations.of(context).sBTimeoutText,
-                              style: TextStyle(
-                                  fontSize: 16,
-                                  color: Colors.red,
-                                  fontWeight: FontWeight.bold),
                             )
                           ]);
                     }
