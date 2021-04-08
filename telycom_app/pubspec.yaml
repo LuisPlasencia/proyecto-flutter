@@ -50,6 +50,8 @@ dependencies:
 
   path_provider: ^2.0.1
 
+  flutter_local_notifications: ^5.0.0+1
+
 dev_dependencies:
   integration_test: ^1.0.1
   flutter_test:

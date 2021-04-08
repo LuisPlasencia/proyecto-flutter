@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter/services.dart';
@@ -13,10 +14,40 @@ import 'package:telycom_app/httpService/Token.dart';
 import 'package:imei_plugin/imei_plugin.dart';
 import 'dart:developer' as developer;
 
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 import 'MisIncidencias.dart';
 
-void main() async => runApp(Login());
+FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+FlutterLocalNotificationsPlugin();
+
+Future<void> main() async {
+  // needed if you intend to initialize in the main function
+  WidgetsFlutterBinding.ensureInitialized();
+
+
+// initialise the plugin. app_icon needs to be a added as a drawable resource to the Android head project
+  const AndroidInitializationSettings initializationSettingsAndroid =
+  AndroidInitializationSettings('@mipmap/ic_launcher');
+
+  final IOSInitializationSettings initializationSettingsIOS =
+  IOSInitializationSettings(
+      onDidReceiveLocalNotification:  _FirstRouteState().onDidReceiveLocalNotification);
+
+  final MacOSInitializationSettings initializationSettingsMacOS =
+  MacOSInitializationSettings();
+
+  final InitializationSettings initializationSettings = InitializationSettings(
+      android: initializationSettingsAndroid,
+      iOS: initializationSettingsIOS,
+      macOS: initializationSettingsMacOS);
+
+  await flutterLocalNotificationsPlugin.initialize(initializationSettings,
+      onSelectNotification: _FirstRouteState().selectNotification);
+
+
+  runApp(Login());
+}
 
 class Login extends StatelessWidget{
   @override
@@ -60,16 +91,61 @@ class _FirstRouteState extends State<FirstRoute> {
   String _platformImei = 'Unknown';
   String uniqueId = "Unknown";
 
+
+
   @override
   void initState() {
     super.initState();
     initPlatformState();
     _isButtonDisabled = false;
     _isTextFieldEnable = true;
+
+  }
+
+
+
+  Future selectNotification(String payload) async {
+    if (payload != null) {
+      debugPrint('notification payload: $payload');
+    }
+    await Navigator.push(
+      context,
+      MaterialPageRoute<void>(builder: (context) => MisIncidencias(tk: '53db87de89a54c17b30df4111cfac14a', imei: _platformImei,)),
+    );
+  }
+
+
+  Future onDidReceiveLocalNotification(
+      int id, String title, String body, String payload) async {
+    // display a dialog with the notification details, tap ok to go to another page
+    showDialog(
+      context: context,
+      builder: (BuildContext context) => CupertinoAlertDialog(
+        title: Text(title),
+        content: Text(body),
+        actions: [
+          CupertinoDialogAction(
+            isDefaultAction: true,
+            child: Text('Ok'),
+            onPressed: () async {
+              Navigator.of(context, rootNavigator: true).pop();
+              await Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => MisIncidencias(tk: '53db87de89a54c17b30df4111cfac14a', imei: _platformImei,)
+                ),
+              );
+            },
+          )
+        ],
+      ),
+    );
   }
 
   //
   void _pulsandoEntrar() {
+    pushNotification( "Telycon",  "Hola");
+
     if (textFieldController.text != "") {
       setState(() {
         cargando = true;
@@ -96,6 +172,20 @@ class _FirstRouteState extends State<FirstRoute> {
           ));
       ScaffoldMessenger.of(context).showSnackBar(snackbar);
     }
+  }
+
+  Future pushNotification(String title, String body) async {
+    const AndroidNotificationDetails androidPlatformChannelSpecifics =
+    AndroidNotificationDetails(
+        'your channel id', 'your channel name', 'your channel description',
+        importance: Importance.max,
+        priority: Priority.high,
+        showWhen: false);
+    const NotificationDetails platformChannelSpecifics =
+    NotificationDetails(android: androidPlatformChannelSpecifics);
+    await flutterLocalNotificationsPlugin.show(
+        0, title, body, platformChannelSpecifics,
+        payload: 'item x');
   }
 
   // Platform messages are asynchronous, so we initialize in an async method.

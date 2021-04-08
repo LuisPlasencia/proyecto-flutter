@@ -147,6 +147,11 @@ class _MisIncidenciasState extends State<MisIncidencias>{
               state.running = false;
               state.errorTimeout = false;
               state.errorSolved = true;
+              state.numberOfMarkers = 0;
+              state.statefulMapController = StatefulMapController(mapController: MapController());
+              state.mapController = MapController();
+              state.sucesos = null;
+
               mediator.setMisIncidenciasState(state);
 
               // futureLogout = LogoutCall.fetchLogout(tk);
