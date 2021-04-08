@@ -11,8 +11,7 @@ class AuthCall{
 
   static Future<Token> fetchToken(String usuario) async {
     // String url = 'http://' + dominioTelyApiServer + '/TelyApiServer/?l=' + licencia + '&id=' + id + '&p=' + perfil + '&ta=' + tipoAplicacion + '&usuario=' + usuario.trim() ;
-    String url = 'http://' + dominioTelyApiServer + '/TelyApiServer/?l=' + licencia + '&id=' + id + '&p=' + perfil + '&ta=' + tipoAplicacion + '&usuario=' + 'Luis' ;
-
+    String url = 'http://' + dominioTelyApiServer + '/TelyApiServer/?l=' + licencia + '&id=' + id + '&p=' + perfil + '&ta=' + tipoAplicacion + '&usuario=' + 'Juju' ;
 
     final response = await http.get(Uri.parse(url));
 

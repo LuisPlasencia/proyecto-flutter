@@ -12,6 +12,7 @@ import 'package:telycom_app/httpService/Logout.dart';
 import 'package:telycom_app/httpService/LogoutCall.dart';
 import 'package:telycom_app/httpService/Suceso.dart';
 import 'package:telycom_app/httpService/SucesoCall.dart';
+import 'package:telycom_app/httpService/UploadReportGPS.dart';
 import 'dart:developer' as developer;
 
 import '../ElementList.dart';
@@ -116,6 +117,8 @@ class _MisIncidenciasState extends State<MisIncidencias>{
   bool isDataWriting;
 
 
+
+
   Future<bool> _onBackPressed() {
     return showDialog(
       context: context,
@@ -133,6 +136,7 @@ class _MisIncidenciasState extends State<MisIncidencias>{
            GestureDetector(
             key: Key('YES'),
             onTap: () {
+
               latLongBloc.dispose();
               sub.cancel();
               timerWrite?.cancel();
@@ -200,6 +204,16 @@ class _MisIncidenciasState extends State<MisIncidencias>{
             future: futureSuceso,
             builder: (context, snapshot) {
               if (snapshot.hasData) {
+
+                /// Si esta activo lo cancelo
+                if(timerGetData != null){
+                  if(timerGetData.isActive){
+                    timerGetData.cancel();
+                    /// Subimos fichero
+                    // UploadReportGPS().uploadImage(_localPath,"http://192.168.15.38/TelyGIS/AndroidServlet?tk=24f64d1e1a0f4c38933147517f4eff52&imei=123456789");
+
+                  }
+                }
 
                 if (snapshot.data.length == 1) {
                   valueSize = 0.10;
@@ -705,12 +719,18 @@ class _MisIncidenciasState extends State<MisIncidencias>{
                 }else{
                   print("Error de timeout");
                   if(!errorTimeout){
+
+                    /// Escribimos en un fichero txt si hay error
+                    GPStrigger();
+
                     errorTimeout = true;
                     errorSolved = false;
                     state.errorTimeout = errorTimeout;
                     state.errorSolved = errorSolved;
                     state.statefulMarkers = statefulMapController.statefulMarkers;
                     mediator.setMisIncidenciasState(state);
+
+
 
                     WidgetsBinding.instance.addPostFrameCallback((_) {
                       final snackbar = SnackBar(
@@ -741,7 +761,7 @@ class _MisIncidenciasState extends State<MisIncidencias>{
                             child: Container(
                                 color: Colors.blue,
                                 child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                   children: [
                                     Text(AppLocalizations.of(context).messageType,
                                         style: TextStyle(
@@ -794,7 +814,7 @@ class _MisIncidenciasState extends State<MisIncidencias>{
                               child: Container(
                                   color: Colors.blue,
                                   child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                     children: [
                                       Text(AppLocalizations.of(context).messageType,
                                           style: TextStyle(
@@ -964,7 +984,7 @@ class _MisIncidenciasState extends State<MisIncidencias>{
                               child: Container(
                                   color: Colors.blue,
                                   child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                     children: [
                                       Text(AppLocalizations.of(context).messageType,
                                           style: TextStyle(
@@ -1026,7 +1046,7 @@ class _MisIncidenciasState extends State<MisIncidencias>{
                                         },
                                         title: Container(
                                             child: Row(
-                                              mainAxisAlignment: MainAxisAlignment.center,
+                                              mainAxisAlignment: MainAxisAlignment.start,
                                               children: [
                                                 Text(state.sucesos[index].tipo,
                                                     style: TextStyle(
@@ -1529,7 +1549,7 @@ class _MisIncidenciasState extends State<MisIncidencias>{
 
     // checkInternetConnection();
 
-    GPStrigger();
+
 
   }
 
@@ -1723,7 +1743,13 @@ class _MisIncidenciasState extends State<MisIncidencias>{
         // statefulMapController.statefulMarkers.clear();
         statefulMapController.statefulMarkers.remove("markerGPS");
         _isRefreshButtonDisabled = true;
-        fetchData();
+        // fetchData();
+        final path = _localPath;
+        path.then((value) {
+          UploadReportGPS().uploadImage("GPSdata.txt","http://192.168.15.38/TelyGIS/AndroidServlet?tk=32516373d17b470b8d08e4045b7161d4&imei=123456789");
+        });
+
+
         posicionActual = _determinePosition();
         reloadMapWithGPSPosition();
         print("UWU " + statefulMapController.statefulMarkers.length.toString());
@@ -1904,6 +1930,9 @@ class _MisIncidenciasState extends State<MisIncidencias>{
     }
 
     writeGPSdata();
+
+    /// Comprobamos si hay conexion 🧔 (pulsado del boton de refresh automaticamente).
+    refreshData();
 
   }
 
