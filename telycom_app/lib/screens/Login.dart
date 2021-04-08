@@ -99,6 +99,7 @@ class _FirstRouteState extends State<FirstRoute> {
     initPlatformState();
     _isButtonDisabled = false;
     _isTextFieldEnable = true;
+    pushNotification('Telycom', "Bienvenido");
 
   }
 
@@ -110,7 +111,7 @@ class _FirstRouteState extends State<FirstRoute> {
     }
     await Navigator.push(
       context,
-      MaterialPageRoute<void>(builder: (context) => MisIncidencias(tk: '53db87de89a54c17b30df4111cfac14a', imei: _platformImei,)),
+      MaterialPageRoute<void>(builder: (context) => MisIncidencias(tk: '53db87de89a54c17b30df4111cfac14a', imei: _platformImei, username: usuario,)),
     );
   }
 
@@ -132,7 +133,7 @@ class _FirstRouteState extends State<FirstRoute> {
               await Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => MisIncidencias(tk: '53db87de89a54c17b30df4111cfac14a', imei: _platformImei,)
+                    builder: (context) => MisIncidencias(tk: '53db87de89a54c17b30df4111cfac14a', imei: _platformImei, username: usuario,)
                 ),
               );
             },
@@ -144,8 +145,6 @@ class _FirstRouteState extends State<FirstRoute> {
 
   //
   void _pulsandoEntrar() {
-    pushNotification( "Telycon",  "Hola");
-
     if (textFieldController.text != "") {
       setState(() {
         cargando = true;
@@ -319,10 +318,11 @@ class _FirstRouteState extends State<FirstRoute> {
 
                           WidgetsBinding.instance
                               .addPostFrameCallback((_) {
+
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => MisIncidencias(tk: snapshot.data.tk, imei: _platformImei,)));
+                                    builder: (context) => MisIncidencias(tk: snapshot.data.tk, imei: _platformImei, username: usuario,)));
 
                                 setState(() {
                                   cargando = false;

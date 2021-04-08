@@ -13,6 +13,7 @@ import 'package:telycom_app/httpService/LogoutCall.dart';
 import 'package:telycom_app/httpService/Suceso.dart';
 import 'package:telycom_app/httpService/SucesoCall.dart';
 import 'package:telycom_app/httpService/UploadReportGPS.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'dart:developer' as developer;
 
 import '../ElementList.dart';
@@ -24,6 +25,9 @@ import 'package:map_controller/map_controller.dart';
 
 import 'DetalleIncidencias.dart';
 import 'package:bouncing_widget/bouncing_widget.dart';
+
+FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+FlutterLocalNotificationsPlugin();
 
 class MyAppMisIncidencias extends StatelessWidget {
   @override
@@ -40,12 +44,13 @@ class MisIncidencias extends StatefulWidget  {
   // Para recuperar el Token
   final String tk;
   final String imei;
+  final String username;
 
-  MisIncidencias({Key key, @required this.tk, @required this.imei})
+  MisIncidencias({Key key, @required this.tk, @required this.imei, @required this.username})
       : super(key: key);
 
   @override
-  _MisIncidenciasState createState() => _MisIncidenciasState(tk, imei);
+  _MisIncidenciasState createState() => _MisIncidenciasState(tk, imei, username);
 }
 
 class _MisIncidenciasState extends State<MisIncidencias>{
@@ -55,8 +60,9 @@ class _MisIncidenciasState extends State<MisIncidencias>{
   Future<Logout> futureLogout;
   String tk;
   String imei;
+  String username;
 
-  _MisIncidenciasState(this.tk, this.imei);
+  _MisIncidenciasState(this.tk, this.imei, this.username);
 
   bool _isRefreshButtonDisabled;
   double valueSize;
@@ -1501,6 +1507,7 @@ class _MisIncidenciasState extends State<MisIncidencias>{
   @override
   void initState() {
     super.initState();
+    pushNotification( "Mis Incidencias",  "Ha logeado como: " + username);
 
     developer.log('MisIncidencias', name: 'my.app.category');
     print("INITSTATE");
@@ -1556,6 +1563,20 @@ class _MisIncidenciasState extends State<MisIncidencias>{
 
 
 
+  }
+
+  Future pushNotification(String title, String body) async {
+    const AndroidNotificationDetails androidPlatformChannelSpecifics =
+    AndroidNotificationDetails(
+        'your channel id', 'your channel name', 'your channel description',
+        importance: Importance.max,
+        priority: Priority.high,
+        showWhen: false);
+    const NotificationDetails platformChannelSpecifics =
+    NotificationDetails(android: androidPlatformChannelSpecifics);
+    await flutterLocalNotificationsPlugin.show(
+        0, title, body, platformChannelSpecifics,
+        payload: 'item x');
   }
 
   void getGPSbyDistance() {
