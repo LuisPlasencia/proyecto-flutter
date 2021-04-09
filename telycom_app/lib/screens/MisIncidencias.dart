@@ -1576,7 +1576,7 @@ class _MisIncidenciasState extends State<MisIncidencias>{
     NotificationDetails(android: androidPlatformChannelSpecifics);
     await flutterLocalNotificationsPlugin.show(
         0, title, body, platformChannelSpecifics,
-        payload: 'item x');
+        payload: 'item Incidencias');
   }
 
   void getGPSbyDistance() {

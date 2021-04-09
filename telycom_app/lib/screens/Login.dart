@@ -105,17 +105,30 @@ class _FirstRouteState extends State<FirstRoute> {
 
 
 
+  /// Se ejecuta cuando pulsamos sobre una notificación
   Future selectNotification(String payload) async {
     if (payload != null) {
       debugPrint('notification payload: $payload');
     }
-    await Navigator.push(
-      context,
-      MaterialPageRoute<void>(builder: (context) => MisIncidencias(tk: '53db87de89a54c17b30df4111cfac14a', imei: _platformImei, username: usuario,)),
-    );
+    if(payload == 'item Login'){
+      print("Has pulsado sobre la notificación de Login");
+      // await Navigator.push(
+      //   context,
+      //   // MaterialPageRoute<void>(builder: (context) => MisIncidencias(tk: '53db87de89a54c17b30df4111cfac14a', imei: _platformImei, username: usuario,)),
+      // );
+    }
+
+    if(payload == 'item Incidencias'){
+      print("Has pulsado sobre la notificación de Mis Incidencias");
+      // await Navigator.push(
+      //   context,
+      //   MaterialPageRoute<void>(builder: (context) => MisIncidencias(tk: '53db87de89a54c17b30df4111cfac14a', imei: _platformImei, username: usuario,)),
+      // );
+    }
+
   }
 
-
+ /// Método opcional para versiones antiguas de iOS
   Future onDidReceiveLocalNotification(
       int id, String title, String body, String payload) async {
     // display a dialog with the notification details, tap ok to go to another page
@@ -184,7 +197,7 @@ class _FirstRouteState extends State<FirstRoute> {
     NotificationDetails(android: androidPlatformChannelSpecifics);
     await flutterLocalNotificationsPlugin.show(
         0, title, body, platformChannelSpecifics,
-        payload: 'item x');
+        payload: 'item Login');
   }
 
   // Platform messages are asynchronous, so we initialize in an async method.
