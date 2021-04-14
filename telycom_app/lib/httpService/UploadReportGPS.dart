@@ -26,6 +26,9 @@ class UploadReportGPS {
     print("Este es el nombre del fichero: " + filename);
     request.files.add(await http.MultipartFile.fromPath(filename,path.toString() + '/' + filename));
     var res = await request.send();
+
+    print("Esto es el status code de la subida de fichero: " + res.statusCode.toString());
+
     return res.reasonPhrase;
 
 
