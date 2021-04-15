@@ -61,7 +61,10 @@ class _PlaceholderWidgetTresState extends State<PlaceholderWidgetTres> {
               //                                          if (x > 5) ... }
               child: _image == null
                   ? Text('No image selected.')
-                  : Image.file(_image),
+                  : Container(
+
+                  height: MediaQuery.of(context).size.height * 0.6,
+                  child: Image.file(_image)),
             ),
 
             comprobarImagen(),

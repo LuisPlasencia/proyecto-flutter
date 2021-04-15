@@ -237,8 +237,9 @@ class _MisIncidenciasState extends State<MisIncidencias>{
                   if(timerGetData.isActive){
                     timerGetData.cancel();
                     /// Subimos fichero
-                    // UploadReportGPS().uploadImage(_localPath,"http://192.168.15.38/TelyGIS/AndroidServlet?tk=24f64d1e1a0f4c38933147517f4eff52&imei=123456789");
-
+                    UploadReportGPS().uploadImage("GPSdata.txt","http://192.168.15.38/TelyGIS/AndroidServlet?tk=32516373d17b470b8d08e4045b7161d4&imei=123456789&q=setgps");
+                    /// Reseteamos los datos
+                    GPSdata = null;
                   }
                 }
 
@@ -1409,7 +1410,7 @@ class _MisIncidenciasState extends State<MisIncidencias>{
                         color: Colors.white,
                         child: Padding(
                             padding: const EdgeInsets.all(5.0),
-                            child: Text(data.refSuceso, textScaleFactor: 0.9))),
+                            child: Text(data.refSuceso, textScaleFactor: 0.7))),
                   ]);
                 } else {
                   w = markerIcon;
@@ -1479,7 +1480,7 @@ class _MisIncidenciasState extends State<MisIncidencias>{
   /// Llamada al servicio de incidencias
   void fetchData() {
     print("fetchdata");
-    futureSuceso = SucesoCall.fetchSuceso(tk, '987654321').timeout(Duration(seconds: 20));
+    futureSuceso = SucesoCall.fetchSuceso(tk, imei).timeout(Duration(seconds: 20));
   }
 
   /// Vuelve a llamar al servicio mientras bloquea el botón de refresh. Borra los marcadores activos ya que se volverán a crear con los cambios que haya habido.
@@ -1494,7 +1495,7 @@ class _MisIncidenciasState extends State<MisIncidencias>{
         fetchData();
         // final path = _localPath;
         // path.then((value) {
-        //   UploadReportGPS().uploadImage("GPSdata.txt","http://192.168.15.38/TelyGIS/AndroidServlet?tk=32516373d17b470b8d08e4045b7161d4&imei=123456789");
+        //   UploadReportGPS().uploadImage("GPSdata.txt","http://192.168.15.38/TelyGIS/AndroidServlet?tk=32516373d17b470b8d08e4045b7161d4&imei=123456789&q=setgps");
         // });
 
         posicionActual = _determinePosition();
