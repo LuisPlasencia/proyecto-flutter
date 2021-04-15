@@ -111,13 +111,13 @@ class _MisIncidenciasState extends State<MisIncidencias>{
 
   /// Para el timer -------------------------->
   double incrementoI = 0.00;
-  bool mayorDeDosCientos;
   int timerCountDown;
 
   /// Trigger para llamar a la funcion de recuperación de GPS data
   Timer timerWrite;
   Timer timerGetData;
   Timer timerDistance;
+  Timer timerOnline;
   String GPSdata;
   double distanceInMeters;
   bool isDataWriting;
@@ -147,7 +147,7 @@ class _MisIncidenciasState extends State<MisIncidencias>{
               sub.cancel();
               timerWrite?.cancel();
               timerGetData?.cancel();
-              timerDistance?.cancel();
+              // timerDistance?.cancel();
 
               state.statefulMarkers = null;
               state.running = false;
@@ -201,8 +201,8 @@ class _MisIncidenciasState extends State<MisIncidencias>{
             'Location permissions are denied (actual value: $permission).');
       }
     }
-
-    return await Geolocator.getCurrentPosition();
+    LocationAccuracy precision = LocationAccuracy.high;
+    return await Geolocator.getCurrentPosition(desiredAccuracy: precision);
   }
 
   void showSnackBar(String text) {
@@ -236,8 +236,9 @@ class _MisIncidenciasState extends State<MisIncidencias>{
                 if(timerGetData != null){
                   if(timerGetData.isActive){
                     timerGetData.cancel();
+                    timerWrite.cancel();
                     /// Subimos fichero
-                    UploadReportGPS().uploadImage("GPSdata.txt","http://192.168.15.38/TelyGIS/AndroidServlet?tk=32516373d17b470b8d08e4045b7161d4&imei=123456789&q=setgps");
+                    UploadReportGPS().uploadImage("GPSdata.txt","http://192.168.15.38/TelyGIS/AndroidServlet?tk=$tk&imei=$imei&q=setgps");
                     /// Reseteamos los datos
                     GPSdata = null;
                   }
@@ -681,139 +682,69 @@ class _MisIncidenciasState extends State<MisIncidencias>{
                 print("Error:  " + snapshot.error.toString());
 
                 /// No incidencias registradas
-                if(snapshot.error.toString().substring(0, 15) == "FormatException"){
-                  if(state.numberOfMarkers != 0){
-                    WidgetsBinding.instance.addPostFrameCallback((_) {
-                      print("push3");
-                      Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                              builder: (BuildContext context) => super.widget));
-                    });
-                    state.numberOfMarkers = 0;
-                    mediator.setMisIncidenciasState(state);
-                  }
-                  print("Error de no hay incidencias");
-                  return ExpansionTile(
-                      childrenPadding: EdgeInsets.only(bottom: 5),
-                      title: Text(AppLocalizations.of(context).incidentsLabel),
-                      backgroundColor: Colors.amberAccent[100],
-                      children: [
-                        Card(
-                          child: Container(
-                              color: Colors.blue,
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Text(AppLocalizations.of(context).messageType,
-                                      style: TextStyle(
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.bold)),
-                                  Container(
-                                      height: 20,
-                                      child: VerticalDivider(color: Colors.red)),
-                                  Text(AppLocalizations.of(context).eventId,
-                                      style: TextStyle(
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.bold)),
-                                  Container(
-                                      height: 20,
-                                      child: VerticalDivider(color: Colors.red)),
-                                  Text(
-                                      AppLocalizations.of(context).eventReference,
-                                      style: TextStyle(
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.bold)),
-                                  Container(
-                                      height: 20,
-                                      child: VerticalDivider(color: Colors.red)),
-                                  Text(
-                                      AppLocalizations.of(context)
-                                          .eventDescription,
-                                      style: TextStyle(
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.bold)),
-                                ],
-                              )),
-                        ),
-                        Text(
-                          AppLocalizations.of(context).noEventAssigned,
-                          style: TextStyle(
-                              fontSize: 16,
-                              color: Colors.red,
-                              fontWeight: FontWeight.bold),
-                        )
-                      ]);
-                }else{
-                  print("Error de timeout");
-                  if(!errorTimeout){
-
-                    /// Escribimos en un fichero txt si hay error
-                    GPStrigger();
-
-                    errorTimeout = true;
-                    errorSolved = false;
-                    state.errorTimeout = errorTimeout;
-                    state.errorSolved = errorSolved;
-                    state.statefulMarkers = statefulMapController.statefulMarkers;
-                    mediator.setMisIncidenciasState(state);
-
-
-                    WidgetsBinding.instance.addPostFrameCallback((_) {
-                      final snackbar = SnackBar(
-                          backgroundColor: Colors.yellow,
-                          content: Text(
-                            AppLocalizations.of(context).sBTimeoutText,
-                            style: TextStyle(
-                                color: Colors.red,
-                                fontWeight: FontWeight.bold),
-                          ));
-
-                      WidgetsBinding.instance
-                          .addPostFrameCallback((_) {
-                        // Add Your Code here.
-                        ScaffoldMessenger.of(context)
-                            .showSnackBar(snackbar);
+                if(snapshot.error.toString() != null && snapshot.error.toString() != "") {
+                  if (snapshot.error.toString().substring(0, 15) ==
+                      "FormatException") {
+                    if (state.numberOfMarkers != 0) {
+                      WidgetsBinding.instance.addPostFrameCallback((_) {
+                        print("push3");
+                        Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                                builder: (BuildContext context) =>
+                                super.widget));
                       });
-                    });
-                  }
-
-                  if(state.numberOfMarkers == 0){
+                      state.numberOfMarkers = 0;
+                      mediator.setMisIncidenciasState(state);
+                    }
+                    print("Error de no hay incidencias");
                     return ExpansionTile(
                         childrenPadding: EdgeInsets.only(bottom: 5),
-                        title: Text(AppLocalizations.of(context).incidentsLabel),
+                        title: Text(AppLocalizations
+                            .of(context)
+                            .incidentsLabel),
                         backgroundColor: Colors.amberAccent[100],
                         children: [
                           Card(
                             child: Container(
                                 color: Colors.blue,
                                 child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                  mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    Text(AppLocalizations.of(context).messageType,
+                                    Text(AppLocalizations
+                                        .of(context)
+                                        .messageType,
                                         style: TextStyle(
                                             color: Colors.white,
                                             fontWeight: FontWeight.bold)),
                                     Container(
                                         height: 20,
-                                        child: VerticalDivider(color: Colors.red)),
-                                    Text(AppLocalizations.of(context).eventId,
+                                        child: VerticalDivider(
+                                            color: Colors.red)),
+                                    Text(AppLocalizations
+                                        .of(context)
+                                        .eventId,
                                         style: TextStyle(
                                             color: Colors.white,
                                             fontWeight: FontWeight.bold)),
                                     Container(
                                         height: 20,
-                                        child: VerticalDivider(color: Colors.red)),
+                                        child: VerticalDivider(
+                                            color: Colors.red)),
                                     Text(
-                                        AppLocalizations.of(context).eventReference,
+                                        AppLocalizations
+                                            .of(context)
+                                            .eventReference,
                                         style: TextStyle(
                                             color: Colors.white,
                                             fontWeight: FontWeight.bold)),
                                     Container(
                                         height: 20,
-                                        child: VerticalDivider(color: Colors.red)),
+                                        child: VerticalDivider(
+                                            color: Colors.red)),
                                     Text(
-                                        AppLocalizations.of(context)
+                                        AppLocalizations
+                                            .of(context)
                                             .eventDescription,
                                         style: TextStyle(
                                             color: Colors.white,
@@ -822,343 +753,336 @@ class _MisIncidenciasState extends State<MisIncidencias>{
                                 )),
                           ),
                           Text(
-                            AppLocalizations.of(context).sBTimeoutText,
+                            AppLocalizations
+                                .of(context)
+                                .noEventAssigned,
                             style: TextStyle(
                                 fontSize: 16,
                                 color: Colors.red,
                                 fontWeight: FontWeight.bold),
                           )
                         ]);
-                  } else{
+                  } else {
+                    print("Error de timeout");
+                    if (!errorTimeout) {
 
-                    if(MediaQuery.of(context).orientation == Orientation.portrait){
+                      /// Escribimos en un fichero txt si hay error
+                      GPStrigger();
+
+                      errorTimeout = true;
+                      errorSolved = false;
+                      state.errorTimeout = errorTimeout;
+                      state.errorSolved = errorSolved;
+                      state.statefulMarkers =
+                          statefulMapController.statefulMarkers;
+                      mediator.setMisIncidenciasState(state);
+
+
+                      WidgetsBinding.instance.addPostFrameCallback((_) {
+                        final snackbar = SnackBar(
+                            backgroundColor: Colors.yellow,
+                            content: Text(
+                              AppLocalizations
+                                  .of(context)
+                                  .sBTimeoutText,
+                              style: TextStyle(
+                                  color: Colors.red,
+                                  fontWeight: FontWeight.bold),
+                            ));
+
+                        WidgetsBinding.instance
+                            .addPostFrameCallback((_) {
+                          // Add Your Code here.
+                          ScaffoldMessenger.of(context)
+                              .showSnackBar(snackbar);
+                        });
+                      });
+                    }
+
+                    if (state.numberOfMarkers == 0) {
                       return ExpansionTile(
                           childrenPadding: EdgeInsets.only(bottom: 5),
-                          title: Text(AppLocalizations.of(context).incidentsLabelNoConnection , style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold),) ,
+                          title: Text(AppLocalizations
+                              .of(context)
+                              .incidentsLabel),
                           backgroundColor: Colors.amberAccent[100],
                           children: [
                             Card(
                               child: Container(
                                   color: Colors.blue,
                                   child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                    mainAxisAlignment: MainAxisAlignment
+                                        .spaceEvenly,
                                     children: [
-                                      Text(AppLocalizations.of(context).messageType,
+                                      Text(AppLocalizations
+                                          .of(context)
+                                          .messageType,
                                           style: TextStyle(
                                               color: Colors.white,
                                               fontWeight: FontWeight.bold)),
                                       Container(
                                           height: 20,
-                                          child: VerticalDivider(color: Colors.red)),
-                                      Text(AppLocalizations.of(context).eventId,
+                                          child: VerticalDivider(
+                                              color: Colors.red)),
+                                      Text(AppLocalizations
+                                          .of(context)
+                                          .eventId,
                                           style: TextStyle(
                                               color: Colors.white,
                                               fontWeight: FontWeight.bold)),
                                       Container(
                                           height: 20,
-                                          child: VerticalDivider(color: Colors.red)),
+                                          child: VerticalDivider(
+                                              color: Colors.red)),
                                       Text(
-                                          AppLocalizations.of(context).eventReference,
+                                          AppLocalizations
+                                              .of(context)
+                                              .eventReference,
                                           style: TextStyle(
                                               color: Colors.white,
                                               fontWeight: FontWeight.bold)),
                                       Container(
                                           height: 20,
-                                          child: VerticalDivider(color: Colors.red)),
+                                          child: VerticalDivider(
+                                              color: Colors.red)),
                                       Text(
-                                        AppLocalizations.of(context).description,
-                                        style: TextStyle(
-                                            color: Colors.white,
-                                            fontWeight: FontWeight.bold),
-                                        maxLines: 10,
-                                      ),
+                                          AppLocalizations
+                                              .of(context)
+                                              .eventDescription,
+                                          style: TextStyle(
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.bold)),
                                     ],
                                   )),
                             ),
-                            Container(
-                              height: MediaQuery.of(context).size.height * valueSize,
-                              child: ListView.builder(
-                                itemCount: state.sucesos.length ,
-                                itemBuilder: (context, index) {
-                                  colorTarjeta = Colors.red[400];
-                                  return Card(
-                                    child: Container(
-                                      color: colorTarjeta,
-                                      child: ListTile(
-                                        onTap: () {
-                                          Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                builder: (context) =>
-                                                    DetalleIncidencias(
-                                                      creation: state.sucesos[index].description,
-                                                      reference: state.sucesos[index].refSuceso,
-                                                      state: "Atendido",
-                                                      direction: state.sucesos[index].description,
-                                                      description: state.sucesos[index].description,
-                                                      latitud: state.sucesos[index].latitude,
-                                                      longitud: state.sucesos[index].longitude,
-                                                    ),
-                                              ));
-                                        },
-                                        title: Container(
-                                            child: Row(
-                                              children: [
-                                                Text(state.sucesos[index].tipo,
-                                                    style: TextStyle(
-                                                        color: Colors.white,
-                                                        fontWeight: FontWeight.bold)),
-                                                Container(
-                                                    height: 30,
-                                                    child: VerticalDivider(
-                                                      color: Colors.black,
-                                                      thickness: 1.5,
-                                                    )),
-                                                Text(state.sucesos[index].idSuceso,
-                                                    style: TextStyle(
-                                                        color: Colors.white,
-                                                        fontWeight: FontWeight.bold)),
-                                                Container(
-                                                    height: 30,
-                                                    child: VerticalDivider(
-                                                      color: Colors.black,
-                                                      thickness: 1.5,
-                                                    )),
-                                                Text(state.sucesos[index].refSuceso,
-                                                    style: TextStyle(
-                                                        color: Colors.white,
-                                                        fontWeight: FontWeight.bold)),
-                                                Container(
-                                                    height: 30,
-                                                    child: VerticalDivider(
-                                                      color: Colors.black,
-                                                      thickness: 1.5,
-                                                    )),
-                                                Flexible(
-                                                  child: Text(
-                                                    state.sucesos[index].description
-                                                        .isNotEmpty
-                                                        ? state.sucesos[index].description
-                                                        : "Vacío",
-                                                    style: TextStyle(
-                                                      color: Colors.white,
-                                                      fontWeight: FontWeight.bold,
-                                                    ),
-                                                  ),
-                                                ),
-                                              ],
-                                            )),
-                                        leading: GestureDetector(
-                                          key: Key("centerInMap" + index.toString()),
-                                          child: Container(
-                                            decoration: BoxDecoration(
-                                              border: Border.all(color: Colors.blue[900], width: 3),
-                                              borderRadius: BorderRadius.circular(60.0),
-                                            ),
-                                            child: ClipRRect(
-                                              borderRadius: BorderRadius.circular(60.0),
-                                              child: Container(
-                                                height: 50,
-                                                width: 50,
-                                                color: Colors.blue,
-                                                child: BouncingWidget(
-                                                  duration: Duration(milliseconds: 300),
-                                                  scaleFactor: 5,
-                                                  onPressed: () {
-                                                    setState(() {
-                                                      var latlng = LatLng(
-                                                          state.sucesos[index].latitude,
-                                                          state.sucesos[index].longitude);
-                                                      final snackBar = SnackBar(
-                                                          duration: const Duration(milliseconds: 500),
-                                                          content: Text("Lat: " +
-                                                              latlng.latitude.toString() +
-                                                              " | Lon: " +
-                                                              latlng.longitude.toString()));
-
-                                                      ScaffoldMessenger.of(context)
-                                                          .showSnackBar(snackBar);
-                                                      double zoom = 15.0; //the zoom you want
-                                                      statefulMapController.mapController
-                                                          .move(latlng, zoom);
-                                                    });
-                                                  },
-
-                                                  child: Icon(
-                                                    Icons.location_pin,
-                                                    color: Colors.black,
-                                                    size: 30.0,
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  );
-                                },
-                              ),
+                            Text(
+                              AppLocalizations
+                                  .of(context)
+                                  .sBTimeoutText,
+                              style: TextStyle(
+                                  fontSize: 16,
+                                  color: Colors.red,
+                                  fontWeight: FontWeight.bold),
                             )
                           ]);
                     } else {
-                      return ExpansionTile(
-                          childrenPadding: EdgeInsets.only(bottom: 5),
-                          title: Text(AppLocalizations.of(context).incidentsLabelNoConnection , style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold),) ,
-                          backgroundColor: Colors.amberAccent[100],
-                          children: [
-                            Card(
-                              child: Container(
-                                  color: Colors.blue,
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                    children: [
-                                      Text(AppLocalizations.of(context).messageType,
+                      if (MediaQuery
+                          .of(context)
+                          .orientation == Orientation.portrait) {
+                        return ExpansionTile(
+                            childrenPadding: EdgeInsets.only(bottom: 5),
+                            title: Text(AppLocalizations
+                                .of(context)
+                                .incidentsLabelNoConnection,
+                              style: TextStyle(color: Colors.red,
+                                  fontWeight: FontWeight.bold),),
+                            backgroundColor: Colors.amberAccent[100],
+                            children: [
+                              Card(
+                                child: Container(
+                                    color: Colors.blue,
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment
+                                          .spaceEvenly,
+                                      children: [
+                                        Text(AppLocalizations
+                                            .of(context)
+                                            .messageType,
+                                            style: TextStyle(
+                                                color: Colors.white,
+                                                fontWeight: FontWeight.bold)),
+                                        Container(
+                                            height: 20,
+                                            child: VerticalDivider(
+                                                color: Colors.red)),
+                                        Text(AppLocalizations
+                                            .of(context)
+                                            .eventId,
+                                            style: TextStyle(
+                                                color: Colors.white,
+                                                fontWeight: FontWeight.bold)),
+                                        Container(
+                                            height: 20,
+                                            child: VerticalDivider(
+                                                color: Colors.red)),
+                                        Text(
+                                            AppLocalizations
+                                                .of(context)
+                                                .eventReference,
+                                            style: TextStyle(
+                                                color: Colors.white,
+                                                fontWeight: FontWeight.bold)),
+                                        Container(
+                                            height: 20,
+                                            child: VerticalDivider(
+                                                color: Colors.red)),
+                                        Text(
+                                          AppLocalizations
+                                              .of(context)
+                                              .description,
                                           style: TextStyle(
                                               color: Colors.white,
-                                              fontWeight: FontWeight.bold)),
-                                      Container(
-                                          height: 20,
-                                          child: VerticalDivider(color: Colors.red)),
-                                      Text(AppLocalizations.of(context).eventId,
-                                          style: TextStyle(
-                                              color: Colors.white,
-                                              fontWeight: FontWeight.bold)),
-                                      Container(
-                                          height: 20,
-                                          child: VerticalDivider(color: Colors.red)),
-                                      Text(
-                                          AppLocalizations.of(context).eventReference,
-                                          style: TextStyle(
-                                              color: Colors.white,
-                                              fontWeight: FontWeight.bold)),
-                                      Container(
-                                          height: 20,
-                                          child: VerticalDivider(color: Colors.red)),
-                                      Text(
-                                        AppLocalizations.of(context).description,
-                                        style: TextStyle(
-                                            color: Colors.white,
-                                            fontWeight: FontWeight.bold),
-                                        maxLines: 10,
-                                      ),
-                                    ],
-                                  )),
-                            ),
-                            Container(
-                              height: MediaQuery.of(context).size.height * valueSize * 1.8,
-                              child: ListView.builder(
-                                itemCount: state.sucesos.length ,
-                                itemBuilder: (context, index) {
-                                  colorTarjeta = Colors.red[400];
-                                  return Card(
-                                    child: Container(
-                                      color: colorTarjeta,
-                                      child: ListTile(
-                                        onTap: () {
-                                          Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                builder: (context) =>
-                                                    DetalleIncidencias(
-                                                      creation: state.sucesos[index].description,
-                                                      reference: state.sucesos[index].refSuceso,
-                                                      state: "Atendido",
-                                                      direction: state.sucesos[index].description,
-                                                      description: state.sucesos[index].description,
-                                                      latitud: state.sucesos[index].latitude,
-                                                      longitud: state.sucesos[index].longitude,
-                                                    ),
-                                              ));
-                                        },
-                                        title: Container(
-                                            child: Row(
-                                              mainAxisAlignment: MainAxisAlignment.start,
-                                              children: [
-                                                Text(state.sucesos[index].tipo,
-                                                    style: TextStyle(
+                                              fontWeight: FontWeight.bold),
+                                          maxLines: 10,
+                                        ),
+                                      ],
+                                    )),
+                              ),
+                              Container(
+                                height: MediaQuery
+                                    .of(context)
+                                    .size
+                                    .height * valueSize,
+                                child: ListView.builder(
+                                  itemCount: state.sucesos.length,
+                                  itemBuilder: (context, index) {
+                                    colorTarjeta = Colors.red[400];
+                                    return Card(
+                                      child: Container(
+                                        color: colorTarjeta,
+                                        child: ListTile(
+                                          onTap: () {
+                                            Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      DetalleIncidencias(
+                                                        creation: state
+                                                            .sucesos[index]
+                                                            .description,
+                                                        reference: state
+                                                            .sucesos[index]
+                                                            .refSuceso,
+                                                        state: "Atendido",
+                                                        direction: state
+                                                            .sucesos[index]
+                                                            .description,
+                                                        description: state
+                                                            .sucesos[index]
+                                                            .description,
+                                                        latitud: state
+                                                            .sucesos[index]
+                                                            .latitude,
+                                                        longitud: state
+                                                            .sucesos[index]
+                                                            .longitude,
+                                                      ),
+                                                ));
+                                          },
+                                          title: Container(
+                                              child: Row(
+                                                children: [
+                                                  Text(
+                                                      state.sucesos[index].tipo,
+                                                      style: TextStyle(
+                                                          color: Colors.white,
+                                                          fontWeight: FontWeight
+                                                              .bold)),
+                                                  Container(
+                                                      height: 30,
+                                                      child: VerticalDivider(
+                                                        color: Colors.black,
+                                                        thickness: 1.5,
+                                                      )),
+                                                  Text(state.sucesos[index]
+                                                      .idSuceso,
+                                                      style: TextStyle(
+                                                          color: Colors.white,
+                                                          fontWeight: FontWeight
+                                                              .bold)),
+                                                  Container(
+                                                      height: 30,
+                                                      child: VerticalDivider(
+                                                        color: Colors.black,
+                                                        thickness: 1.5,
+                                                      )),
+                                                  Text(state.sucesos[index]
+                                                      .refSuceso,
+                                                      style: TextStyle(
+                                                          color: Colors.white,
+                                                          fontWeight: FontWeight
+                                                              .bold)),
+                                                  Container(
+                                                      height: 30,
+                                                      child: VerticalDivider(
+                                                        color: Colors.black,
+                                                        thickness: 1.5,
+                                                      )),
+                                                  Flexible(
+                                                    child: Text(
+                                                      state.sucesos[index]
+                                                          .description
+                                                          .isNotEmpty
+                                                          ? state.sucesos[index]
+                                                          .description
+                                                          : "Vacío",
+                                                      style: TextStyle(
                                                         color: Colors.white,
-                                                        fontWeight: FontWeight.bold)),
-                                                Container(
-                                                    height: 30,
-                                                    child: VerticalDivider(
-                                                      color: Colors.black,
-                                                      thickness: 1.5,
-                                                    )),
-                                                Text(state.sucesos[index].idSuceso,
-                                                    style: TextStyle(
-                                                        color: Colors.white,
-                                                        fontWeight: FontWeight.bold)),
-                                                Container(
-                                                    height: 30,
-                                                    child: VerticalDivider(
-                                                      color: Colors.black,
-                                                      thickness: 1.5,
-                                                    )),
-                                                Text(state.sucesos[index].refSuceso,
-                                                    style: TextStyle(
-                                                        color: Colors.white,
-                                                        fontWeight: FontWeight.bold)),
-                                                Container(
-                                                    height: 30,
-                                                    child: VerticalDivider(
-                                                      color: Colors.black,
-                                                      thickness: 1.5,
-                                                    )),
-                                                Flexible(
-                                                  child: Text(
-                                                    state.sucesos[index].description
-                                                        .isNotEmpty
-                                                        ? state.sucesos[index].description
-                                                        : "Vacío",
-                                                    style: TextStyle(
-                                                      color: Colors.white,
-                                                      fontWeight: FontWeight.bold,
+                                                        fontWeight: FontWeight
+                                                            .bold,
+                                                      ),
                                                     ),
                                                   ),
-                                                ),
-                                              ],
-                                            )),
-                                        leading: GestureDetector(
-                                          key: Key("centerInMap" + index.toString()),
-                                          child: Container(
-                                            decoration: BoxDecoration(
-                                              border: Border.all(color: Colors.blue[900], width: 3),
-                                              borderRadius: BorderRadius.circular(60.0),
-                                            ),
-                                            child: ClipRRect(
-                                              borderRadius: BorderRadius.circular(60.0),
-                                              child: Container(
-                                                height: 50,
-                                                width: 50,
-                                                color: Colors.blue,
-                                                child: BouncingWidget(
-                                                  duration: Duration(milliseconds: 300),
-                                                  scaleFactor: 5,
-                                                  onPressed: () {
-                                                    setState(() {
-                                                      var latlng = LatLng(
-                                                          state.sucesos[index].latitude,
-                                                          state.sucesos[index].longitude);
-                                                      final snackBar = SnackBar(
-                                                          duration: const Duration(milliseconds: 500),
-                                                          content: Text("Lat: " +
-                                                              latlng.latitude.toString() +
-                                                              " | Lon: " +
-                                                              latlng.longitude.toString()));
+                                                ],
+                                              )),
+                                          leading: GestureDetector(
+                                            key: Key("centerInMap" +
+                                                index.toString()),
+                                            child: Container(
+                                              decoration: BoxDecoration(
+                                                border: Border.all(
+                                                    color: Colors.blue[900],
+                                                    width: 3),
+                                                borderRadius: BorderRadius
+                                                    .circular(60.0),
+                                              ),
+                                              child: ClipRRect(
+                                                borderRadius: BorderRadius
+                                                    .circular(60.0),
+                                                child: Container(
+                                                  height: 50,
+                                                  width: 50,
+                                                  color: Colors.blue,
+                                                  child: BouncingWidget(
+                                                    duration: Duration(
+                                                        milliseconds: 300),
+                                                    scaleFactor: 5,
+                                                    onPressed: () {
+                                                      setState(() {
+                                                        var latlng = LatLng(
+                                                            state.sucesos[index]
+                                                                .latitude,
+                                                            state.sucesos[index]
+                                                                .longitude);
+                                                        final snackBar = SnackBar(
+                                                            duration: const Duration(
+                                                                milliseconds: 500),
+                                                            content: Text(
+                                                                "Lat: " +
+                                                                    latlng
+                                                                        .latitude
+                                                                        .toString() +
+                                                                    " | Lon: " +
+                                                                    latlng
+                                                                        .longitude
+                                                                        .toString()));
 
-                                                      ScaffoldMessenger.of(context)
-                                                          .showSnackBar(snackBar);
-                                                      double zoom = 15.0; //the zoom you want
-                                                      statefulMapController.mapController
-                                                          .move(latlng, zoom);
-                                                    });
-                                                  },
+                                                        ScaffoldMessenger.of(
+                                                            context)
+                                                            .showSnackBar(
+                                                            snackBar);
+                                                        double zoom = 15.0; //the zoom you want
+                                                        statefulMapController
+                                                            .mapController
+                                                            .move(latlng, zoom);
+                                                      });
+                                                    },
 
-                                                  child: Icon(
-                                                    Icons.location_pin,
-                                                    color: Colors.black,
-                                                    size: 30.0,
+                                                    child: Icon(
+                                                      Icons.location_pin,
+                                                      color: Colors.black,
+                                                      size: 30.0,
+                                                    ),
                                                   ),
                                                 ),
                                               ),
@@ -1166,14 +1090,242 @@ class _MisIncidenciasState extends State<MisIncidencias>{
                                           ),
                                         ),
                                       ),
-                                    ),
-                                  );
-                                },
+                                    );
+                                  },
+                                ),
+                              )
+                            ]);
+                      } else {
+                        return ExpansionTile(
+                            childrenPadding: EdgeInsets.only(bottom: 5),
+                            title: Text(AppLocalizations
+                                .of(context)
+                                .incidentsLabelNoConnection,
+                              style: TextStyle(color: Colors.red,
+                                  fontWeight: FontWeight.bold),),
+                            backgroundColor: Colors.amberAccent[100],
+                            children: [
+                              Card(
+                                child: Container(
+                                    color: Colors.blue,
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment
+                                          .spaceEvenly,
+                                      children: [
+                                        Text(AppLocalizations
+                                            .of(context)
+                                            .messageType,
+                                            style: TextStyle(
+                                                color: Colors.white,
+                                                fontWeight: FontWeight.bold)),
+                                        Container(
+                                            height: 20,
+                                            child: VerticalDivider(
+                                                color: Colors.red)),
+                                        Text(AppLocalizations
+                                            .of(context)
+                                            .eventId,
+                                            style: TextStyle(
+                                                color: Colors.white,
+                                                fontWeight: FontWeight.bold)),
+                                        Container(
+                                            height: 20,
+                                            child: VerticalDivider(
+                                                color: Colors.red)),
+                                        Text(
+                                            AppLocalizations
+                                                .of(context)
+                                                .eventReference,
+                                            style: TextStyle(
+                                                color: Colors.white,
+                                                fontWeight: FontWeight.bold)),
+                                        Container(
+                                            height: 20,
+                                            child: VerticalDivider(
+                                                color: Colors.red)),
+                                        Text(
+                                          AppLocalizations
+                                              .of(context)
+                                              .description,
+                                          style: TextStyle(
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.bold),
+                                          maxLines: 10,
+                                        ),
+                                      ],
+                                    )),
                               ),
-                            )
-                          ]);
-                    }
+                              Container(
+                                height: MediaQuery
+                                    .of(context)
+                                    .size
+                                    .height * valueSize * 1.8,
+                                child: ListView.builder(
+                                  itemCount: state.sucesos.length,
+                                  itemBuilder: (context, index) {
+                                    colorTarjeta = Colors.red[400];
+                                    return Card(
+                                      child: Container(
+                                        color: colorTarjeta,
+                                        child: ListTile(
+                                          onTap: () {
+                                            Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      DetalleIncidencias(
+                                                        creation: state
+                                                            .sucesos[index]
+                                                            .description,
+                                                        reference: state
+                                                            .sucesos[index]
+                                                            .refSuceso,
+                                                        state: "Atendido",
+                                                        direction: state
+                                                            .sucesos[index]
+                                                            .description,
+                                                        description: state
+                                                            .sucesos[index]
+                                                            .description,
+                                                        latitud: state
+                                                            .sucesos[index]
+                                                            .latitude,
+                                                        longitud: state
+                                                            .sucesos[index]
+                                                            .longitude,
+                                                      ),
+                                                ));
+                                          },
+                                          title: Container(
+                                              child: Row(
+                                                mainAxisAlignment: MainAxisAlignment
+                                                    .start,
+                                                children: [
+                                                  Text(
+                                                      state.sucesos[index].tipo,
+                                                      style: TextStyle(
+                                                          color: Colors.white,
+                                                          fontWeight: FontWeight
+                                                              .bold)),
+                                                  Container(
+                                                      height: 30,
+                                                      child: VerticalDivider(
+                                                        color: Colors.black,
+                                                        thickness: 1.5,
+                                                      )),
+                                                  Text(state.sucesos[index]
+                                                      .idSuceso,
+                                                      style: TextStyle(
+                                                          color: Colors.white,
+                                                          fontWeight: FontWeight
+                                                              .bold)),
+                                                  Container(
+                                                      height: 30,
+                                                      child: VerticalDivider(
+                                                        color: Colors.black,
+                                                        thickness: 1.5,
+                                                      )),
+                                                  Text(state.sucesos[index]
+                                                      .refSuceso,
+                                                      style: TextStyle(
+                                                          color: Colors.white,
+                                                          fontWeight: FontWeight
+                                                              .bold)),
+                                                  Container(
+                                                      height: 30,
+                                                      child: VerticalDivider(
+                                                        color: Colors.black,
+                                                        thickness: 1.5,
+                                                      )),
+                                                  Flexible(
+                                                    child: Text(
+                                                      state.sucesos[index]
+                                                          .description
+                                                          .isNotEmpty
+                                                          ? state.sucesos[index]
+                                                          .description
+                                                          : "Vacío",
+                                                      style: TextStyle(
+                                                        color: Colors.white,
+                                                        fontWeight: FontWeight
+                                                            .bold,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ],
+                                              )),
+                                          leading: GestureDetector(
+                                            key: Key("centerInMap" +
+                                                index.toString()),
+                                            child: Container(
+                                              decoration: BoxDecoration(
+                                                border: Border.all(
+                                                    color: Colors.blue[900],
+                                                    width: 3),
+                                                borderRadius: BorderRadius
+                                                    .circular(60.0),
+                                              ),
+                                              child: ClipRRect(
+                                                borderRadius: BorderRadius
+                                                    .circular(60.0),
+                                                child: Container(
+                                                  height: 50,
+                                                  width: 50,
+                                                  color: Colors.blue,
+                                                  child: BouncingWidget(
+                                                    duration: Duration(
+                                                        milliseconds: 300),
+                                                    scaleFactor: 5,
+                                                    onPressed: () {
+                                                      setState(() {
+                                                        var latlng = LatLng(
+                                                            state.sucesos[index]
+                                                                .latitude,
+                                                            state.sucesos[index]
+                                                                .longitude);
+                                                        final snackBar = SnackBar(
+                                                            duration: const Duration(
+                                                                milliseconds: 500),
+                                                            content: Text(
+                                                                "Lat: " +
+                                                                    latlng
+                                                                        .latitude
+                                                                        .toString() +
+                                                                    " | Lon: " +
+                                                                    latlng
+                                                                        .longitude
+                                                                        .toString()));
 
+                                                        ScaffoldMessenger.of(
+                                                            context)
+                                                            .showSnackBar(
+                                                            snackBar);
+                                                        double zoom = 15.0; //the zoom you want
+                                                        statefulMapController
+                                                            .mapController
+                                                            .move(latlng, zoom);
+                                                      });
+                                                    },
+
+                                                    child: Icon(
+                                                      Icons.location_pin,
+                                                      color: Colors.black,
+                                                      size: 30.0,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                ),
+                              )
+                            ]);
+                      }
+                    }
                   }
                 }
 
@@ -1185,7 +1337,7 @@ class _MisIncidenciasState extends State<MisIncidencias>{
           child: FlutterMap(
             mapController: statefulMapController.mapController,
             options: MapOptions(
-              maxZoom: 19,
+              maxZoom: 18,
               minZoom: 10,
               // center: LatLng(latLog.latitude, latLog.longitude),
               center: LatLng(latitudCenter, longitudCenter),
@@ -1226,7 +1378,7 @@ class _MisIncidenciasState extends State<MisIncidencias>{
     sub.cancel();
     timerGetData?.cancel();
     timerWrite?.cancel();
-    timerDistance?.cancel();
+    // timerDistance?.cancel();
     super.dispose();
   }
 
@@ -1275,7 +1427,6 @@ class _MisIncidenciasState extends State<MisIncidencias>{
 
     fetchData();
 
-    mayorDeDosCientos = false;
 
     isDataWriting = false;
 
@@ -1284,6 +1435,8 @@ class _MisIncidenciasState extends State<MisIncidencias>{
     reloadMapWithGPSPositionAndCenter();
 
     _isRefreshButtonDisabled = true;
+
+    // timerOnline = Timer.periodic(Duration(seconds: 40), (Timer t) => writeGPSdata());
 
     // checkInternetConnection();
 
@@ -1305,58 +1458,57 @@ class _MisIncidenciasState extends State<MisIncidencias>{
         payload: 'item Incidencias');
   }
 
-  void getGPSbyDistance() {
+  bool compareGPSDistance() {
 
-    mayorDeDosCientos = false;
+    bool mayorDeDosCientos = false;
 
     // final double tmpLatitudCenter = latitudCenter;
     // final double tmpLongitudCenter = longitudCenter;
     // double tmpDistanceMeters = 0;
 
-    incrementoI = incrementoI + 0.0001;
+    // incrementoI = incrementoI + 0.0001;
     // tmpLatitudCenter = latitudCenter;
     // tmpLongitudCenter = longitudCenter;
 
-    if(isDataWriting){
-      print("EStoy aqui <------------------------------------");
-      timerDistance.cancel();
-      isDataWriting = false;
+    // if(isDataWriting){
+    //   print("EStoy aqui <------------------------------------");
+    //   // timerDistance.cancel();
+    //   isDataWriting = false;
+    // }
 
-    }
+    // posicionActual = _determinePosition();
+    // posicionActual.then((value) =>
+    // {
+    //   latitudCenter = value.latitude + incrementoI,
+    //   longitudCenter = value.longitude  + incrementoI,
 
-    posicionActual = _determinePosition();
-    posicionActual.then((value) =>
-    {
-      latitudCenter = value.latitude + incrementoI,
-      longitudCenter = value.longitude  + incrementoI,
-
-      distanceInMeters = mediator.getMisIncidenciasState().tmpDistanceMeters +
-      Geolocator.distanceBetween(mediator.getMisIncidenciasState().tmpLatitudeCenter,mediator.getMisIncidenciasState().tmpLongitudeCenter,
-      latitudCenter, longitudCenter),
+      distanceInMeters = state.tmpDistanceMeters +
+      Geolocator.distanceBetween(state.tmpLatitudeCenter,state.tmpLongitudeCenter,
+      latitudCenter, longitudCenter);
 
       if(distanceInMeters >= 200){
-        mayorDeDosCientos = true,
-        getGPSdata(),
-        writeGPSdata(),
-        timerGetData.cancel(),
-        timerWrite.cancel(),
+        mayorDeDosCientos = true;
+        // getGPSdata(),
+        // writeGPSdata(),
+        // timerGetData.cancel(),
+        // timerWrite.cancel(),
 
         // Reinicio la distancia y le sumo el resto
         // mediator.getMisIncidenciasState().tmpDistanceMeters = distanceInMeters - 200,
 
-        state.tmpLatitudeCenter = latitudCenter,
-        state.tmpLongitudeCenter = longitudCenter,
-        state.tmpDistanceMeters = distanceInMeters - 200,
-        mediator.setMisIncidenciasState(state),
-        distanceInMeters = mediator.getMisIncidenciasState().tmpDistanceMeters,
+        // state.tmpLatitudeCenter = latitudCenter,
+        // state.tmpLongitudeCenter = longitudCenter,
+        // state.tmpDistanceMeters = distanceInMeters - 200,
+        // mediator.setMisIncidenciasState(state),
+        distanceInMeters = state.tmpDistanceMeters;
 
-        print("Es mayor de 200------------------------>"),
-      },
+        print("Es mayor de 200------------------------>");
+      }
 
-      print("La distancia es: $distanceInMeters"),
-      print("¿Es mayor que 200 metros?: $mayorDeDosCientos"),
-    });
-
+      print("La distancia es: $distanceInMeters");
+      print("¿Es mayor que 200 metros?: $mayorDeDosCientos");
+    // });
+    return mayorDeDosCientos;
   }
 
   @override
@@ -1510,6 +1662,43 @@ class _MisIncidenciasState extends State<MisIncidencias>{
     });
   }
 
+
+  /// Determino la posición actual y la comparo con la anterior para comprobar que si es mayor de 200m, escriba un elemento en el fichero.
+  void refreshDataOnOffline() {
+    statefulMapController.onReady.then((value) {
+      state.statefulMarkers =  statefulMapController.statefulMarkers;
+      mediator.setMisIncidenciasState(state);
+      setState(() {
+        // statefulMapController.statefulMarkers.clear();
+        _isRefreshButtonDisabled = true;
+        fetchData();
+        // final path = _localPath;
+        // path.then((value) {
+        //   UploadReportGPS().uploadImage("GPSdata.txt","http://192.168.15.38/TelyGIS/AndroidServlet?tk=32516373d17b470b8d08e4045b7161d4&imei=123456789&q=setgps");
+        // });
+
+
+        posicionActual = _determinePosition();
+        posicionActual.then((value){
+
+          if(compareGPSDistance()){
+            timerWrite.cancel();
+            writeGPSdata();
+            timerWrite = Timer.periodic(Duration(seconds: 40), (Timer t) => writeGPSdata());
+          }
+        });
+
+        reloadMapWithGPSPosition();
+
+        print("UWU " + statefulMapController.statefulMarkers.length.toString());
+
+        state.statefulMapController = statefulMapController;
+        state.mapController = _mapController;
+        mediator.setMisIncidenciasState(state);
+      });
+    });
+  }
+
   ///Espera a los valores del GPS, centra el mapa y actualiza el marcador de GPS
   void reloadMapWithGPSPositionAndCenter() {
     // esto es un callback, determina nuestra posición
@@ -1574,11 +1763,18 @@ class _MisIncidenciasState extends State<MisIncidencias>{
     });
 
     posicionActual.then((value) => {
+
+      print("Precision: " + value.accuracy.toString() + 'm'),
+      print("Velocidad: " + value.speed.toString() + 'm/s'),
+      print("Rumbo: " + value.heading.toString() + 'º'),
+      print("Tiempo: " + value.timestamp.millisecondsSinceEpoch.toString() + 'millis'),
+
       statefulMapController.statefulMarkers.remove("markerGPS"),
       developer.log(value.toString(), name: 'my.app.category'),
       latitudCenter = value.latitude,
       longitudCenter = value.longitude,
       statefulMapController.onReady.then((_) {
+
         // GPS distance
         state.tmpLatitudeCenter = latitudCenter;
         state.tmpLongitudeCenter = longitudCenter;
@@ -1655,6 +1851,7 @@ class _MisIncidenciasState extends State<MisIncidencias>{
     print("Se esta escribiendo en un TXT");
     final file = await _localFile;
     isDataWriting = true;
+    getGPSdata();
     return file.writeAsString(GPSdata);
   }
 
@@ -1675,7 +1872,7 @@ class _MisIncidenciasState extends State<MisIncidencias>{
   /// Nos devuelve el imei, el tiempo en milis y la posicion.
   void getGPSdata() {
     if(GPSdata == null){
-      GPSdata = "123456789\r\n" + DateTime.now().millisecondsSinceEpoch.toString() + ";" + latitudCenter.toString() +
+      GPSdata = "$imei\r\n" + DateTime.now().millisecondsSinceEpoch.toString() + ";" + latitudCenter.toString() +
           ";" + longitudCenter.toString() + "\r\n";
 
     } else {
@@ -1684,10 +1881,8 @@ class _MisIncidenciasState extends State<MisIncidencias>{
           ";" + longitudCenter.toString() + "\r\n";
     }
 
-    writeGPSdata();
-
     /// Comprobamos si hay conexion 🧔 (pulsado del boton de refresh automaticamente).
-    refreshData();
+    // refreshData();
 
   }
 
@@ -1695,9 +1890,11 @@ class _MisIncidenciasState extends State<MisIncidencias>{
   void GPStrigger() {
 
     // timer = Timer.periodic(Duration(seconds: 5), (Timer t) => readGPSdata());
-    // timerWrite = Timer.periodic(Duration(seconds: 30), (Timer t) => writeGPSdata());
-    timerGetData = Timer.periodic(Duration(seconds: 5), (Timer t) => getGPSdata());
-    timerDistance = Timer.periodic(Duration(seconds: 5), (Timer t) => getGPSbyDistance());
+    timerWrite = Timer.periodic(Duration(seconds: 40), (Timer t) => writeGPSdata());
+    timerGetData = Timer.periodic(Duration(seconds: 10), (Timer t) => refreshDataOnOffline());
+    // timerDistance = Timer.periodic(Duration(seconds: 5), (Timer t) => getGPSbyDistance());
 
   }
+
+
 }
