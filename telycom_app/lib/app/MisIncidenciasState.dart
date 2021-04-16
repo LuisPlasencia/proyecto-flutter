@@ -21,4 +21,6 @@ class MisIncidenciasState{
   double tmpLongitudeCenter = 0;
   double tmpDistanceMeters = 0;
 
+  int captureTime;
+
 }

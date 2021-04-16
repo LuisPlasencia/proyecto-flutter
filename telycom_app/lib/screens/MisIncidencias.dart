@@ -1771,15 +1771,19 @@ class _MisIncidenciasState extends State<MisIncidencias>{
 
       statefulMapController.statefulMarkers.remove("markerGPS"),
       developer.log(value.toString(), name: 'my.app.category'),
+
+      // GPS distance
+      state.tmpLatitudeCenter = latitudCenter,
+      state.tmpLongitudeCenter = longitudCenter,
+      state.tmpDistanceMeters = 0,
+      state.captureTime = value.timestamp.millisecondsSinceEpoch,
+      mediator.setMisIncidenciasState(state),
       latitudCenter = value.latitude,
       longitudCenter = value.longitude,
+
       statefulMapController.onReady.then((_) {
 
-        // GPS distance
-        state.tmpLatitudeCenter = latitudCenter;
-        state.tmpLongitudeCenter = longitudCenter;
-        state.tmpDistanceMeters = 0;
-        mediator.setMisIncidenciasState(state);
+
 
         //Create marker with GPS position
         statefulMapController.addStatefulMarker(
@@ -1872,12 +1876,12 @@ class _MisIncidenciasState extends State<MisIncidencias>{
   /// Nos devuelve el imei, el tiempo en milis y la posicion.
   void getGPSdata() {
     if(GPSdata == null){
-      GPSdata = "$imei\r\n" + DateTime.now().millisecondsSinceEpoch.toString() + ";" + latitudCenter.toString() +
+      GPSdata = "$imei\r\n" + state.captureTime.toString() + ";" + latitudCenter.toString() +
           ";" + longitudCenter.toString() + "\r\n";
 
     } else {
 
-      GPSdata = GPSdata + DateTime.now().millisecondsSinceEpoch.toString() + ";" + latitudCenter.toString() +
+      GPSdata = GPSdata + state.captureTime.toString() + ";" + latitudCenter.toString() +
           ";" + longitudCenter.toString() + "\r\n";
     }
 
