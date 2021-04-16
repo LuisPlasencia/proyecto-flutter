@@ -1385,7 +1385,7 @@ class _MisIncidenciasState extends State<MisIncidencias>{
   @override
   void initState() {
     super.initState();
-    pushNotification( "Mis Incidencias",  "Ha logeado como: " + username);
+    pushNotification( 2, "Mis Incidencias",  "Ha logeado como: " + username);
 
     developer.log('MisIncidencias', name: 'my.app.category');
     print("INITSTATE");
@@ -1444,18 +1444,18 @@ class _MisIncidenciasState extends State<MisIncidencias>{
 
   }
 
-  Future pushNotification(String title, String body) async {
+  Future pushNotification(int id, String title, String body) async {
     const AndroidNotificationDetails androidPlatformChannelSpecifics =
     AndroidNotificationDetails(
-        '1', 'your channel name', 'your channel description',
+        'your channel id', 'your channel name', 'your channel description',
         importance: Importance.max,
         priority: Priority.high,
         showWhen: false);
     const NotificationDetails platformChannelSpecifics =
     NotificationDetails(android: androidPlatformChannelSpecifics);
     await flutterLocalNotificationsPlugin.show(
-        1, title, body, platformChannelSpecifics,
-        payload: 'item Incidencias');
+        id, title, body, platformChannelSpecifics,
+        payload: 'item ' + id.toString());
   }
 
   bool compareGPSDistance() {
@@ -1896,7 +1896,7 @@ class _MisIncidenciasState extends State<MisIncidencias>{
     // timer = Timer.periodic(Duration(seconds: 5), (Timer t) => readGPSdata());
     timerWrite = Timer.periodic(Duration(seconds: 40), (Timer t) => writeGPSdata());
     timerGetData = Timer.periodic(Duration(seconds: 10), (Timer t) => refreshDataOnOffline());
-    // timerDistance = Timer.periodic(Duration(seconds: 5), (Timer t) => getGPSbyDistance());
+    //timerDistance = Timer.periodic(Duration(seconds: 5), (Timer t) => getGPSbyDistance());
 
   }
 
