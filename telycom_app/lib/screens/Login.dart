@@ -96,7 +96,7 @@ class _FirstRouteState extends State<FirstRoute> {
     initPlatformState();
     _isButtonDisabled = false;
     _isTextFieldEnable = true;
-    pushNotification('Telycom', "Bienvenido");
+    pushNotification(1, 'Telycom', "Bienvenido");
 
   }
 
@@ -106,20 +106,14 @@ class _FirstRouteState extends State<FirstRoute> {
     if (payload != null) {
       debugPrint('notification payload: $payload');
     }
-    if(payload == 'item Login'){
+    if(payload == 'item 1'){
       print("Has pulsado sobre la notificación de Login");
-      // await Navigator.push(
-      //   context,
-      //   // MaterialPageRoute<void>(builder: (context) => MisIncidencias(tk: '53db87de89a54c17b30df4111cfac14a', imei: _platformImei, username: usuario,)),
-      // );
+      // HAZ ALGO
     }
 
-    if(payload == 'item Incidencias'){
+    if(payload == 'item 2'){
       print("Has pulsado sobre la notificación de Mis Incidencias");
-      // await Navigator.push(
-      //   context,
-      //   MaterialPageRoute<void>(builder: (context) => MisIncidencias(tk: '53db87de89a54c17b30df4111cfac14a', imei: _platformImei, username: usuario,)),
-      // );
+      // HAZ ALGO
     }
 
   }
@@ -187,18 +181,18 @@ class _FirstRouteState extends State<FirstRoute> {
   }
 
   /// Notificaciones Push
-  Future pushNotification(String title, String body) async {
+  Future pushNotification(int id, String title, String body) async {
     const AndroidNotificationDetails androidPlatformChannelSpecifics =
     AndroidNotificationDetails(
-        'your channel id', 'your channel name', 'your channel description',
+        'your event id', 'your event name', 'your event description',
         importance: Importance.max,
         priority: Priority.high,
         showWhen: false);
     const NotificationDetails platformChannelSpecifics =
     NotificationDetails(android: androidPlatformChannelSpecifics);
     await flutterLocalNotificationsPlugin.show(
-        0, title, body, platformChannelSpecifics,
-        payload: 'item Login');
+        id, title, body, platformChannelSpecifics,
+        payload: 'item ' + id.toString());
   }
 
   // Platform messages are asynchronous, so we initialize in an async method.
